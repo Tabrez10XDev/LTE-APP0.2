@@ -1,5 +1,5 @@
 import { COLORS, SIZES, FONTS } from "./theme";
-// import assets from "./assets";
+import assets from "./assets";
 
 
-export {COLORS, SIZES, FONTS};
+export {COLORS, SIZES, FONTS, assets};
