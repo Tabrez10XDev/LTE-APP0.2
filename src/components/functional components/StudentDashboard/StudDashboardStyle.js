@@ -1,5 +1,6 @@
 /* StudDashboard.j */
 import { StyleSheet } from 'react-native';
+import { FONTS } from '../../../../constants';
 
 const StudStyle = StyleSheet.create({
     studMainContainer:{
@@ -19,7 +20,14 @@ const StudStyle = StyleSheet.create({
     }, 
     textStyle:{
         fontSize:40,
-        fontWeight:'bold'
+        fontWeight:'bold',
+        fontFamily:FONTS.bold
+    },
+    goodText:{
+        color:'#DD550D', 
+    },
+    excellentText:{
+        color:'#1EC12A', 
     },
     completedText:{
         color:'#2865DE', 
@@ -30,6 +38,8 @@ const StudStyle = StyleSheet.create({
     subTextStyle:{
         color:'#58585A',
         fontSize:14,
+        fontFamily:FONTS.regular
+
     }, 
     mainContainer:{
         alignSelf:'center',
@@ -59,6 +69,24 @@ const StudStyle = StyleSheet.create({
         height: 75,
         padding:18,
         textAlign:'center',
+      },
+      subViewContainer: {
+        width: 350,
+        height: 60,
+        alignSelf: "center",
+        marginHorizontal:50, 
+        marginVertical:16, 
+        justifyContent:"flex-end" 
+      },
+      btnStyle: {
+        alignItems: "center",
+        backgroundColor: "#FF758F",
+        padding: 10,
+        borderRadius: 5,
+      },
+      btnTextStyle: {
+        fontSize: 20,
+        color: "#FFFFFF",
       },
 })
 

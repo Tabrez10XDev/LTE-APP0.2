@@ -1,18 +1,21 @@
 /* HomeTabView StyleSheet */
 import { StyleSheet } from "react-native";
+import { COLORS, SIZES, FONTS, assets } from "../../../../constants";
+
 const styles = StyleSheet.create({
  
 
 
   mainAudioContainer: {
     flex: 1,
+    backgroundColor:'white'
   },
   audioText:{
-        fontSize:16, 
-        width:370,
+        fontSize:SIZES.font, 
         alignSelf:'center',
         textAlign:'center',  
-        margin:30
+        margin:30,
+        fontFamily:FONTS.regular
   }, 
   dragViewContainer: {
     flex: 2,
@@ -31,11 +34,13 @@ const styles = StyleSheet.create({
   }, 
   uploadText:{
     textAlign:'center', 
+    fontSize:SIZES.font,
+    fontFamily:FONTS.bold
   }, 
 
   subViewContainer: {
     width: 350,
-    height: 250,
+    height: 60,
     alignSelf: "center",
     marginHorizontal:50, 
     marginVertical:50, 

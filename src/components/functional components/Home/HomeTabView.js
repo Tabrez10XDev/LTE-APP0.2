@@ -1,9 +1,13 @@
 import { React, useLayoutEffect, useCallback, useState } from "react";
-import { Text, View, Image, TouchableOpacity } from "react-native";
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import { Text, View, Image, TouchableOpacity, Dimensions } from "react-native";
+import {
+  createDrawerNavigator, DrawerContentScrollView,
+  DrawerItemList,
+} from "@react-navigation/drawer";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import axios from "axios";
+import { StyleSheet } from "react-native";
 
 import "react-native-gesture-handler";
 // import DocumentPicker, { types } from 'react-native-document-picker';
@@ -11,23 +15,69 @@ import * as DocumentPicker from "expo-document-picker";
 import Style from "./Style";
 import StudentProfileView from "../StudentDashboard/studdashboard";
 import StudentTraining from "./Training/StudentTraining";
+import { COLORS, SIZES, FONTS, assets } from "../../../../constants";
+import styles from "./Style";
+import StudentsList from "../StudentDashboard/StudentsList";
+import StudentRoutes from "../StudentDashboard/StudentRoutes";
 
 //Create Instance for all Navigators
 const Tab = createMaterialTopTabNavigator();
 //const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
+
+
+const CustomDrawer = props => {
+  return (
+    <View style={{ flex: 1 }}>
+      <DrawerContentScrollView {...props}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: 20,
+            marginBottom: 20,
+          }}
+        >
+          <View>
+            <Text style={Styles.bold}>Mr. Deepak Sharma</Text>
+            <Text style={Styles.greyText}>M.Sc</Text>
+          </View>
+          
+        </View>
+        <DrawerItemList {...props} />
+      </DrawerContentScrollView>
+      <TouchableOpacity
+        style={{
+          position: 'absolute',
+          right: 0,
+          left: 0,
+          bottom: 50,
+          padding: 20,
+        }}
+      >
+        <Text style={Styles.semiBold} >Log Out</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+
+
 function TrainingMaterialTab({ navigation }) {
   return (
     <View
       style={{
-        flex: 1,
-        justifyContent: "center",
+        justifyContent: "flex-start",
         alignSelf: "center",
-        width: 300,
+        backgroundColor: 'white',
+        paddingTop: SIZES.medium,
+        paddingHorizontal: 16,
+        alignItems:'center'
       }}
     >
-      <Text>
+      <Text style={Styles.paragraph}>
         It is a long established fact that a reader will be distracted by the
         readable content of a page when looking at its layout. The point of
         using Lorem Ipsum is that it has a more-or-less normal distribution of
@@ -35,17 +85,23 @@ function TrainingMaterialTab({ navigation }) {
         look like readable English.
       </Text>
       <Image
-        style={{ width: 300, height: 100 }}
+        style={{ width: Dimensions.get('window').width - 32, height: Dimensions.get('window').width * 0.70, resizeMode: 'cover', marginVertical: SIZES.smallFont }}
         source={{
           uri: "https://source.unsplash.com/1024x768/?tree",
         }}
       />
-      <Text>
+      <Text style={Styles.paragraph}>
         Many desktop publishing packages and web page editors now use Lorem
         Ipsum as their default model text, and a search for ‘lorem ipsum’ will
         uncover many web sites still in their infancy. Various versions have
         evolved over the years.
       </Text>
+      <View style={Style.subViewContainer}>
+        <TouchableOpacity style={Style.btnStyle}>
+          <Text style={Style.btnTextStyle}>DOWNLOAD MATERIALS</Text>
+        </TouchableOpacity>
+      </View>
+
     </View>
   );
 }
@@ -58,7 +114,7 @@ function UploadAudioTab() {
     timestamp: date.getTime(),
     upload_preset: "my_preset",
     file: "",
-    cloud_name:"db2bzxbn7"
+    cloud_name: "db2bzxbn7"
   });
   const [isAudioComponentLoaded, setAudioComponentLoaded] = useState(false);
   const [fileResponse, setFileResponse] = useState([]);
@@ -79,21 +135,21 @@ function UploadAudioTab() {
     }
   }, []);
 
-  const uploadAudio =async () => {
-    
+  const uploadAudio = async () => {
+
     console.log("UplaodAudio", formData);
-    const { name, uri }  = fileResponse;
+    const { name, uri } = fileResponse;
     let formDataObj = new FormData();
-    if(uri){
-      formDataObj.append('file', {name, uri});
+    if (uri) {
+      formDataObj.append('file', { name, uri });
       formDataObj.append('public_id', formData.public_id);
       formDataObj.append('api_key', formData.api_key);
-      formDataObj.append('cloud_name',formData.cloud_name);
+      formDataObj.append('cloud_name', formData.cloud_name);
       formDataObj.append('timestamp', formData.timestamp);
-      formDataObj.append('upload_preset',formData.upload_preset);
+      formDataObj.append('upload_preset', formData.upload_preset);
     }
     console.log("formdataobj", formDataObj);
-    
+
   };
   return (
     <View style={Style.mainAudioContainer}>
@@ -125,22 +181,15 @@ function UploadAudioTab() {
 
 function HomeScreen() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator screenOptions={{
+      contentStyle: { backgroundColor: '#FFFFFF' }, tabBarIndicatorStyle: { backgroundColor: COLORS.primary },
+    }}>
       <Tab.Screen name="Training Material" component={TrainingMaterialTab} />
       <Tab.Screen name="Upload Audio" component={UploadAudioTab} />
     </Tab.Navigator>
   );
 }
 
-// function StudentProfileView() {
-//   return (
-//     <View>
-//       <Text style={{textAlign: 'center', marginTop: 300}}>
-//         Welcome to Article page!
-//       </Text>
-//     </View>
-//   );
-// }
 
 function MyProfileView() {
   return (
@@ -152,29 +201,24 @@ function MyProfileView() {
   );
 }
 
-// function StudentTrainingSession() {
-//   return (
-//     <View>
-//       <Text style={{textAlign: 'center', marginTop: 300}}>
-//         Welcome to Article page!
-//       </Text>
-//     </View>
-//   );
-// }
 
 function HomeTabView() {
   return (
-    <Drawer.Navigator>
+    <Drawer.Navigator
+      drawerContent={props => <CustomDrawer {...props} />}
+
+      screenOptions={{ headerTintColor: 'black', drawerActiveBackgroundColor: COLORS.primary, drawerActiveTintColor: 'white' }} >
       <Drawer.Screen
         name="Teacher's Training"
         component={HomeScreen}
         options={({ navigation, route }) => ({
           headerRight: () => (
-            <Ionicons name="notifications" size={22} color="#FF758F" />
+            <Ionicons name="notifications" size={22} color="#FF758F" style={{ marginEnd: 16 }} />
           ),
         })}
+
       />
-      <Drawer.Screen name="Student Profile" component={StudentProfileView} />
+      <Drawer.Screen name="Student Profiles" component={StudentRoutes}/>
       <Drawer.Screen name="My Profile" component={MyProfileView} />
       <Drawer.Screen name="LTE Training Session" component={StudentTraining} />
     </Drawer.Navigator>
@@ -182,3 +226,38 @@ function HomeTabView() {
 }
 
 export default HomeTabView;
+
+const Styles = StyleSheet.create({
+  paragraph: {
+    fontSize: 16,
+    fontFamily: FONTS.regular,
+    textAlign: 'justify',
+    flexWrap: 'wrap',
+    color: COLORS.textBlack,
+
+  },
+  semiBold: {
+    fontSize: SIZES.font,
+    fontFamily: FONTS.semiBold,
+    textAlign: 'justify',
+    flexWrap: 'wrap',
+    color: COLORS.textBlack,
+
+  },
+  bold: {
+    fontSize: SIZES.medium,
+    fontFamily: FONTS.bold,
+    textAlign: 'justify',
+    flexWrap: 'wrap',
+    color: COLORS.textBlack,
+  },
+  greyText: {
+    fontSize: SIZES.font,
+    fontFamily: FONTS.regular,
+    textAlign: 'justify',
+    flexWrap: 'wrap',
+    color: COLORS.grey,
+  }
+});
+
+
