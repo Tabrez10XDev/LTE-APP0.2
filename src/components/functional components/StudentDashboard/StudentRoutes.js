@@ -7,7 +7,7 @@ import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import StudentsList from './StudentsList';
 import StudentProfileView from "../StudentDashboard/studdashboard";
-import LevelReview from '../../Sessions/LevelReview';
+import LevelReview from '../Sessions/LevelReview';
 
 const Stack = createNativeStackNavigator();
 
