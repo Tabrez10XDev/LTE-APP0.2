@@ -3,7 +3,11 @@ export const COLORS = {
     grey: "#767676",
     darkGrey: "#00000099",
     borderGrey: "#0000001F",
-    textBlack: "#111214"
+    textBlack: "#111214",
+    yellow: "#EFC331",
+    unProgressed: "#EBEBEB",
+    darkBlue: "#203455",
+    green: "#4CBF7D"
 
 };
 

@@ -8,16 +8,14 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { Feather, Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import { StyleSheet } from "react-native";
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 import "react-native-gesture-handler";
 // import DocumentPicker, { types } from 'react-native-document-picker';
 import * as DocumentPicker from "expo-document-picker";
 import Style from "./Style";
-import StudentProfileView from "../StudentDashboard/studdashboard";
 import StudentTraining from "./Training/StudentTraining";
 import { COLORS, SIZES, FONTS, assets } from "../../../../constants";
-import styles from "./Style";
-import StudentsList from "../StudentDashboard/StudentsList";
 import StudentRoutes from "../StudentDashboard/StudentRoutes";
 
 //Create Instance for all Navigators
@@ -44,7 +42,7 @@ const CustomDrawer = props => {
             <Text style={Styles.bold}>Mr. Deepak Sharma</Text>
             <Text style={Styles.greyText}>M.Sc</Text>
           </View>
-          
+
         </View>
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
@@ -74,7 +72,7 @@ function TrainingMaterialTab({ navigation }) {
         backgroundColor: 'white',
         paddingTop: SIZES.medium,
         paddingHorizontal: 16,
-        alignItems:'center'
+        alignItems: 'center'
       }}
     >
       <Text style={Styles.paragraph}>
@@ -203,6 +201,24 @@ function MyProfileView() {
 
 
 function HomeTabView() {
+
+  function getHeaderTitle(route) {
+    // If the focused route is not found, we need to assume it's the initial screen
+    // This can happen during if there hasn't been any navigation inside the screen
+    // In our case, it's "Feed" as that's the first screen inside the navigator
+    const routeName = getFocusedRouteNameFromRoute(route) ?? 'Feed';
+
+    switch (routeName) {
+      case 'Feed':
+        return 'News feed';
+      case 'Profile':
+        return 'My profile';
+      case 'Account':
+        return 'My account';
+    }
+  }
+
+
   return (
     <Drawer.Navigator
       drawerContent={props => <CustomDrawer {...props} />}
@@ -215,10 +231,19 @@ function HomeTabView() {
           headerRight: () => (
             <Ionicons name="notifications" size={22} color="#FF758F" style={{ marginEnd: 16 }} />
           ),
-        })}
-
+        })
+        }
       />
-      <Drawer.Screen name="Student Profiles" component={StudentRoutes}/>
+      <Drawer.Screen name="Student Profiles" component={StudentRoutes}
+        options={({ route }) => {
+          const routeName = getFocusedRouteNameFromRoute(route) ?? 'Items'
+          console.log("--------------")
+
+          console.log(routeName)
+          if (routeName == "Level Review")
+            return ({ swipeEnabled: false, headerShown: false })
+        }}
+      />
       <Drawer.Screen name="My Profile" component={MyProfileView} />
       <Drawer.Screen name="LTE Training Session" component={StudentTraining} />
     </Drawer.Navigator>

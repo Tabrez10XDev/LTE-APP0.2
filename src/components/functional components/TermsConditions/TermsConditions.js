@@ -16,7 +16,7 @@ const TermsConditions = ({ navigation }) => {
 
   return (
     <View style={{ ...Styles.container, marginHorizontal: 16 }}>
-      <Text style={{ ...Styles.header, marginTop: '40%' }}>
+      <Text style={{ ...Styles.header, marginTop: '25%' }}>
         Terms & Conditions
       </Text>
       <View style={Styles.section}>
