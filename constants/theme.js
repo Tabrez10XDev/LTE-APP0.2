@@ -7,7 +7,9 @@ export const COLORS = {
     yellow: "#EFC331",
     unProgressed: "#EBEBEB",
     darkBlue: "#203455",
-    green: "#4CBF7D"
+    green: "#4CBF7D",
+    almostBlack: "#111214",
+    blue: "#2664DE"
 
 };
 

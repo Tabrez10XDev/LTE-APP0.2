@@ -2,7 +2,11 @@ import { StyleSheet, Text, View , TouchableOpacity} from 'react-native';
 import { SliderBox } from 'react-native-image-slider-box';
 import { useState } from 'react';
 
+
 const Landing = ({ navigation }) => {
+
+
+
   const [imageList , setImageList]= useState([
     "https://source.unsplash.com/1024x768/?nature",
     "https://source.unsplash.com/1024x768/?water",
@@ -27,6 +31,7 @@ const Landing = ({ navigation }) => {
       resizeMethod={'resize'}
       resizeMode={'cover'}
       />
+
      <Text style={styles.textStyle}>Education & Training</Text>
      <Text style={styles.subTextStyle}>In learning you will teach,</Text>
      <Text style={styles.subTextStyle}>and in teaching you will learn.</Text>

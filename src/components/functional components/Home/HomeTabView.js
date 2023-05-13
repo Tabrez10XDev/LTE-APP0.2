@@ -17,6 +17,7 @@ import Style from "./Style";
 import StudentTraining from "./Training/StudentTraining";
 import { COLORS, SIZES, FONTS, assets } from "../../../../constants";
 import StudentRoutes from "../StudentDashboard/StudentRoutes";
+import TeacherDashboard from "../Profile/TeacherDashboard";
 
 //Create Instance for all Navigators
 const Tab = createMaterialTopTabNavigator();
@@ -244,8 +245,7 @@ function HomeTabView() {
             return ({ swipeEnabled: false, headerShown: false })
         }}
       />
-      <Drawer.Screen name="My Profile" component={MyProfileView} />
-      <Drawer.Screen name="LTE Training Session" component={StudentTraining} />
+      <Drawer.Screen name="My Profile" component={TeacherDashboard} />
     </Drawer.Navigator>
   );
 }
