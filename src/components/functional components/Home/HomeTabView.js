@@ -20,15 +20,24 @@ import StudentRoutes from "../StudentDashboard/StudentRoutes";
 import TeacherDashboard from "../Profile/TeacherDashboard";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import { createContext, useContext } from 'react';
+import { ScrollView } from "react-native-gesture-handler";
+import TeacherMaterial from "../../ui components/TeacherMaterial";
+import Toast from 'react-native-toast-message';
 
 //Create Instance for all Navigators
 const Tab = createMaterialTopTabNavigator();
 //const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
+const TeacherIDContext = createContext(null);
+const TeacherProfileContext = createContext(null);
+
 
 
 const CustomDrawer = props => {
+  const teacher = useContext(TeacherProfileContext);
+
   return (
     <View style={{ flex: 1 }}>
       <DrawerContentScrollView {...props}>
@@ -42,8 +51,8 @@ const CustomDrawer = props => {
           }}
         >
           <View>
-            <Text style={Styles.bold}>Mr. Deepak Sharma</Text>
-            <Text style={Styles.greyText}>M.Sc</Text>
+            <Text style={Styles.bold}>{teacher.teacher_name}</Text>
+            <Text style={Styles.greyText}>{teacher.role}</Text>
           </View>
 
         </View>
@@ -67,6 +76,38 @@ const CustomDrawer = props => {
 
 
 function TrainingMaterialTab({ navigation }) {
+
+
+  const [trainingMaterial, setTrainingMaterial] = useState([])
+
+  function getTrainingMaterials() {
+    try {
+      axios.get(
+        `${CONST.baseUrl}/teacherresource/get_teacher_res_info`
+      ).then((response) => {
+        setTrainingMaterial(response.data)
+      })
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  
+  useEffect(() => {
+    getTrainingMaterials()
+  }, [])
+
+  //
+
+
+ 
+
+
+
+
+
+
+  //
+
   return (
     <View
       style={{
@@ -78,27 +119,25 @@ function TrainingMaterialTab({ navigation }) {
         alignItems: 'center'
       }}
     >
-      <Text style={Styles.paragraph}>
-        It is a long established fact that a reader will be distracted by the
-        readable content of a page when looking at its layout. The point of
-        using Lorem Ipsum is that it has a more-or-less normal distribution of
-        letters, as opposed to using ‘Content here, content here’, making it
-        look like readable English.
-      </Text>
-      <Image
-        style={{ width: Dimensions.get('window').width - 32, height: Dimensions.get('window').width * 0.70, resizeMode: 'cover', marginVertical: SIZES.smallFont }}
-        source={{
-          uri: "https://source.unsplash.com/1024x768/?tree",
-        }}
-      />
-      <Text style={Styles.paragraph}>
-        Many desktop publishing packages and web page editors now use Lorem
-        Ipsum as their default model text, and a search for ‘lorem ipsum’ will
-        uncover many web sites still in their infancy. Various versions have
-        evolved over the years.
-      </Text>
+      <ScrollView contentContainerStyle={{ alignItems: 'center', width: '100%', justifyContent:'center' }} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
+
+        <View style={{ width: Dimensions.get('window').width * 0.9, alignItems:'center', justifyContent:'center'}}>
+          {trainingMaterial.map((ele,index)=>{
+            return (<TeacherMaterial 
+            name={ele.teacher_res_name}
+            desc={ele.teacher_res_desc}
+            type={ele.teacher_res_type}
+            size={ele.teacher_res_file_size}
+            link="https://asset.cloudinary.com/db2bzxbn7/b91cab6fe5884dfe635a0e5c9b6151ff"
+            key={index}/>)
+          })}
+        </View>
+
+      </ScrollView>
+
       <View style={Style.subViewContainer}>
-        <TouchableOpacity style={Style.btnStyle}>
+        <TouchableOpacity 
+        style={Style.btnStyle}>
           <Text style={Style.btnTextStyle}>DOWNLOAD MATERIALS</Text>
         </TouchableOpacity>
       </View>
@@ -110,24 +149,27 @@ function TrainingMaterialTab({ navigation }) {
 
 
 function UploadAudioTab({ route }) {
+  const teacherID = useContext(TeacherIDContext);
 
-  const [audioStatus, setAudioStatus] = useState("APproved")
-  const [image, setImage] = useState(assets.approved)
-  console.log("-------------------------------");
-  console.log(route.params);
+  const [audioStatus, setAudioStatus] = useState("null")
+  const [image, setImage] = useState("")
+  console.log(teacherID);
+
   function getAudioStatus() {
-    axios.get(
-      `${CONST.baseUrl}/audio/get/teacher/audiostatus/${route.params.teacherID}`
-    ).then((response) => {
-      setAudioStatus(response.data.at(-1).audio_status)
-      if (response.data.at(-1).audio_status == "submitted") {
-        setImage(assets.waiting)
-      } else if (response.data.at(-1).audio_status == "approved") {
-        setImage(assets.approved)
-      }
-    }).catch((error) => {
-      console.log(error)
-    });
+    try {
+      axios.get(
+        `${CONST.baseUrl}/audio/get/teacherdetails/audiostatus/${teacherID}`
+      ).then((response) => {
+        setAudioStatus(response.data.at(-1).audio_status)
+        if (response.data.at(-1).audio_status == "submitted") {
+          setImage(assets.waiting)
+        } else if (response.data.at(-1).audio_status == "approved") {
+          setImage(assets.approved)
+        }
+      })
+    } catch (e) {
+      console.error(e);
+    }
   }
 
 
@@ -161,16 +203,15 @@ function UploadAudioTab({ route }) {
 
 
   const date = new Date();
-  const URL = `https://api.cloudinary.com/v1_1/db2bzxbn7/upload`;
+  const URL = `https://api.cloudinary.com/v1_1/db2bzxbn7/video/upload`;
   const [formData, setFormData] = useState({
-    public_id: "lte_teachers",
     api_key: "164615611795246",
     timestamp: date.getTime(),
     upload_preset: "my_preset",
     file: "",
     cloud_name: "db2bzxbn7"
   });
-  const [isAudioComponentLoaded, setAudioComponentLoaded] = useState(false);
+
   const [fileResponse, setFileResponse] = useState({});
 
   const audioSubmitBtn = useCallback(async () => {
@@ -195,22 +236,42 @@ function UploadAudioTab({ route }) {
     let formDataObj = new FormData();
     if (uri) {
       formDataObj.append('file', { name, uri });
-      formDataObj.append('public_id', formData.public_id);
       formDataObj.append('api_key', formData.api_key);
-      formDataObj.append('cloud_name', formData.cloud_name);
-      formDataObj.append('timestamp', formData.timestamp);
       formDataObj.append('upload_preset', formData.upload_preset);
 
-
-      axios.post(
+      
+   try{   axios.post(
         URL, formDataObj
       ).then((response) => {
-        console.log("-------------------");
-        console.log(JSON.stringify(response));
-        console.log("-------------------");
-      }).catch((error) => {
-        console.log(error)
-      });
+          axios.post(
+            `${CONST.baseUrl}/audio`,{
+              teacher_id : teacherID,
+              audio_file_name: name,
+              audio_source: response.data.url ?? "",
+              audioStatus: "submitted",
+              audio_reason: "",
+              audio_audit_by: "tanu"
+            }
+          ).then((response)=>{
+            if(response.status == 200){
+            console.log(response)
+            setAudioStatus("submitted")}
+          }
+          ).catch((err=>{
+            Toast.show({
+              type: 'error',
+              text1: 'Unknown error occured'
+            })
+          
+          }))
+      })}catch(err){
+        console.error(e)
+        Toast.show({
+          type: 'error',
+          text1: 'Unknown error occured'
+        })
+
+      }
 
 
     }
@@ -234,6 +295,10 @@ function UploadAudioTab({ route }) {
               />
               <Text style={Style.uploadText}>
                 Drop files here or click to upload
+              </Text>
+
+              <Text style={{...Style.greyText, alignSelf:'center', marginTop:2}}>
+                Status: {audioStatus}
               </Text>
             </TouchableOpacity>
             {fileResponse.name != undefined ? (
@@ -265,6 +330,10 @@ function UploadAudioTab({ route }) {
           </View>
         </View>)
       }
+       <Toast
+        position='bottom'
+        bottomOffset={20}
+      />
     </View>
 
   );
@@ -273,12 +342,11 @@ function UploadAudioTab({ route }) {
 function HomeScreen({ route }) {
   return (
     <Tab.Navigator
-      initialParams={{ teacherID: route.params.teacherID }}
       screenOptions={{
         contentStyle: { backgroundColor: '#FFFFFF' }, tabBarIndicatorStyle: { backgroundColor: COLORS.primary },
       }}>
-      <Tab.Screen name="Training Material" component={TrainingMaterialTab} initialParams={{ teacherID: route.params.teacherID }} />
-      <Tab.Screen name="Upload Audio" component={UploadAudioTab} initialParams={{ teacherID: route.params.teacherID }} />
+      <Tab.Screen name="Training Material" component={TrainingMaterialTab} />
+      <Tab.Screen name="Upload Audio" component={UploadAudioTab} />
     </Tab.Navigator>
   );
 }
@@ -306,89 +374,76 @@ function HomeTabView() {
     getData()
   }, [])
 
-    const getData = async () => {
-        try {
-          const value = await AsyncStorage.getItem('AuthState')
-          console.log(value);
-          setStateID(value)
-          let data = {
-            "teacher_id": value
-          };
+
+  const getData = async () => {
+    try {
+      let value = await AsyncStorage.getItem('AuthState')
+      setStateID(value)
       
-          let config = {
-            method: 'get',
-            maxBodyLength: Infinity,
-            url: `${CONST.baseUrl}/teacher/get/teacherdetails/app`,
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            data: data
-          };
-      
-          axios.request(config)
-            .then((response) => {
-              setData(response.data)
-              console.log(JSON.stringify(response.data));
-            })
-            .catch((error) => {
-              console.log(JSON.stringify(error));
-            });
-        } catch(e) {
-          // error reading value
-        }
-      }
-
-
-
-
-
-
-
-
-  function getHeaderTitle(route) {
-    // If the focused route is not found, we need to assume it's the initial screen
-    // This can happen during if there hasn't been any navigation inside the screen
-    // In our case, it's "Feed" as that's the first screen inside the navigator
-    const routeName = getFocusedRouteNameFromRoute(route) ?? 'Feed';
-
-    switch (routeName) {
-      case 'Feed':
-        return 'News feed';
-      case 'Profile':
-        return 'My profile';
-      case 'Account':
-        return 'My account';
+axios.post(
+  `${CONST.baseUrl}/teacher/get/teacherdetails/app`,{
+    teacher_id: value
+  }
+).then((response)=>{
+  setData(response.data[0])
+  console.log(response.data[0])
+})
+    } catch (e) {
+      // error reading value
+      console.error(e)
     }
   }
 
 
-  return (
-    <Drawer.Navigator
-      drawerContent={props => <CustomDrawer {...props} />}
-      initialParams={{ teacherID: stateID }}
 
-      screenOptions={{ headerTintColor: 'black', drawerActiveBackgroundColor: COLORS.primary, drawerActiveTintColor: 'white' }} >
-      <Drawer.Screen
-        name="Teacher's Training"
-        component={HomeScreen}
+  // function getHeaderTitle(route) {
+  //   // If the focused route is not found, we need to assume it's the initial screen
+  //   // This can happen during if there hasn't been any navigation inside the screen
+  //   // In our case, it's "Feed" as that's the first screen inside the navigator
+  //   const routeName = getFocusedRouteNameFromRoute(route) ?? 'Feed';
+
+  //   switch (routeName) {
+  //     case 'Feed':
+  //       return 'News feed';
+  //     case 'Profile':
+  //       return 'My profile';
+  //     case 'Account':
+  //       return 'My account';
+  //   }
+  // }
+
+
+  return (
+    <TeacherIDContext.Provider value={stateID}>
+    <TeacherProfileContext.Provider value={data}>
+
+      <Drawer.Navigator
+        drawerContent={props => <CustomDrawer {...props} />}
         initialParams={{ teacherID: stateID }}
-        options={({ navigation, route }) => ({
-          headerRight: () => (
-            <Ionicons name="notifications" size={22} color="#FF758F" style={{ marginEnd: 16 }} />
-          ),
-        })
-        }
-      />
-      <Drawer.Screen name="Student Profiles" component={StudentRoutes}
-      initialParams={{ teacherID: stateID }}
-        options={({ route }) => {
-          const routeName = getFocusedRouteNameFromRoute(route) ?? 'Items'
-          if (routeName == "Level Review")
-            return ({ swipeEnabled: false, headerShown: false })
-        }}
-      />
-      <Drawer.Screen name="My Profile" component={TeacherDashboard} initialParams={data} />
-    </Drawer.Navigator>
+
+        screenOptions={{ headerTintColor: 'black', drawerActiveBackgroundColor: COLORS.primary, drawerActiveTintColor: 'white' }} >
+        <Drawer.Screen
+          name="Teacher's Training"
+          component={HomeScreen}
+          options={({ navigation, route }) => ({
+            headerRight: () => (
+              <Ionicons name="notifications" size={22} color="#FF758F" style={{ marginEnd: 16 }} />
+            ),
+          })
+          }
+        />
+        <Drawer.Screen name="Student Profiles" component={StudentRoutes}
+          initialParams={{ teacherID: stateID }}
+          options={({ route }) => {
+            const routeName = getFocusedRouteNameFromRoute(route) ?? 'Items'
+            if (routeName == "Level Review")
+              return ({ swipeEnabled: false, headerShown: false })
+          }}
+        />
+        <Drawer.Screen name="My Profile" component={TeacherDashboard} initialParams={data} />
+      </Drawer.Navigator>
+      </TeacherProfileContext.Provider>
+    </TeacherIDContext.Provider>
   );
 }
 
