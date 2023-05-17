@@ -18,6 +18,8 @@ import StudentTraining from "./Training/StudentTraining";
 import { COLORS, SIZES, FONTS, assets, CONST } from "../../../../constants";
 import StudentRoutes from "../StudentDashboard/StudentRoutes";
 import TeacherDashboard from "../Profile/TeacherDashboard";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 //Create Instance for all Navigators
 const Tab = createMaterialTopTabNavigator();
@@ -107,19 +109,20 @@ function TrainingMaterialTab({ navigation }) {
 
 
 
-function UploadAudioTab({route}) {
+function UploadAudioTab({ route }) {
 
   const [audioStatus, setAudioStatus] = useState("APproved")
   const [image, setImage] = useState(assets.approved)
-
+  console.log("-------------------------------");
+  console.log(route.params);
   function getAudioStatus() {
     axios.get(
       `${CONST.baseUrl}/audio/get/teacher/audiostatus/${route.params.teacherID}`
     ).then((response) => {
       setAudioStatus(response.data.at(-1).audio_status)
-      if(response.data.at(-1).audio_status == "submitted"){
+      if (response.data.at(-1).audio_status == "submitted") {
         setImage(assets.waiting)
-      }else if(response.data.at(-1).audio_status == "approved"){
+      } else if (response.data.at(-1).audio_status == "approved") {
         setImage(assets.approved)
       }
     }).catch((error) => {
@@ -274,8 +277,8 @@ function HomeScreen({ route }) {
       screenOptions={{
         contentStyle: { backgroundColor: '#FFFFFF' }, tabBarIndicatorStyle: { backgroundColor: COLORS.primary },
       }}>
-      <Tab.Screen name="Training Material" component={TrainingMaterialTab} />
-      <Tab.Screen name="Upload Audio" component={UploadAudioTab} />
+      <Tab.Screen name="Training Material" component={TrainingMaterialTab} initialParams={{ teacherID: route.params.teacherID }} />
+      <Tab.Screen name="Upload Audio" component={UploadAudioTab} initialParams={{ teacherID: route.params.teacherID }} />
     </Tab.Navigator>
   );
 }
@@ -296,53 +299,49 @@ function HomeTabView() {
 
   const [data, setData] = useState({})
 
-  const [stateID, setStateID] = useState(false)
+  const [stateID, setStateID] = useState("NULL")
 
 
   useEffect(() => {
-    load()
+    getData()
   }, [])
 
-  const load = async () => {
-
-    AsyncStorage.getItem('AuthState').then(result => {
-      console.log(result)
-      if (result !== null && result != "LoggedOut") {
-        setStateID(result)
-      } else {
-        setStateID("LoggedOut")
+    const getData = async () => {
+        try {
+          const value = await AsyncStorage.getItem('AuthState')
+          console.log(value);
+          setStateID(value)
+          let data = {
+            "teacher_id": value
+          };
+      
+          let config = {
+            method: 'get',
+            maxBodyLength: Infinity,
+            url: `${CONST.baseUrl}/teacher/get/teacherdetails/app`,
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            data: data
+          };
+      
+          axios.request(config)
+            .then((response) => {
+              setData(response.data)
+              console.log(JSON.stringify(response.data));
+            })
+            .catch((error) => {
+              console.log(JSON.stringify(error));
+            });
+        } catch(e) {
+          // error reading value
+        }
       }
-    })
-
-  }
 
 
 
 
-  useEffect(() => {
-    let data = JSON.stringify({
-      "teacher_id": 40
-    });
 
-    let config = {
-      method: 'get',
-      maxBodyLength: Infinity,
-      url: 'https://lte-backend.onrender.com/api/teacher/get/teacherdetails/app',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      data: data
-    };
-
-    axios.request(config)
-      .then((response) => {
-        console.log(JSON.stringify(response.data));
-      })
-      .catch((error) => {
-        console.log(JSON.stringify(error));
-      });
-
-  }, [])
 
 
 
@@ -372,6 +371,7 @@ function HomeTabView() {
       <Drawer.Screen
         name="Teacher's Training"
         component={HomeScreen}
+        initialParams={{ teacherID: stateID }}
         options={({ navigation, route }) => ({
           headerRight: () => (
             <Ionicons name="notifications" size={22} color="#FF758F" style={{ marginEnd: 16 }} />
@@ -380,9 +380,9 @@ function HomeTabView() {
         }
       />
       <Drawer.Screen name="Student Profiles" component={StudentRoutes}
+      initialParams={{ teacherID: stateID }}
         options={({ route }) => {
           const routeName = getFocusedRouteNameFromRoute(route) ?? 'Items'
-
           if (routeName == "Level Review")
             return ({ swipeEnabled: false, headerShown: false })
         }}

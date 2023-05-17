@@ -3,7 +3,7 @@ import { SliderBox } from 'react-native-image-slider-box';
 import { useState } from 'react';
 
 
-const Landing = ({ navigation }) => {
+const Landing = ({ navigation, route }) => {
 
 
 
@@ -17,7 +17,7 @@ const Landing = ({ navigation }) => {
 
 
    const onStartedPressed = ()=>{
-    console.log("clicked");
+    console.log(route);
     navigation.navigate('Login');
    };
   return (

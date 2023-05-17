@@ -1,9 +1,10 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import Checkbox from 'expo-checkbox';
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import { StyleSheet } from "react-native";
 import { COLORS, SIZES, FONTS, assets } from "../../../../constants";
 import Toast from 'react-native-toast-message';
+import { AsyncStorage } from 'react-native'
 
 
 const TermsConditions = ({ navigation, route }) => {

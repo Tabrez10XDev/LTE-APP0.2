@@ -9,9 +9,9 @@ import StudentsList from './StudentsList';
 import StudentProfileView from "../StudentDashboard/studdashboard";
 import LevelReview from '../Sessions/LevelReview';
 
-const Stack = createNativeStackNavigator({route});
+const Stack = createNativeStackNavigator();
 
-const StudentRoutes = () => {
+const StudentRoutes = ({route}) => {
     return (
         <Stack.Navigator initialParams={{ teacherID: route.params.teacherID }}
             screenOptions={{ headerShown: false }}>

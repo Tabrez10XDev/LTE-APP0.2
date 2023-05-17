@@ -5,6 +5,8 @@ import { COLORS, SIZES, FONTS, assets, CONST } from "../../../../constants";
 import { TextInput } from "@react-native-material/core";
 import Toast from 'react-native-toast-message';
 import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 import { StyleSheet } from "react-native";
@@ -28,10 +30,7 @@ const Login = ({ navigation, route }) => {
     "email": "",
     "password": ""
   });
-  const onChangeLoginDetails = (nativeEvent) => {
 
-    setLoginDetails({ ...loginDetails, password: nativeEvent.Text });
-  };
 
   const saveLogin = async (id) => {
     try {
@@ -62,15 +61,16 @@ const Login = ({ navigation, route }) => {
         `${CONST.baseUrl}/teacher/get/teacherlogin`, loginDetails
       ).then((response) => {
             
-      console.log(response.data)
-      if(response.data.signup_status == true){
-        saveLogin(response.data.teacher_id.toString())
+  
+      if(response.data[0].signup_status == true){
+        saveLogin(response.data[0].teacher_id.toString())
+        console.log(route);
         route.params.finishAuth()
       }else{
-      navigation.navigate('TermsConditions');
+        navigation.navigate('TermsConditions');
       }
       }).catch((error) => {
-        console.log(JSON.stringify(error))
+        console.error(error)
         Toast.show({
           type: 'error',
           text1: 'Unknown error occured'

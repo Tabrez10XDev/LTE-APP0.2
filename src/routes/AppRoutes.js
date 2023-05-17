@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Login from '../components/functional components/Auth/Login';
 import Landing from '../components/functional components/Landing/Landing'
 import TermsConditions from '../components/functional components/TermsConditions/TermsConditions';
 import HomeTabView from "../components/functional components/Home/HomeTabView"
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const AppRoutes = ({ navigation }) => {
 
@@ -16,26 +18,28 @@ const AppRoutes = ({ navigation }) => {
 
 
     const finishAuth = () => {
-        setState(true)
+        setState(false)
       }
 
     useEffect(() => {
-        load()
+        getData()
     }, [])
 
-    const load = async () => {
+    const getData = async () => {
+        try {
+          const value = await AsyncStorage.getItem('AuthState')
+          console.log(value);
+          if (result !== null && result != "-1") {
+            setState(false)
+        } else {
+            setState(true)
+        }
+        } catch(e) {
+          // error reading value
+        }
+      }
 
-        AsyncStorage.getItem('AuthState').then(result => {
-            console.log(result)
-            if (result !== null && result != "LoggedOut") {
-                setState(true)
-            } else {
-                setState(false)
-            }
-        })
-
-    }
-
+ 
 
 
     return (
@@ -43,15 +47,15 @@ const AppRoutes = ({ navigation }) => {
 
             <Stack.Group screenOptions={{}}  >
 
-                {state ? (<Stack.Group screenOptions={{}} initialParams={{ finishAuth: finishAuth }}  >
+                {state ? (<Stack.Group screenOptions={{}} >
 
-                    <Stack.Screen name="Landing" component={Landing} options={{ header: () => null }} />
-
-
-                    <Stack.Screen name="Login" component={Login} options={{ header: () => null }} />
+                    <Stack.Screen name="Landing" component={Landing} options={{ header: () => null }}  initialParams={{ finishAuth: finishAuth }} />
 
 
-                    <Stack.Screen name="TermsConditions" component={TermsConditions} options={{ header: () => null }} />
+                    <Stack.Screen name="Login" component={Login} options={{ header: () => null }}  initialParams={{ finishAuth: finishAuth }}/>
+
+
+                    <Stack.Screen name="TermsConditions" component={TermsConditions} options={{ header: () => null }}  initialParams={{ finishAuth: finishAuth }}/>
                 </Stack.Group>)
 
                     : (<Stack.Group screenOptions={{}}  >
