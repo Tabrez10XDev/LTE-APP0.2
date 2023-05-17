@@ -1,4 +1,4 @@
-import { React, useLayoutEffect, useCallback, useState } from "react";
+import { React, useLayoutEffect, useCallback, useState, useEffect } from "react";
 import { Text, View, Image, TouchableOpacity, Dimensions } from "react-native";
 import {
   createDrawerNavigator, DrawerContentScrollView,
@@ -15,7 +15,7 @@ import "react-native-gesture-handler";
 import * as DocumentPicker from "expo-document-picker";
 import Style from "./Style";
 import StudentTraining from "./Training/StudentTraining";
-import { COLORS, SIZES, FONTS, assets } from "../../../../constants";
+import { COLORS, SIZES, FONTS, assets, CONST } from "../../../../constants";
 import StudentRoutes from "../StudentDashboard/StudentRoutes";
 import TeacherDashboard from "../Profile/TeacherDashboard";
 
@@ -104,9 +104,61 @@ function TrainingMaterialTab({ navigation }) {
     </View>
   );
 }
-function UploadAudioTab() {
+
+
+
+function UploadAudioTab({route}) {
+
+  const [audioStatus, setAudioStatus] = useState("APproved")
+  const [image, setImage] = useState(assets.approved)
+
+  function getAudioStatus() {
+    axios.get(
+      `${CONST.baseUrl}/audio/get/teacher/audiostatus/${route.params.teacherID}`
+    ).then((response) => {
+      setAudioStatus(response.data.at(-1).audio_status)
+      if(response.data.at(-1).audio_status == "submitted"){
+        setImage(assets.waiting)
+      }else if(response.data.at(-1).audio_status == "approved"){
+        setImage(assets.approved)
+      }
+    }).catch((error) => {
+      console.log(error)
+    });
+  }
+
+
+  useEffect(() => {
+    getAudioStatus()
+  }, [])
+
+
+  const ImagePlaceholder = () => {
+    return (
+      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <Image
+          style={{ width: "70%", height: "70%", resizeMode: 'contain' }}
+          source={image}
+        />
+
+        <View style={{ padding: 8, borderColor: COLORS.darkGrey, borderStyle: 'dashed', borderWidth: 1, borderRadius: 8, paddingHorizontal: 36 }}>
+          <Text style={{ fontSize: 16, fontWeight: 500, margin: 8 }}>
+            {audioStatus.toUpperCase()}
+          </Text>
+        </View>
+
+
+      </View>
+    )
+  }
+
+
+
+
+
+
   const date = new Date();
-  const URL = `https://api.cloudinary.com/v1_1/db2bzxbn7/:resource_type/upload`;
+  const URL = `https://api.cloudinary.com/v1_1/db2bzxbn7/upload`;
   const [formData, setFormData] = useState({
     public_id: "lte_teachers",
     api_key: "164615611795246",
@@ -116,7 +168,7 @@ function UploadAudioTab() {
     cloud_name: "db2bzxbn7"
   });
   const [isAudioComponentLoaded, setAudioComponentLoaded] = useState(false);
-  const [fileResponse, setFileResponse] = useState([]);
+  const [fileResponse, setFileResponse] = useState({});
 
   const audioSubmitBtn = useCallback(async () => {
     console.log("audiobutton clicked");
@@ -126,7 +178,6 @@ function UploadAudioTab() {
         copyToCacheDirectory: true,
         multiple: false,
       });
-      console.log(response);
       setFileResponse(response);
       setFormData({ ...formData, file: response.uri });
     } catch (err) {
@@ -136,7 +187,7 @@ function UploadAudioTab() {
 
   const uploadAudio = async () => {
 
-    console.log("UplaodAudio", formData);
+
     const { name, uri } = fileResponse;
     let formDataObj = new FormData();
     if (uri) {
@@ -146,43 +197,83 @@ function UploadAudioTab() {
       formDataObj.append('cloud_name', formData.cloud_name);
       formDataObj.append('timestamp', formData.timestamp);
       formDataObj.append('upload_preset', formData.upload_preset);
+
+
+      axios.post(
+        URL, formDataObj
+      ).then((response) => {
+        console.log("-------------------");
+        console.log(JSON.stringify(response));
+        console.log("-------------------");
+      }).catch((error) => {
+        console.log(error)
+      });
+
+
     }
-    console.log("formdataobj", formDataObj);
 
   };
   return (
     <View style={Style.mainAudioContainer}>
-      <Text style={Style.audioText}>
-        Please share your voice audio file and we will get back to you once it
-        approved
-      </Text>
-      <View style={Style.dragViewContainer}>
-        <TouchableOpacity onPress={audioSubmitBtn}>
-          <Feather
-            style={Style.uploadIcon}
-            name="upload-cloud"
-            size={42}
-            color="blue"
-          />
-          <Text style={Style.uploadText}>
-            Drop files here or click to upload
+      {audioStatus != "unsubmitted" && audioStatus != "rejected" ? <ImagePlaceholder /> : (
+        <View style={Style.mainAudioContainer}>
+          <Text style={Style.audioText}>
+            Please share your voice audio file and we will get back to you once it
+            approved
           </Text>
-        </TouchableOpacity>
-      </View>
-      <View style={Style.subViewContainer}>
-        <TouchableOpacity onPress={uploadAudio} style={Style.btnStyle}>
-          <Text style={Style.btnTextStyle}>SUBMIT</Text>
-        </TouchableOpacity>
-      </View>
+          <View style={Style.dragViewContainer}>
+            <TouchableOpacity onPress={audioSubmitBtn}>
+              <Feather
+                style={Style.uploadIcon}
+                name="upload-cloud"
+                size={42}
+                color="blue"
+              />
+              <Text style={Style.uploadText}>
+                Drop files here or click to upload
+              </Text>
+            </TouchableOpacity>
+            {fileResponse.name != undefined ? (
+              <View style={{ flexDirection: 'row', marginTop: 32, alignItems: 'center' }}>
+                <Text>
+                  {fileResponse.name}
+                </Text>
+
+                <TouchableOpacity
+                  onPress={() => { setFileResponse({}) }}
+                  style={{ marginLeft: 8, alignItems: 'center', justifyContent: 'center' }}>
+
+                  <Feather
+                    style={{}}
+                    name="x"
+                    size={24}
+                    color="black"
+                  />
+                </TouchableOpacity>
+
+              </View>
+
+            ) : null}
+          </View>
+          <View style={Style.subViewContainer}>
+            <TouchableOpacity onPress={uploadAudio} style={Style.btnStyle}>
+              <Text style={Style.btnTextStyle}>SUBMIT</Text>
+            </TouchableOpacity>
+          </View>
+        </View>)
+      }
     </View>
+
   );
 }
 
-function HomeScreen() {
+function HomeScreen({ route }) {
   return (
-    <Tab.Navigator screenOptions={{
-      contentStyle: { backgroundColor: '#FFFFFF' }, tabBarIndicatorStyle: { backgroundColor: COLORS.primary },
-    }}>
+    <Tab.Navigator
+      initialParams={{ teacherID: route.params.teacherID }}
+      screenOptions={{
+        contentStyle: { backgroundColor: '#FFFFFF' }, tabBarIndicatorStyle: { backgroundColor: COLORS.primary },
+      }}>
       <Tab.Screen name="Training Material" component={TrainingMaterialTab} />
       <Tab.Screen name="Upload Audio" component={UploadAudioTab} />
     </Tab.Navigator>
@@ -202,6 +293,58 @@ function MyProfileView() {
 
 
 function HomeTabView() {
+
+  const [data, setData] = useState({})
+
+  const [stateID, setStateID] = useState(false)
+
+
+  useEffect(() => {
+    load()
+  }, [])
+
+  const load = async () => {
+
+    AsyncStorage.getItem('AuthState').then(result => {
+      console.log(result)
+      if (result !== null && result != "LoggedOut") {
+        setStateID(result)
+      } else {
+        setStateID("LoggedOut")
+      }
+    })
+
+  }
+
+
+
+
+  useEffect(() => {
+    let data = JSON.stringify({
+      "teacher_id": 40
+    });
+
+    let config = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: 'https://lte-backend.onrender.com/api/teacher/get/teacherdetails/app',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: data
+    };
+
+    axios.request(config)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch((error) => {
+        console.log(JSON.stringify(error));
+      });
+
+  }, [])
+
+
 
   function getHeaderTitle(route) {
     // If the focused route is not found, we need to assume it's the initial screen
@@ -223,6 +366,7 @@ function HomeTabView() {
   return (
     <Drawer.Navigator
       drawerContent={props => <CustomDrawer {...props} />}
+      initialParams={{ teacherID: stateID }}
 
       screenOptions={{ headerTintColor: 'black', drawerActiveBackgroundColor: COLORS.primary, drawerActiveTintColor: 'white' }} >
       <Drawer.Screen
@@ -238,14 +382,12 @@ function HomeTabView() {
       <Drawer.Screen name="Student Profiles" component={StudentRoutes}
         options={({ route }) => {
           const routeName = getFocusedRouteNameFromRoute(route) ?? 'Items'
-          console.log("--------------")
 
-          console.log(routeName)
           if (routeName == "Level Review")
             return ({ swipeEnabled: false, headerShown: false })
         }}
       />
-      <Drawer.Screen name="My Profile" component={TeacherDashboard} />
+      <Drawer.Screen name="My Profile" component={TeacherDashboard} initialParams={data} />
     </Drawer.Navigator>
   );
 }

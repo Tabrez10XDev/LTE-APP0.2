@@ -14,9 +14,12 @@ import { TimePickerModal } from 'react-native-paper-dates';
 import { Switch } from 'react-native-paper';
 
 
-const TeacherDashboard = () => {
+const TeacherDashboard = ({route}) => {
     return(
-        <View/>
+        
+        <View>
+            {console.log(route.params)}
+        </View>
     )
 }
 

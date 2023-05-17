@@ -3,15 +3,71 @@ import Checkbox from 'expo-checkbox';
 import { React, useState } from "react";
 import { StyleSheet } from "react-native";
 import { COLORS, SIZES, FONTS, assets } from "../../../../constants";
+import Toast from 'react-native-toast-message';
 
 
-const TermsConditions = ({ navigation }) => {
+const TermsConditions = ({ navigation, route }) => {
   const [isChecked, setChecked] = useState(false);
   const [isChecked2, setChecked2] = useState(false);
 
+  const [state, setState] = useState(false)
+
+
+  useEffect(() => {
+      load()
+  }, [])
+
+  const load = async () => {
+
+      AsyncStorage.getItem('AuthState').then(result => {
+          console.log(result)
+          if (result !== null && result != "LoggedOut") {
+              setState(result)
+          } else {
+              setState("LoggedOut")
+          }
+      })
+
+  }
+
+
   const nextBtn = () => {
-    console.log("Terms Conditions button clicked");
-    navigation.navigate('HomeTabView');
+
+    if (isChecked && isChecked2) {
+
+
+
+      axios.post(
+        `${CONST.baseUrl}/teacherapp/update/conditions/${state}`,
+        {
+          "is_commitment_three_months": true,
+          "is_agreed_lte_policy": true
+        }
+
+      ).then((response) => {
+
+        console.log("Terms Conditions button clicked");
+
+        route.params.finishAuth()
+
+
+      }).catch((error) => {
+        console.log(error)
+        Toast.show({
+          type: 'error',
+          text1: 'Unknown error occured'
+        })
+      });
+
+
+
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: 'Accept the terms to continue'
+      })
+    }
+
   };
 
   return (
@@ -33,11 +89,15 @@ const TermsConditions = ({ navigation }) => {
         <Text style={Styles.paragraph}>This programme requires minimum 3 months of commitment of 3 alternate days a week (40 minutes session) as decided by teacher and student. In the case I have to discontinue I will give a 2 week’s notice.</Text>
       </View>
 
-      <View style={{...Styles.subViewContainer, position:'absolute', bottom:'15%'}}>
+      <View style={{ ...Styles.subViewContainer, position: 'absolute', bottom: '15%' }}>
         <TouchableOpacity style={Styles.btnStyle} onPress={nextBtn}>
           <Text style={Styles.btnTextStyle}>NEXT</Text>
         </TouchableOpacity>
       </View>
+      <Toast
+        position='bottom'
+        bottomOffset={20}
+      />
     </View>
   );
 };
@@ -53,8 +113,8 @@ const Styles = StyleSheet.create({
   },
   container: {
     width: '90%',
-    alignSelf:'center',
-    height:'100%'
+    alignSelf: 'center',
+    height: '100%'
   },
   section: {
     flexDirection: 'row',

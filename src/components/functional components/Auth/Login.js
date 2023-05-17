@@ -1,14 +1,15 @@
 import { Text, View, TouchableOpacity, Image } from "react-native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { React, useState } from "react";
-import { COLORS, SIZES, FONTS, assets } from "../../../../constants";
+import { COLORS, SIZES, FONTS, assets, CONST } from "../../../../constants";
 import { TextInput } from "@react-native-material/core";
-
+import Toast from 'react-native-toast-message';
+import axios from "axios";
 
 
 import { StyleSheet } from "react-native";
 
-const Login = ({ navigation }) => {
+const Login = ({ navigation, route }) => {
 
 
 
@@ -16,19 +17,67 @@ const Login = ({ navigation }) => {
   const [visibility, setVisibility] = useState(false)
 
 
+
+  const validateEmail = (email) => {
+    return email.match(
+      /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+  };
+
   const [loginDetails, setLoginDetails] = useState({
-    "username": "",
+    "email": "",
     "password": ""
   });
   const onChangeLoginDetails = (nativeEvent) => {
 
-    //setLoginDetails({...loginDetails, username:nativeEvent.Text});
     setLoginDetails({ ...loginDetails, password: nativeEvent.Text });
   };
 
+  const saveLogin = async (id) => {
+    try {
+        await AsyncStorage.setItem('AuthState', id)
+    } catch (err) {
+        alert(err)
+    }
+}
+
   const loginSubmitBtn = () => {
-    console.log("login button clicked");
-    navigation.navigate('TermsConditions');
+    console.log(loginDetails);
+    if (validateEmail(loginDetails.email) == null) {
+      Toast.show({
+        type: 'error',
+        text1: 'Invalid Email'
+      })
+    } else if (loginDetails.password.trim() == "") {
+      Toast.show({
+        type: 'error',
+        text1: 'Empty Password'
+      })
+    } else {
+
+      // navigation.navigate('TermsConditions');
+
+
+      axios.post(
+        `${CONST.baseUrl}/teacher/get/teacherlogin`, loginDetails
+      ).then((response) => {
+            
+      console.log(response.data)
+      if(response.data.signup_status == true){
+        saveLogin(response.data.teacher_id.toString())
+        route.params.finishAuth()
+      }else{
+      navigation.navigate('TermsConditions');
+      }
+      }).catch((error) => {
+        console.log(JSON.stringify(error))
+        Toast.show({
+          type: 'error',
+          text1: 'Unknown error occured'
+        })
+      });
+
+    }
   };
 
   return (
@@ -40,7 +89,7 @@ const Login = ({ navigation }) => {
         In learning you will teach, and in teaching {'\n'} you will learn.
       </Text>
 
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={{ height: 48, justifyContent: 'center', alignItems: 'center', borderRadius: 8, marginTop: SIZES.doubleLarge, borderWidth: 1, borderColor: COLORS.borderGrey, width: '100%' }}
         onPress={() => { }}
       >
@@ -55,10 +104,10 @@ const Login = ({ navigation }) => {
 
       </TouchableOpacity>
       <Text style={{ ...Styles.headerText, marginTop: SIZES.medium }}>Or</Text>
+ */}
 
 
-
-      <TextInput onChangeText={username => setLoginDetails({ ...loginDetails, username: username })} value={loginDetails.username} keyboardType="email-address" variant="outlined" label="Username  " style={{ marginHorizontal: 16, width: '100%', marginTop: SIZES.medium }} color={COLORS.darkGrey} />
+      <TextInput onChangeText={username => setLoginDetails({ ...loginDetails, email: username })} value={loginDetails.email} keyboardType="email-address" variant="outlined" label="Email" style={{ marginHorizontal: 16, width: '100%', marginTop: SIZES.medium, marginTop: 72 }} color={COLORS.darkGrey} />
       <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: SIZES.medium }}>
         <TextInput onChangeText={password => setLoginDetails({ ...loginDetails, password: password })} value={loginDetails.password} secureTextEntry={!visibility} variant="outlined" label="Password" style={{ marginHorizontal: 16, width: '100%' }} color={COLORS.darkGrey} />
         <TouchableOpacity
@@ -83,6 +132,10 @@ const Login = ({ navigation }) => {
           <Text style={Styles.btnTextStyle}>LOGIN</Text>
         </TouchableOpacity>
       </View>
+      <Toast
+        position='bottom'
+        bottomOffset={20}
+      />
     </View>
   );
 };

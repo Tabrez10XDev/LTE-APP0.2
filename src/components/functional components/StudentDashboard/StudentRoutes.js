@@ -9,14 +9,15 @@ import StudentsList from './StudentsList';
 import StudentProfileView from "../StudentDashboard/studdashboard";
 import LevelReview from '../Sessions/LevelReview';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator({route});
 
 const StudentRoutes = () => {
     return (
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Navigator initialParams={{ teacherID: route.params.teacherID }}
+            screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Student Profiles" component={StudentsList} />
-            <Stack.Screen name="Student Profile" component={StudentProfileView}  />
-            <Stack.Screen name="Level Review" component={LevelReview}  />
+            <Stack.Screen name="Student Profile" component={StudentProfileView} />
+            <Stack.Screen name="Level Review" component={LevelReview} />
 
         </Stack.Navigator>
     )
