@@ -67,7 +67,9 @@ const CustomDrawer = props => {
           padding: 20,
         }}
       >
-        <Text style={Styles.semiBold} >Log Out</Text>
+        <Text
+        onPress={()=>{props.initialParams.logout.logout()}}
+        style={Styles.semiBold} >Log Out</Text>
       </TouchableOpacity>
     </View>
   );
@@ -363,7 +365,7 @@ function MyProfileView() {
 }
 
 
-function HomeTabView() {
+function HomeTabView({route}) {
 
   const [data, setData] = useState({})
 
@@ -371,6 +373,8 @@ function HomeTabView() {
 
 
   useEffect(() => {
+
+
     getData()
   }, [])
 
@@ -418,7 +422,7 @@ axios.post(
     <TeacherProfileContext.Provider value={data}>
 
       <Drawer.Navigator
-        drawerContent={props => <CustomDrawer {...props} />}
+        drawerContent={props => <CustomDrawer {...props} initialParams={{logout: route.params}} />}
         initialParams={{ teacherID: stateID }}
 
         screenOptions={{ headerTintColor: 'black', drawerActiveBackgroundColor: COLORS.primary, drawerActiveTintColor: 'white' }} >

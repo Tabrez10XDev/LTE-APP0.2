@@ -6,19 +6,11 @@ import { List, Chip } from "react-native-paper";
 import { COLORS, SIZES, FONTS, assets } from "../../../../constants";
 import ProgressBar from 'react-native-progress/Bar'
 
-const viewClicked = () => {
-    console.log("view button clicked");
-};
-const downloadClicked = () => {
-    console.log("download button clicked");
-};
-const submitBtn = () => {
-    console.log("submit the rating clicked");
-};
+import { Feather, Ionicons } from "@expo/vector-icons";
 
 
 
-const Training = ({ navigation }) => {
+const Training = ({ navigation, route }) => {
 
 
     function navToSessions() {
@@ -111,6 +103,14 @@ const Training = ({ navigation }) => {
                     </TouchableOpacity>
                 </List.Accordion>
             </List.AccordionGroup>
+
+            <TouchableOpacity 
+            onPress={()=>{
+            route.params.onClick()
+            }}
+            style={{ width: 60, height: 60, position: 'absolute', backgroundColor: COLORS.borderGrey, bottom: 120, right: 50, borderRadius: 30, alignItems: 'center', justifyContent: 'center', borderWidth:1, borderColor:COLORS.primary }}>
+                <Feather name="layers" size={30} color={COLORS.primary}  />
+            </TouchableOpacity>
         </View>
     )
 }

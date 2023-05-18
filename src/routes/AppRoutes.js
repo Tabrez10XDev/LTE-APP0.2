@@ -19,7 +19,18 @@ const AppRoutes = ({ navigation }) => {
 
     const finishAuth = () => {
         setState(false)
-      }
+    }
+
+    const logout = async () => {
+        try {
+            await AsyncStorage.setItem('AuthState', "-1")
+        } catch (err) {
+            alert(err)
+        }
+
+
+        setState(true)
+    }
 
     useEffect(() => {
         getData()
@@ -27,19 +38,19 @@ const AppRoutes = ({ navigation }) => {
 
     const getData = async () => {
         try {
-          const value = await AsyncStorage.getItem('AuthState')
-          console.log(value);
-          if (result !== null && result != "-1") {
-            setState(false)
-        } else {
-            setState(true)
-        }
-        } catch(e) {
-          // error reading value
-        }
-      }
+            const value = await AsyncStorage.getItem('AuthState')
+            if (result !== null && result != "-1") {
+                setState(false)
+            } else {
 
- 
+                setState(true)
+            }
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+
 
 
     return (
@@ -49,18 +60,18 @@ const AppRoutes = ({ navigation }) => {
 
                 {state ? (<Stack.Group screenOptions={{}} >
 
-                    <Stack.Screen name="Landing" component={Landing} options={{ header: () => null }}  initialParams={{ finishAuth: finishAuth }} />
+                    <Stack.Screen name="Landing" component={Landing} options={{ header: () => null }} initialParams={{ finishAuth: finishAuth }} />
 
 
-                    <Stack.Screen name="Login" component={Login} options={{ header: () => null }}  initialParams={{ finishAuth: finishAuth }}/>
+                    <Stack.Screen name="Login" component={Login} options={{ header: () => null }} initialParams={{ finishAuth: finishAuth }} />
 
 
-                    <Stack.Screen name="TermsConditions" component={TermsConditions} options={{ header: () => null }}  initialParams={{ finishAuth: finishAuth }}/>
+                    <Stack.Screen name="TermsConditions" component={TermsConditions} options={{ header: () => null }} initialParams={{ finishAuth: finishAuth }} />
                 </Stack.Group>)
 
                     : (<Stack.Group screenOptions={{}}  >
 
-                        <Stack.Screen name="HomeTabView" component={HomeTabView} options={({ navigation, route }) => ({
+                        <Stack.Screen name="HomeTabView" component={HomeTabView} initialParams={{logout: logout}} options={({ navigation, route }) => ({
                             headerShown: false,
                         })} />
                     </Stack.Group>)}
