@@ -38,7 +38,7 @@ const AppRoutes = ({ navigation }) => {
 
     const getData = async () => {
         try {
-            const value = await AsyncStorage.getItem('AuthState')
+            const result = await AsyncStorage.getItem('AuthState')
             if (result !== null && result != "-1") {
                 setState(false)
             } else {

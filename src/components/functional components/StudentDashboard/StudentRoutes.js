@@ -15,7 +15,7 @@ const StudentRoutes = ({route}) => {
     return (
         <Stack.Navigator initialParams={{ teacherID: route.params.teacherID }}
             screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Students List" component={StudentsList} />
+            <Stack.Screen name="Students List" component={StudentsList} initialParams={{teacherID: route.params.teacherID}} />
             <Stack.Screen name="Student Profile" component={StudentProfileView} />
             <Stack.Screen name="Level Review" component={LevelReview} />
 

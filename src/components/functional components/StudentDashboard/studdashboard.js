@@ -12,14 +12,12 @@ import { Feather, Ionicons } from "@expo/vector-icons";
 
 
 
-function StudentProfileView() {
+function StudentProfileView({route}) {
 
   const refRBSheet = useRef();
 
   function openSheet(){
-    console.log("CLicked")
     refRBSheet.current.open()
-
   }
 
 

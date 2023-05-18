@@ -2,21 +2,14 @@ import { Text, View, Image, StyleSheet, TouchableOpacity, Dimensions } from "rea
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { List, Chip } from "react-native-paper";
-
 import { COLORS, SIZES, FONTS, assets } from "../../../../constants";
 import ProgressBar from 'react-native-progress/Bar'
-
 import { Feather, Ionicons } from "@expo/vector-icons";
 
-
-
 const Training = ({ navigation, route }) => {
-
-
     function navToSessions() {
         navigation.navigate("Level Review")
     }
-
     return (
         <View style={{ height: '100%', backgroundColor: 'white', paddingTop: 16 }}>
             <List.AccordionGroup>

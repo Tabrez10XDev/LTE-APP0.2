@@ -2,25 +2,79 @@ import { Text, View, Image, TextInput, StyleSheet, TouchableOpacity } from "reac
 import React from "react";
 import Style from "./StudDashboardStyle";
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, SIZES, FONTS } from "../../../../constants";
+import { COLORS, SIZES, FONTS, CONST } from "../../../../constants";
 import { useState, useEffect, useRef } from "react";
 import StudentListItem from "../../ui components/StudentListItem";
+import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const StudentsList = ({ navigation, route }) => {
 
-const StudentsList = ({navigation}) => {
-
+    const [students, setStudents] = useState([])
+    const [activeStudents, setActiveStudents] = useState([])
+    const [archiveStudents, setArchiveStudents] = useState([])
     const [stackIndex, setStackIndex] = useState(1);
+    const [studentData, setStudentData] = useState([])
 
-    function navToProfile(){
-        navigation.navigate("Student Profile")
+
+
+    useEffect(() => {
+        getStudentList()
+    }, [])
+
+
+    const getStudentList = async () => {
+        try {
+            let teacherID = await AsyncStorage.getItem('AuthState')
+            axios.post(
+                `${CONST.baseUrl}/teacherapp/get/student/training`, {
+                teacher_id: teacherID
+            }
+            ).then((response) => {
+                setStudents(response.data)
+                setStudentData(response.data)
+                response.data.map((ele, index) => {
+                    if (ele.student_status == "active") {
+                        setActiveStudents(oldArray => [...oldArray, ele]);
+                    } else {
+                        setArchiveStudents(oldArray => [...oldArray, ele]);
+                    }
+                })
+            })
+        } catch (e) {
+            // error reading value
+            console.error(e)
+        }
     }
+
+    function handleSearch(text) {
+        let tempArray = []
+        if (text.trim() != "") {
+            studentData.map((ele) => {
+                if (ele.student_name.includes(text)) {
+                    tempArray.push(ele)
+                }
+            })
+            setStudentData(tempArray)
+        } else {
+            if (stackIndex == 1) {
+                setStudentData(students)
+            } else if (stackIndex == 2) {
+                setStudentData(activeStudents)
+            } else {
+                setStudentData(archiveStudents)
+            }
+        }
+    }
+
+
 
 
     return (
         <View style={{ backgroundColor: 'white', width: '100%', height: '100%', padding: 16, alignItems: 'center' }}>
             <View style={{ width: '100%', justifyContent: 'center' }}>
 
-                <TextInput placeholder="Search..." style={{ height: 60, width: '100%', borderRadius: 30, borderColor: COLORS.borderGrey, paddingHorizontal: 42, borderWidth: 1, alignItems: 'center', flexDirection: 'row' }} selectionColor={COLORS.grey}>
+                <TextInput onChangeText={(text) => handleSearch(text)} placeholder="Search..." style={{ height: 60, width: '100%', borderRadius: 30, borderColor: COLORS.borderGrey, paddingHorizontal: 42, borderWidth: 1, alignItems: 'center', flexDirection: 'row' }} selectionColor={COLORS.grey}>
 
                 </TextInput>
                 <Ionicons name="md-search" size={22} color="#000000BD" style={{ position: 'absolute', left: 16 }} />
@@ -29,7 +83,11 @@ const StudentsList = ({navigation}) => {
 
             <View style={{ flexDirection: 'row', width: '100%', marginTop: 12 }}>
                 <TouchableOpacity
-                    onPress={() => { setStackIndex(1) }}
+                    onPress={() => {
+                        console.log(students);
+                        setStudentData(students)
+                        setStackIndex(1)
+                    }}
                     style={[stackIndex == 1 ? styles.selectedBox : styles.unSelectedBox]}
                 >
                     <Text style={[stackIndex == 1 ? styles.selectedText : styles.unSelectedText]}>
@@ -38,7 +96,10 @@ const StudentsList = ({navigation}) => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    onPress={() => { setStackIndex(2) }}
+                    onPress={() => {
+                        setStudentData(activeStudents)
+                        setStackIndex(2)
+                    }}
                     style={[stackIndex == 2 ? styles.selectedBox : styles.unSelectedBox]}>
                     <Text style={[stackIndex == 2 ? styles.selectedText : styles.unSelectedText]}>
                         Active
@@ -46,7 +107,10 @@ const StudentsList = ({navigation}) => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    onPress={() => { setStackIndex(3) }}
+                    onPress={() => {
+                        setStudentData(archiveStudents)
+                        setStackIndex(3)
+                    }}
                     style={[stackIndex == 3 ? styles.selectedBox : styles.unSelectedBox]}>
                     <Text style={[stackIndex == 3 ? styles.selectedText : styles.unSelectedText]}>
                         Archived
@@ -54,9 +118,18 @@ const StudentsList = ({navigation}) => {
                 </TouchableOpacity>
             </View>
 
-            <StudentListItem onclick={navToProfile}/>
-            <StudentListItem/>
-            <StudentListItem/>
+            {studentData.map((ele, index) => {
+                return (
+                    <StudentListItem
+                        name={ele.student_name}
+                        education={ele.education}
+                        onclick={() => {
+                            navigation.navigate("Student Profile",ele)
+                        }}
+                        key={index} />
+                )
+            })}
+
 
         </View>
     )
