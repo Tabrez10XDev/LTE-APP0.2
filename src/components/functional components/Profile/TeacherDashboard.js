@@ -15,7 +15,7 @@ import { createContext, useContext } from 'react';
 import { TextInput } from "@react-native-material/core";
 
 
-const TeacherDashboard = ({ route }) => {
+const TeacherDashboard = ({ route, navigation }) => {
 
     const data = route.params
 
@@ -109,7 +109,9 @@ const TeacherDashboard = ({ route }) => {
                                 {data.spoc_name}
                                 </Text>
                                 <MaterialIcons 
-                                onPress={()=>{}}
+                                onPress={()=>{
+                                    navigation.navigate('Contact SPOC');
+                                }}
                                 name="contact-page" size={24} color={COLORS.primary} style={{position:'absolute', right:8}}/>
                             </View>
 

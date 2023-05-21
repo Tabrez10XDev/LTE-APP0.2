@@ -13,8 +13,8 @@ const ProfileRoutes = ({route}) => {
     return (
         <Stack.Navigator initialParams={{ teacherID: route.params.teacherID }}
             screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="My Profile" component={TeacherDashboard}  />
-            {/* <Stack.Screen name="Contact SPOC" component={StudentProfileView} /> */}
+            <Stack.Screen name="Teacher Dashboard" component={TeacherDashboard} initialParams={route.params} />
+            <Stack.Screen name="Contact SPOC" component={ContactSpoc} />
 
         </Stack.Navigator>
     )

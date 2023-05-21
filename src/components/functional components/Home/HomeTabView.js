@@ -24,6 +24,7 @@ import { createContext, useContext } from 'react';
 import { ScrollView } from "react-native-gesture-handler";
 import TeacherMaterial from "../../ui components/TeacherMaterial";
 import Toast from 'react-native-toast-message';
+import ProfileRoutes from "../Profile/ProfileRoutes";
 
 //Create Instance for all Navigators
 const Tab = createMaterialTopTabNavigator();
@@ -403,24 +404,6 @@ function HomeTabView({ route }) {
   }
 
 
-
-  // function getHeaderTitle(route) {
-  //   // If the focused route is not found, we need to assume it's the initial screen
-  //   // This can happen during if there hasn't been any navigation inside the screen
-  //   // In our case, it's "Feed" as that's the first screen inside the navigator
-  //   const routeName = getFocusedRouteNameFromRoute(route) ?? 'Feed';
-
-  //   switch (routeName) {
-  //     case 'Feed':
-  //       return 'News feed';
-  //     case 'Profile':
-  //       return 'My profile';
-  //     case 'Account':
-  //       return 'My account';
-  //   }
-  // }
-
-
   return (
     <TeacherIDContext.Provider value={stateID}>
       <TeacherProfileContext.Provider value={data}>
@@ -437,7 +420,7 @@ function HomeTabView({ route }) {
             component={HomeScreen}
             options={({ navigation, route }) => ({
               headerRight: () => (
-                <Ionicons name="notifications" size={22} color="#FF758F" style={{ marginEnd: 16 }} />
+                <Ionicons name="notifications" size={22} color={COLORS.primary} style={{ marginEnd: 16 }} />
               ),
             })
             }
@@ -450,7 +433,12 @@ function HomeTabView({ route }) {
                 return ({ swipeEnabled: false, headerShown: false })
             }}
           />
-          <Drawer.Screen name="My Profile" component={TeacherDashboard} initialParams={data} />
+          <Drawer.Screen name="My Profile" component={ProfileRoutes} initialParams={data}
+          options={({ route }) => {
+            const routeName = getFocusedRouteNameFromRoute(route) ?? 'Items'
+            if (routeName == "Contact SPOC")
+              return ({ swipeEnabled: false, headerShown: false })
+          }} />
         </Drawer.Navigator>
       </TeacherProfileContext.Provider>
     </TeacherIDContext.Provider>
