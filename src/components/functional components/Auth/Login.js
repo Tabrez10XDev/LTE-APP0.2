@@ -65,7 +65,7 @@ const Login = ({ navigation, route }) => {
         console.log(response.data[0])
         console.log("+++++++++++++++++++++++++++++++++");    
 
-      if(response.data[0].signup_status == true){
+      if(response.data[0].is_commitment_three_months === true && response.data[0].is_agreed_lte_policy === true){
         saveLogin(response.data[0].teacher_id.toString())
         route.params.finishAuth()
       }else{

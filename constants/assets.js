@@ -6,6 +6,7 @@ import waiting from "../assets/icons/waiting.png"
 import profile from "../assets/icons/profile.png"
 import ticketClose from "../assets/icons/clipboardclose.png"
 import ticketOpen from "../assets/icons/clipboardtick.png"
+import boardingOne from "../assets/icons/boardingOne.png"
 
 
 export default {
@@ -16,5 +17,6 @@ export default {
     waiting,
     profile,
     ticketClose,
-    ticketOpen
+    ticketOpen,
+    boardingOne
 }

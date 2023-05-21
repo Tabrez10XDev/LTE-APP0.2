@@ -5,27 +5,24 @@ import {
   DrawerItemList,
 } from "@react-navigation/drawer";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons, Fontisto, FontAwesome } from "@expo/vector-icons";
 import axios from "axios";
 import { StyleSheet } from "react-native";
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 import "react-native-gesture-handler";
-// import DocumentPicker, { types } from 'react-native-document-picker';
 import * as DocumentPicker from "expo-document-picker";
 import Style from "./Style";
-import StudentTraining from "./Training/StudentTraining";
 import { COLORS, SIZES, FONTS, assets, CONST } from "../../../../constants";
 import StudentRoutes from "../StudentDashboard/StudentRoutes";
-import TeacherDashboard from "../Profile/TeacherDashboard";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 import { createContext, useContext } from 'react';
 import { ScrollView } from "react-native-gesture-handler";
 import TeacherMaterial from "../../ui components/TeacherMaterial";
 import Toast from 'react-native-toast-message';
 import ProfileRoutes from "../Profile/ProfileRoutes";
 import TicketStatus from "../Tickets/TicketStatus";
+import moment from 'moment';
 
 const Tab = createMaterialTopTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -50,9 +47,11 @@ const CustomDrawer = props => {
             marginBottom: 20,
           }}
         >
+
           <View>
             <Text style={Styles.bold}>{teacher.teacher_name}</Text>
             <Text style={Styles.greyText}>{teacher.role}</Text>
+            {teacher.tentative_start_date ? <Text style={Styles.greyText}>Since {moment(teacher.tentative_start_date.substring(0, 10), "YYYY-MM-DD").fromNow()}</Text> : null}
           </View>
 
         </View>
@@ -137,12 +136,6 @@ function TrainingMaterialTab({ navigation }) {
 
       </ScrollView>
 
-      <View style={Style.subViewContainer}>
-        <TouchableOpacity
-          style={Style.btnStyle}>
-          <Text style={Style.btnTextStyle}>DOWNLOAD MATERIALS</Text>
-        </TouchableOpacity>
-      </View>
 
     </View>
   );
@@ -410,38 +403,94 @@ function HomeTabView({ route }) {
         <Drawer.Navigator
           drawerContent={props => <CustomDrawer {...props} initialParams={{ logout: route.params }} />}
           initialParams={{ teacherID: stateID }}
-
           screenOptions={{
             headerTintColor: 'black', drawerActiveBackgroundColor: COLORS.primary, drawerActiveTintColor: 'white', headerStyle: {
               backgroundColor: COLORS.blueShade
             }
           }} >
+
+
           <Drawer.Screen
             name="Teacher's Training"
             component={HomeScreen}
-            options={({ navigation, route }) => ({
-              headerRight: () => (
-                <Ionicons name="notifications" size={22} color={COLORS.primary} style={{ marginEnd: 16 }} />
-              ),
-            })
+            options={({ route }) => {
+              return ({
+                headerRight: () => (
+                  <Ionicons name="notifications" size={22} color={COLORS.primary} style={{ marginEnd: 16 }} />
+                ),
+                drawerIcon: ({ focused, size }) => (
+                  <Ionicons
+                    name="md-home"
+                    size={size}
+                    color={focused ? 'white' : 'black'}
+                  />
+                ),
+              })
+            }
             }
           />
           <Drawer.Screen name="Student Profiles" component={StudentRoutes}
             initialParams={{ teacherID: stateID }}
+
             options={({ route }) => {
               const routeName = getFocusedRouteNameFromRoute(route) ?? 'Items'
-              if (routeName == "Level Review")
-                return ({ swipeEnabled: false, headerShown: false })
-            }}
+              if (routeName == "Level Review") {
+                return ({
+                  drawerIcon: ({ focused, size }) => (
+                    <Fontisto name="room" size={24} 
+                    color={focused ? 'white' : 'black'}
+                    />
+                  ),
+                  swipeEnabled: false, headerShown: false,
+
+                })
+              }
+              return ({
+                drawerIcon: ({ focused, size }) => (
+                  <Fontisto name="room" size={24} 
+                  color={focused ? 'white' : 'black'}
+                  />
+                ),
+
+              })
+
+            }
+            }
           />
           <Drawer.Screen name="My Profile" component={ProfileRoutes} initialParams={data}
             options={({ route }) => {
               const routeName = getFocusedRouteNameFromRoute(route) ?? 'Items'
               if (routeName == "Contact SPOC")
-                return ({ swipeEnabled: false, headerShown: false })
+                return ({
+                  swipeEnabled: false, headerShown: false,
+                  drawerIcon: ({ focused, size }) => (
+                    <Ionicons
+                      name="person"
+                      size={size}
+                      color={focused ? 'white' : 'black'}
+                      />
+                  ),
+                })
+              return ({
+                drawerIcon: ({ focused, size }) => (
+                  <Ionicons
+                    name="person"
+                    size={size}
+                    color={focused ? 'white' : 'black'}
+                  />
+                ),
+              })
             }} />
 
-          <Drawer.Screen name="Ticket Status" component={TicketStatus} />
+          <Drawer.Screen name="Ticket Status" component={TicketStatus}
+            options={({ navigation, route }) => ({
+              drawerIcon: ({ focused, size }) => (
+                <FontAwesome name="ticket" size={24} 
+                color={focused ? 'white' : 'black'}
+                />
+              ),
+            })}
+          />
 
         </Drawer.Navigator>
       </TeacherProfileContext.Provider>

@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View , TouchableOpacity} from 'react-native';
 import { SliderBox } from 'react-native-image-slider-box';
 import { useState } from 'react';
+import { COLORS } from '../../../../constants';
 
 
 const Landing = ({ navigation, route }) => {
@@ -23,7 +24,7 @@ const Landing = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
       <SliderBox images={imageList} sliderBoxHeight={550}
-      dotColor="#FF758F"
+      dotColor={COLORS.primary}
       inactiveDotColor="#90A4AE"
       paginationBoxVerticalPadding={20}
       autoplay
@@ -76,7 +77,7 @@ const styles = StyleSheet.create({
   }, 
   btnStyle:{
     alignItems: "center",
-    backgroundColor: "#FF758F",
+    backgroundColor: COLORS.primary,
     padding: 10, 
     borderRadius:5
   }, 
