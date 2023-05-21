@@ -25,10 +25,9 @@ import { ScrollView } from "react-native-gesture-handler";
 import TeacherMaterial from "../../ui components/TeacherMaterial";
 import Toast from 'react-native-toast-message';
 import ProfileRoutes from "../Profile/ProfileRoutes";
+import TicketStatus from "../Tickets/TicketStatus";
 
-//Create Instance for all Navigators
 const Tab = createMaterialTopTabNavigator();
-//const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 const TeacherIDContext = createContext(null);
@@ -412,9 +411,11 @@ function HomeTabView({ route }) {
           drawerContent={props => <CustomDrawer {...props} initialParams={{ logout: route.params }} />}
           initialParams={{ teacherID: stateID }}
 
-          screenOptions={{ headerTintColor: 'black', drawerActiveBackgroundColor: COLORS.primary, drawerActiveTintColor: 'white', headerStyle:{
-            backgroundColor:COLORS.blueShade
-          } }} >
+          screenOptions={{
+            headerTintColor: 'black', drawerActiveBackgroundColor: COLORS.primary, drawerActiveTintColor: 'white', headerStyle: {
+              backgroundColor: COLORS.blueShade
+            }
+          }} >
           <Drawer.Screen
             name="Teacher's Training"
             component={HomeScreen}
@@ -434,11 +435,14 @@ function HomeTabView({ route }) {
             }}
           />
           <Drawer.Screen name="My Profile" component={ProfileRoutes} initialParams={data}
-          options={({ route }) => {
-            const routeName = getFocusedRouteNameFromRoute(route) ?? 'Items'
-            if (routeName == "Contact SPOC")
-              return ({ swipeEnabled: false, headerShown: false })
-          }} />
+            options={({ route }) => {
+              const routeName = getFocusedRouteNameFromRoute(route) ?? 'Items'
+              if (routeName == "Contact SPOC")
+                return ({ swipeEnabled: false, headerShown: false })
+            }} />
+
+          <Drawer.Screen name="Ticket Status" component={TicketStatus} />
+
         </Drawer.Navigator>
       </TeacherProfileContext.Provider>
     </TeacherIDContext.Provider>

@@ -4,6 +4,8 @@ import showPassword from "../assets/icons/show_password.png"
 import approved from "../assets/icons/approved.png"
 import waiting from "../assets/icons/waiting.png"
 import profile from "../assets/icons/profile.png"
+import ticketClose from "../assets/icons/clipboardclose.png"
+import ticketOpen from "../assets/icons/clipboardtick.png"
 
 
 export default {
@@ -12,5 +14,7 @@ export default {
     showPassword,
     approved,
     waiting,
-    profile
+    profile,
+    ticketClose,
+    ticketOpen
 }
