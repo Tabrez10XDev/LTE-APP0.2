@@ -19,8 +19,12 @@ const StudentsList = ({ navigation, route }) => {
 
 
     useEffect(() => {
-        getStudentList()
-    }, [])
+        const unsubscribe = navigation.addListener('focus', () => {
+          getStudentList()
+        });
+    
+        return unsubscribe;
+      }, [navigation]);
 
 
     const getStudentList = async () => {

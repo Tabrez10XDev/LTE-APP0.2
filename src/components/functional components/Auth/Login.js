@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 import { StyleSheet } from "react-native";
+import { log } from "react-native-reanimated";
 
 const Login = ({ navigation, route }) => {
 
@@ -41,7 +42,6 @@ const Login = ({ navigation, route }) => {
 }
 
   const loginSubmitBtn = () => {
-    console.log(loginDetails);
     if (validateEmail(loginDetails.email) == null) {
       Toast.show({
         type: 'error',
@@ -60,11 +60,13 @@ const Login = ({ navigation, route }) => {
       axios.post(
         `${CONST.baseUrl}/teacher/get/teacherlogin`, loginDetails
       ).then((response) => {
-            
-  
+        
+        console.log("+++++++++++++++++++++++++++++++++");    
+        console.log(response.data[0])
+        console.log("+++++++++++++++++++++++++++++++++");    
+
       if(response.data[0].signup_status == true){
         saveLogin(response.data[0].teacher_id.toString())
-        console.log(route);
         route.params.finishAuth()
       }else{
         navigation.navigate('TermsConditions');

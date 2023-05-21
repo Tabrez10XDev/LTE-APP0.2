@@ -150,7 +150,7 @@ function TrainingMaterialTab({ navigation }) {
 
 
 
-function UploadAudioTab({ route }) {
+function UploadAudioTab({ route, navigation }) {
   const teacherID = useContext(TeacherIDContext);
 
   const [audioStatus, setAudioStatus] = useState("null")
@@ -173,10 +173,13 @@ function UploadAudioTab({ route }) {
     }
   }
 
-
   useEffect(() => {
-    getAudioStatus()
-  }, [])
+    const unsubscribe = navigation.addListener('focus', () => {
+      getAudioStatus()
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
 
   const ImagePlaceholder = () => {
@@ -284,7 +287,7 @@ function UploadAudioTab({ route }) {
   };
   return (
     <View style={Style.mainAudioContainer}>
-      {audioStatus != "unsubmitted" && audioStatus != "rejected" && audioStatus != null ? <ImagePlaceholder /> : (
+      {audioStatus != "unsubmitted" && audioStatus != "rejected" && audioStatus != null && audioStatus != "resend" ? <ImagePlaceholder /> : (
         <View style={Style.mainAudioContainer}>
           <Text style={Style.audioText}>
             Please share your voice audio file and we will get back to you once it
@@ -426,7 +429,9 @@ function HomeTabView({ route }) {
           drawerContent={props => <CustomDrawer {...props} initialParams={{ logout: route.params }} />}
           initialParams={{ teacherID: stateID }}
 
-          screenOptions={{ headerTintColor: 'black', drawerActiveBackgroundColor: COLORS.primary, drawerActiveTintColor: 'white' }} >
+          screenOptions={{ headerTintColor: 'black', drawerActiveBackgroundColor: COLORS.primary, drawerActiveTintColor: 'white', headerStyle:{
+            backgroundColor:COLORS.blueShade
+          } }} >
           <Drawer.Screen
             name="Teacher's Training"
             component={HomeScreen}

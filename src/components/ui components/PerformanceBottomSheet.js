@@ -17,7 +17,7 @@ import {
 import RBSheet from "react-native-raw-bottom-sheet";
 
 
-export default PerformanceBottomSheet = ({ refRBSheet }) => {
+export default PerformanceBottomSheet = ({ refRBSheet, name, number, level, satisfied, good, excellent, needsImprov, session, group }) => {
 
 
 
@@ -42,33 +42,37 @@ export default PerformanceBottomSheet = ({ refRBSheet }) => {
 
             <View>
                 <View style={Style.studMainContainer}>
-                    <Text style={Style.nameTextStyle}>Vikram Kumar</Text>
-                    <Text style={[Style.gradeText, Style.subTextStyle]}>+91 9087654321</Text>
-                    <Text style={Style.moreText}>More</Text>
+                    <Text style={Style.nameTextStyle}>{name}</Text>
+                    <Text style={[Style.gradeText, Style.subTextStyle]}>{number}</Text>
+                    {/* <Text style={Style.moreText}>More</Text> */}
 
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 16 }}>
                         <Text style={{ fontFamily: FONTS.semiBold, fontSize: SIZES.smallFont }}>
-                            Level 2
+                            Level {level}
                         </Text>
-                        <View style={{ flexDirection: 'row', marginStart: 8 }}>
+                        <View style={{ flexDirection: 'row', marginHorizontal: 8 }}>
                             <View style={{ height: 4, width: 4, borderRadius: 2, backgroundColor: COLORS.grey, marginHorizontal: 2 }} />
-                            <View style={{ height: 4, width: 4, borderRadius: 2, backgroundColor: COLORS.grey, marginHorizontal: 2 }} />
-                            <View style={{ height: 4, width: 4, borderRadius: 2, backgroundColor: COLORS.grey, marginHorizontal: 2 }} />
-
                         </View>
+                        <Text style={{ fontFamily: FONTS.semiBold, fontSize: SIZES.smallFont }}>
+                            Session {session}
+                        </Text>
                     </View>
+
+                    <Text style={{ fontFamily: FONTS.regular, fontSize: SIZES.smallFont, marginTop:10  }}>
+                            {group}
+                        </Text>
                 </View>
 
                 <View style={{ paddingVertical: 16 }}>
 
                     <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-evenly' }}>
                         <View style={{ ...Style.completionAlign, width: '50%' }}>
-                            <Text style={[Style.textStyle, Style.completedText]}>04</Text>
+                            <Text style={[Style.textStyle, Style.completedText]}>{needsImprov}</Text>
                             <Text style={Style.subTextStyle}>Needs Improvement</Text>
                         </View>
 
                         <View style={{ ...Style.completionAlign, width: '50%' }}>
-                            <Text style={[Style.textStyle, Style.studyingText]}>06</Text>
+                            <Text style={[Style.textStyle, Style.studyingText]}>{satisfied}</Text>
                             <Text style={Style.subTextStyle}>Satisfactory</Text>
                         </View>
                     </View>
@@ -76,12 +80,12 @@ export default PerformanceBottomSheet = ({ refRBSheet }) => {
 
                     <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 64 }}>
                         <View style={{ ...Style.completionAlign, width: '50%' }}>
-                            <Text style={[Style.textStyle, Style.goodText]}>07</Text>
+                            <Text style={[Style.textStyle, Style.goodText]}>{good}</Text>
                             <Text style={Style.subTextStyle}>Good</Text>
                         </View>
 
                         <View style={{ ...Style.completionAlign, width: '50%' }}>
-                            <Text style={[Style.textStyle, Style.excellentText]}>10</Text>
+                            <Text style={[Style.textStyle, Style.excellentText]}>{excellent}</Text>
                             <Text style={Style.subTextStyle}>Excellent</Text>
                         </View>
                     </View>
@@ -93,25 +97,7 @@ export default PerformanceBottomSheet = ({ refRBSheet }) => {
                         <Text style={Style.btnTextStyle}>Close</Text>
                     </TouchableOpacity>
                 </View>
-
-                {/* <View style={Style.mainContainer}>
-<View style={Style.completionAlign}>
-  <Text style={[Style.textStyle , Style.completedText]}>01</Text>
-  <Text style={Style.subTextStyle}>Completed</Text>
-</View>
-<View style={Style.completionAlign}>
-<Ionicons name="md-school" size={42} color="#FF758F" />
-</View>
-<View style={Style.completionAlign}>
-<Text style={[Style.textStyle , Style.studyingText]}>02</Text>
-  <Text style={Style.subTextStyle}>Studying</Text>
-</View>
-</View> */}
-                {/* <StudPerformance/> */}
             </View>
-
-
-
         </RBSheet>
 
     )
