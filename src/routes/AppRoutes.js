@@ -7,7 +7,8 @@ import Landing from '../components/functional components/Landing/Landing'
 import TermsConditions from '../components/functional components/TermsConditions/TermsConditions';
 import HomeTabView from "../components/functional components/Home/HomeTabView"
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import OnBoardingScreen from '../components/functional components/OnBoardingComponent/OnBoardingScreen';
+import OnBoardingRoutes from '../components/functional components/OnBoardingComponent/OnBoardingRoutes';
 
 const AppRoutes = ({ navigation }) => {
 
@@ -15,11 +16,29 @@ const AppRoutes = ({ navigation }) => {
 
     const Stack = createNativeStackNavigator();
     const [state, setState] = useState(false)
+    const [isBoarded, setBoarded] = useState(false);
 
 
     const finishAuth = () => {
         setState(false)
     }
+
+    const saveBoardingState = async () => {
+        try {
+            AsyncStorage.setItem('FirstTime', "true").then(
+                
+            )
+        } catch (err) {
+            console.error(err)
+        }
+    }
+    
+
+    const finishBoarding = () => {
+        setBoarded(true)    
+        saveBoardingState()
+      }
+    
 
     const logout = async () => {
         try {
@@ -34,6 +53,7 @@ const AppRoutes = ({ navigation }) => {
 
     useEffect(() => {
         getData()
+        getBoardedData()
     }, [])
 
     const getData = async () => {
@@ -51,6 +71,20 @@ const AppRoutes = ({ navigation }) => {
     }
 
 
+    const getBoardedData = async () => {
+        try {
+            const result = await AsyncStorage.getItem('FirstTime')
+            if (result !== null) {
+                setBoarded(true)
+            } else {
+                setBoarded(false)
+            }
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+
 
 
     return (
@@ -60,18 +94,27 @@ const AppRoutes = ({ navigation }) => {
 
                 {state ? (<Stack.Group screenOptions={{}} >
 
-                    <Stack.Screen name="Landing" component={Landing} options={{ header: () => null }} initialParams={{ finishAuth: finishAuth }} />
+                    {isBoarded ? (<Stack.Group screenOptions={{}} >
 
+                        <Stack.Screen name="Login" component={Login} options={{ header: () => null }} initialParams={{ finishAuth: finishAuth }} />
 
-                    <Stack.Screen name="Login" component={Login} options={{ header: () => null }} initialParams={{ finishAuth: finishAuth }} />
+                        <Stack.Screen name="TermsConditions" component={TermsConditions} options={{ header: () => null }} initialParams={{ finishAuth: finishAuth }} />
 
+                    </Stack.Group>)
 
-                    <Stack.Screen name="TermsConditions" component={TermsConditions} options={{ header: () => null }} initialParams={{ finishAuth: finishAuth }} />
-                </Stack.Group>)
+                        : (<Stack.Group screenOptions={{}} >
+
+                             <Stack.Screen name="Landing" component={OnBoardingRoutes} options={{ header: () => null }} initialParams={{ finishBoarding: finishBoarding }}/>
+
+                        </Stack.Group>)
+                    }
+                </Stack.Group>
+
+                )
 
                     : (<Stack.Group screenOptions={{}}  >
 
-                        <Stack.Screen name="HomeTabView" component={HomeTabView} initialParams={{logout: logout}} options={({ navigation, route }) => ({
+                        <Stack.Screen name="HomeTabView" component={HomeTabView} initialParams={{ logout: logout }} options={({ navigation, route }) => ({
                             headerShown: false,
                         })} />
                     </Stack.Group>)}

@@ -2,44 +2,31 @@ import { View, Text, TouchableOpacity } from "react-native";
 import Checkbox from 'expo-checkbox';
 import { React, useState, useEffect } from "react";
 import { StyleSheet } from "react-native";
-import { COLORS, SIZES, FONTS, assets } from "../../../../constants";
+import { COLORS, SIZES, FONTS, assets, CONST } from "../../../../constants";
 import Toast from 'react-native-toast-message';
-import { AsyncStorage } from 'react-native'
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from "axios";
 
 const TermsConditions = ({ navigation, route }) => {
   const [isChecked, setChecked] = useState(false);
   const [isChecked2, setChecked2] = useState(false);
 
-  const [state, setState] = useState(false)
 
-
-  useEffect(() => {
-      load()
-  }, [])
-
-  const load = async () => {
-
-      AsyncStorage.getItem('AuthState').then(result => {
-          console.log(result)
-          if (result !== null && result != "LoggedOut") {
-              setState(result)
-          } else {
-              setState("LoggedOut")
-          }
-      })
-
-  }
-
+  const saveLogin = async (id) => {
+    try {
+        await AsyncStorage.setItem('AuthState', id)
+    } catch (err) {
+        alert(err)
+    }
+}
 
   const nextBtn = () => {
 
     if (isChecked && isChecked2) {
 
 
-
-      axios.post(
-        `${CONST.baseUrl}/teacherapp/update/conditions/${state}`,
+      axios.put(
+        `${CONST.baseUrl}/teacherapp/update/conditions/${route.params.teacher_id}`,
         {
           "is_commitment_three_months": true,
           "is_agreed_lte_policy": true
@@ -48,12 +35,12 @@ const TermsConditions = ({ navigation, route }) => {
       ).then((response) => {
 
         console.log("Terms Conditions button clicked");
-
+        saveLogin(route.params.teacher_id)
         route.params.finishAuth()
 
 
       }).catch((error) => {
-        console.log(error)
+        console.error(error)
         Toast.show({
           type: 'error',
           text1: 'Unknown error occured'
@@ -141,7 +128,7 @@ const Styles = StyleSheet.create({
   },
   btnStyle: {
     alignItems: "center",
-    backgroundColor: "#FF758F",
+    backgroundColor: COLORS.primary,
     padding: 10,
     borderRadius: 5,
   },

@@ -60,16 +60,12 @@ const Login = ({ navigation, route }) => {
       axios.post(
         `${CONST.baseUrl}/teacher/get/teacherlogin`, loginDetails
       ).then((response) => {
-        
-        console.log("+++++++++++++++++++++++++++++++++");    
-        console.log(response.data[0])
-        console.log("+++++++++++++++++++++++++++++++++");    
 
       if(response.data[0].is_commitment_three_months === true && response.data[0].is_agreed_lte_policy === true){
         saveLogin(response.data[0].teacher_id.toString())
         route.params.finishAuth()
       }else{
-        navigation.navigate('TermsConditions');
+        navigation.navigate('TermsConditions', {teacher_id: response.data[0].teacher_id.toString()});
       }
       }).catch((error) => {
         console.error(error)
@@ -197,7 +193,7 @@ const Styles = StyleSheet.create({
   },
   btnStyle: {
     alignItems: "center",
-    backgroundColor: "#FF758F",
+    backgroundColor: COLORS.primary,
     padding: 10,
     borderRadius: 5,
   },

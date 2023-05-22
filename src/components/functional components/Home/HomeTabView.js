@@ -380,6 +380,8 @@ function HomeTabView({ route }) {
   const getData = async () => {
     try {
       let value = await AsyncStorage.getItem('AuthState')
+      console.log("+++++++++++===============")
+      console.log(value);
       setStateID(value)
 
       axios.post(

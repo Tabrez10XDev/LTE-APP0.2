@@ -1,10 +1,7 @@
-/* HomeTabView StyleSheet */
 import { StyleSheet } from "react-native";
 import { COLORS, SIZES, FONTS, assets } from "../../../../constants";
 
 const styles = StyleSheet.create({
- 
-
 
   mainAudioContainer: {
     flex: 1,
@@ -48,7 +45,7 @@ const styles = StyleSheet.create({
   },
   btnStyle: {
     alignItems: "center",
-    backgroundColor: "#FF758F",
+    backgroundColor: COLORS.primary,
     padding: 10,
     borderRadius: 5,
   },

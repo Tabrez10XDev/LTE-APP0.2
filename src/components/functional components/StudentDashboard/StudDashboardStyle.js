@@ -1,6 +1,6 @@
 /* StudDashboard.j */
 import { StyleSheet } from 'react-native';
-import { FONTS } from '../../../../constants';
+import { COLORS, FONTS } from '../../../../constants';
 
 const StudStyle = StyleSheet.create({
     studMainContainer:{
@@ -80,7 +80,7 @@ const StudStyle = StyleSheet.create({
       },
       btnStyle: {
         alignItems: "center",
-        backgroundColor: "#FF758F",
+        backgroundColor: COLORS.primary,
         padding: 10,
         borderRadius: 5,
       },

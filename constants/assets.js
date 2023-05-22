@@ -7,6 +7,7 @@ import profile from "../assets/icons/profile.png"
 import ticketClose from "../assets/icons/clipboardclose.png"
 import ticketOpen from "../assets/icons/clipboardtick.png"
 import boardingOne from "../assets/icons/boardingOne.png"
+import arrowCircleRight from "../assets/icons/arrowcircleright.png"
 
 
 export default {
@@ -18,5 +19,6 @@ export default {
     profile,
     ticketClose,
     ticketOpen,
-    boardingOne
+    boardingOne,
+    arrowCircleRight
 }

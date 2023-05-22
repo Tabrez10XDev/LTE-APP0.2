@@ -1,8 +1,6 @@
 import * as React from "react";
-import { useState, useEffect, useRef } from "react";
 import { COLORS, SIZES, FONTS, assets } from "../../../../constants";
-import { StatusBar } from "react-native";
-import { AsyncStorage } from 'react-native'
+import { StatusBar, TouchableOpacity } from "react-native";
 
 import {
     Text,
@@ -19,19 +17,13 @@ import {
 
 const OnBoardingThreeScreen = ({ navigation, route }) => {
 
-    const saveLogin = async () => {
-        try {
-            await AsyncStorage.setItem('FirstTime', 'true')
-        } catch (err) {
-            alert(err)
-        }
-    }
+
 
 
 
     return (
-
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white, alignItems: 'center', flexDirection: 'column' }}>
+
             <StatusBar
                 background={COLORS.white}
                 backgroundColor={COLORS.white}
@@ -39,28 +31,7 @@ const OnBoardingThreeScreen = ({ navigation, route }) => {
                 style={{ backgroundColor: COLORS.white, flex: 1 }}
             ></StatusBar>
 
-            <Text
-                style={{
-                    textAlign: 'center',
-                    alignSelf: 'center',
-                    fontSize: SIZES.font,
-                    fontFamily: FONTS.regular,
-                    color: COLORS.text,
-                    position: 'absolute',
-                    top: 32,
-                    right: 24,
-                    padding: 14,
-                    zIndex: 2
-                }}
-                onPress={() => { route.params.finishBoarding() }}
-            >
-                Skip
-            </Text>
-
-            <Image
-                source={assets.boardingOne}
-                style={{ width: Dimensions.get("window").width * 0.8, resizeMode: 'contain', height: Dimensions.get("window").width * 0.9, marginTop: "15%" }} />
-            <View style={{ width: '90%', justifyContent: 'center', alignItems: 'center', marginTop: 16 }}>
+            <View style={{ width: '90%', justifyContent: 'center', alignItems: 'center', marginTop: 64 }}>
                 <Text
                     style={{
                         textAlign: 'center',
@@ -70,7 +41,7 @@ const OnBoardingThreeScreen = ({ navigation, route }) => {
                         color: COLORS.text,
                     }}
                 >
-                    boardingThreeH
+                    Education & Training
                 </Text>
 
                 <Text
@@ -79,17 +50,39 @@ const OnBoardingThreeScreen = ({ navigation, route }) => {
                         alignSelf: 'center',
                         fontSize: SIZES.font,
                         fontFamily: FONTS.regular,
-                        color: COLORS.text,
+                        color: COLORS.textGrey,
                         marginTop: SIZES.medium
                     }}
                 >
-                    boardingThreeP
+                    In learning you will teach, and in{'\n'}teaching you will learn.
                 </Text>
 
             </View>
 
+
+
+            <Image
+                source={assets.boardingOne}
+                style={{ width: Dimensions.get("window").width * 0.8, resizeMode: 'contain', height: Dimensions.get("window").width * 0.9, marginTop: 36 }} />
+
+
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, width: '100%', position: 'absolute', bottom: 48, alignItems: 'center' }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+
+                <Text
+                    style={{
+                        textAlign: 'center',
+                        alignSelf: 'center',
+                        fontSize: SIZES.medium,
+                        fontFamily: FONTS.semiBold,
+                        color: COLORS.primary,
+                        flex: 1
+                    }}
+                    onPress={() => { route.params.finishBoarding() }}
+                >
+                    Skip
+                </Text>
+
+                <View style={{ flexDirection: 'row', justifyContent: 'center', flex: 1 }}>
                     <View style={{ height: 12, width: 12, borderRadius: 10, backgroundColor: COLORS.grey }} />
                     <View style={{ height: 12, width: 12, borderRadius: 10, backgroundColor: COLORS.grey, marginStart: 8 }} />
                     <View style={{ height: 12, width: 12, borderRadius: 10, backgroundColor: COLORS.blue, marginStart: 8 }} />
@@ -97,16 +90,14 @@ const OnBoardingThreeScreen = ({ navigation, route }) => {
                 </View>
 
 
-                <Pressable
-                    style={{ height: 48, backgroundColor: COLORS.blue, justifyContent: 'center', alignItems: 'center', width: '30%', borderRadius: 8 }}
-                    onPress={() => {
-                        saveLogin()
-                        route.params.finishBoarding()
-
-                    }}
+                <TouchableOpacity
+                    style={{ justifyContent: 'center', alignItems: 'center',flex: 1 }}
+                    onPress={() => { route.params.finishBoarding() }}
                 >
-                    <Text style={{ color: COLORS.white, fontSize: SIZES.font, fontWeight: FONTS.semiBold }}>Next</Text>
-                </Pressable>
+                    <Image
+                    style={{height:48, width:48}}
+                    source={assets.arrowCircleRight}/>
+                </TouchableOpacity>
             </View>
 
         </SafeAreaView>
