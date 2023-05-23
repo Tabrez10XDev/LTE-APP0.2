@@ -80,9 +80,7 @@ const OnBoardingScreen = ({ navigation, route }) => {
                         flex: 1
                     }}
                     onPress={() => { 
-                        saveBoardingState()
                         route.params.finishBoarding()
-                        
                      }}
                 >
                     Skip

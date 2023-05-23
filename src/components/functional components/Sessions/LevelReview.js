@@ -9,11 +9,9 @@ import ProgressBar from 'react-native-progress/Bar'
 import { StackActions } from '@react-navigation/native';
 import { ScrollView } from "react-native-gesture-handler";
 import Style from "../Home/Style";
-import {WebView} from 'react-native-webview';
 
 
 const viewClicked = () => {
-    return <WebView source={{ uri: 'https://reactnative.dev/' }} style={{flex:1}} />;
 
     console.log("view button clicked");
 };
@@ -71,7 +69,6 @@ const LevelReview = ({ navigation }) => {
 
 
                     </View>
-                    <WebView source={{ uri: 'https://reactnative.dev/' }} style={{flex:1}} />
                     <View style={{ alignSelf: 'flex-start', marginTop: 8, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', width: '90%' }}>
 
 

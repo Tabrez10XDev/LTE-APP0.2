@@ -23,6 +23,7 @@ import Toast from 'react-native-toast-message';
 import ProfileRoutes from "../Profile/ProfileRoutes";
 import TicketStatus from "../Tickets/TicketStatus";
 import moment from 'moment';
+import { StatusBar } from "expo-status-bar";
 
 const Tab = createMaterialTopTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -97,18 +98,6 @@ function TrainingMaterialTab({ navigation }) {
     getTrainingMaterials()
   }, [])
 
-  //
-
-
-
-
-
-
-
-
-
-  //
-
   return (
     <View
       style={{
@@ -147,7 +136,7 @@ function UploadAudioTab({ route, navigation }) {
   const teacherID = useContext(TeacherIDContext);
 
   const [audioStatus, setAudioStatus] = useState("null")
-  const [image, setImage] = useState("")
+  const [image, setImage] = useState(assets.notFound)
 
   function getAudioStatus() {
     try {
@@ -401,6 +390,12 @@ function HomeTabView({ route }) {
   return (
     <TeacherIDContext.Provider value={stateID}>
       <TeacherProfileContext.Provider value={data}>
+        <StatusBar
+          background={COLORS.blueShade}
+          backgroundColor={COLORS.blueShade}
+          barStyle="dark-content"
+          style={{ backgroundColor: COLORS.blueShade, flex: 1 }}
+        />
 
         <Drawer.Navigator
           drawerContent={props => <CustomDrawer {...props} initialParams={{ logout: route.params }} />}
@@ -439,8 +434,8 @@ function HomeTabView({ route }) {
               if (routeName == "Level Review") {
                 return ({
                   drawerIcon: ({ focused, size }) => (
-                    <Fontisto name="room" size={24} 
-                    color={focused ? 'white' : 'black'}
+                    <Fontisto name="room" size={24}
+                      color={focused ? 'white' : 'black'}
                     />
                   ),
                   swipeEnabled: false, headerShown: false,
@@ -449,8 +444,8 @@ function HomeTabView({ route }) {
               }
               return ({
                 drawerIcon: ({ focused, size }) => (
-                  <Fontisto name="room" size={24} 
-                  color={focused ? 'white' : 'black'}
+                  <Fontisto name="room" size={24}
+                    color={focused ? 'white' : 'black'}
                   />
                 ),
 
@@ -470,7 +465,7 @@ function HomeTabView({ route }) {
                       name="person"
                       size={size}
                       color={focused ? 'white' : 'black'}
-                      />
+                    />
                   ),
                 })
               return ({
@@ -487,8 +482,8 @@ function HomeTabView({ route }) {
           <Drawer.Screen name="Ticket Status" component={TicketStatus}
             options={({ navigation, route }) => ({
               drawerIcon: ({ focused, size }) => (
-                <FontAwesome name="ticket" size={24} 
-                color={focused ? 'white' : 'black'}
+                <FontAwesome name="ticket" size={24}
+                  color={focused ? 'white' : 'black'}
                 />
               ),
             })}

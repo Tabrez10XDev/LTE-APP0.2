@@ -121,12 +121,16 @@ const StudentsList = ({ navigation, route }) => {
                     </Text>
                 </TouchableOpacity>
             </View>
-
+            {studentData.length == 0 ? 
+            <Text style={{marginTop:64, fontFamily: FONTS.bold, color:COLORS.darkGrey, fontSize: 16}}>
+                No Student is mapped to you 
+            </Text> : null}
             {studentData.map((ele, index) => {
                 return (
                     <StudentListItem
                         name={ele.student_name}
                         education={ele.education}
+                        number={ele.whatsappno}
                         onclick={() => {
                             navigation.navigate("Student Profile",ele)
                         }}

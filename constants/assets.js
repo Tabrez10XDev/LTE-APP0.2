@@ -8,7 +8,7 @@ import ticketClose from "../assets/icons/clipboardclose.png"
 import ticketOpen from "../assets/icons/clipboardtick.png"
 import boardingOne from "../assets/icons/boardingOne.png"
 import arrowCircleRight from "../assets/icons/arrowcircleright.png"
-
+import notFound from "../assets/icons/notFound.png"
 
 export default {
     google,
@@ -20,5 +20,6 @@ export default {
     ticketClose,
     ticketOpen,
     boardingOne,
-    arrowCircleRight
+    arrowCircleRight,
+    notFound
 }

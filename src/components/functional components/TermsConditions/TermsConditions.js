@@ -29,7 +29,8 @@ const TermsConditions = ({ navigation, route }) => {
         `${CONST.baseUrl}/teacherapp/update/conditions/${route.params.teacher_id}`,
         {
           "is_commitment_three_months": true,
-          "is_agreed_lte_policy": true
+          "is_agreed_lte_policy": true,
+          "signup_status": true
         }
 
       ).then((response) => {

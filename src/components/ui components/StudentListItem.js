@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 
 
-const StudentListItem = ({onclick, name, education}) => {
+const StudentListItem = ({onclick, name, education, number}) => {
 
     const [firstLetters, setFirstLetters] = useState("")
 
@@ -38,7 +38,7 @@ const StudentListItem = ({onclick, name, education}) => {
                     fontSize: 16,
                     color: '#3F4188'
                 }}>
-                    {firstLetters}
+                    {firstLetters} 
                 </Text>
             </View>
 
@@ -48,14 +48,14 @@ const StudentListItem = ({onclick, name, education}) => {
                     fontSize: 16,
                     color: 'black'
                 }}>
-                    {name}
+                    {name} ({number})
                 </Text>
                 <Text style={{
                     fontFamily: FONTS.regular,
                     fontSize: 14,
                     color: COLORS.grey,
                 }}>
-                    {education}
+                    {education} Grade
                 </Text>
             </View>
 

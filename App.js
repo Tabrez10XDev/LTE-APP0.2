@@ -9,13 +9,7 @@ import AppRoutes from "./src/routes/AppRoutes";
 import { useFonts } from 'expo-font';
 
 
-const theme = {
-  ...DefaultTheme,
-  colour: {
-    ...DefaultTheme.colors,
-    background: "transparent"
-  }
-}
+
 
 
 export default function App() {
@@ -38,9 +32,7 @@ export default function App() {
 
   return (
    <RootSiblingParent>
-    <NavigationContainer theme={theme}>
       <AppRoutes/>
-    </NavigationContainer>
    </RootSiblingParent>
   );
 }

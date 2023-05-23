@@ -74,8 +74,8 @@ const styles = StyleSheet.create({
         backgroundColor:'white',
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: 8,
-        paddingHorizontal: 24,
+        paddingVertical: 12,
+        paddingHorizontal: 8,
         marginHorizontal: 8,
         flex:1
     },
@@ -87,8 +87,8 @@ const styles = StyleSheet.create({
         borderColor: COLORS.primary,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: 8,
-        paddingHorizontal: 24,
+        paddingVertical: 12,
+        paddingHorizontal: 8,
         marginHorizontal: 8
     },
     unSelectedText: {
