@@ -258,7 +258,7 @@ function UploadAudioTab({ route, navigation }) {
         console.error(e)
         Toast.show({
           type: 'error',
-          text1: 'Unknown error occured'
+          text1: 'Unknown error in link generation'
         })
 
       }
