@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, Image, Modal } from "react-native";
 import Checkbox from 'expo-checkbox';
 import { React, useState, useEffect } from "react";
 import { StyleSheet } from "react-native";
@@ -25,10 +25,11 @@ const TicketListItem = ({onclick, name, education, id, time, status}) => {
             </View>
 
             <View style={{marginStart:12, paddingVertical:8, justifyContent:'space-between'}}>
-                <Text style={{
+                <Text numberOfLines={1} style={{
                     fontFamily: FONTS.semiBold,
                     fontSize: 16,
-                    color: 'black'
+                    color: 'black',
+                    maxWidth: "75%",
                 }}>
                     {name}
                 </Text>

@@ -4,32 +4,79 @@ import { useState, useEffect, useRef } from "react";
 import { List, Chip } from "react-native-paper";
 import { Dimensions } from "react-native";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { COLORS, SIZES, FONTS, assets } from "../../../../constants";
+import { COLORS, SIZES, FONTS, assets, CONST } from "../../../../constants";
 import { DatePickerModal } from 'react-native-paper-dates';
 import { Ionicons, MaterialIcons, Feather, FontAwesome } from "@expo/vector-icons";
 import { Dropdown } from 'react-native-element-dropdown';
+import Toast from 'react-native-toast-message';
+import { StackActions } from '@react-navigation/native';
 
 import { ScrollView } from "react-native-gesture-handler";
 import { TimePickerModal } from 'react-native-paper-dates';
 import { Switch } from 'react-native-paper';
 import { createContext, useContext } from 'react';
-const ContactSpoc = () => {
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from "axios";
 
-    const genderList = [
-        {
-            label: "Male",
-            value: "MALE",
-        },
-        {
-            label: "Female",
-            value: "FEMALE",
-        },
-        {
-            label: "Others",
-            value: "UNSPECIFIED",
-        },
-    ]
+const ContactSpoc = ({navigation}) => {
 
+    // const genderList = [
+    //     {
+    //         label: "Male",
+    //         value: "MALE",
+    //     },
+    //     {
+    //         label: "Female",
+    //         value: "FEMALE",
+    //     },
+    //     {
+    //         label: "Others",
+    //         value: "UNSPECIFIED",
+    //     },
+    // ]
+
+    const postTicket = async () => {
+        if(title.trim().length === 0 || message.trim().length === 0 ){
+            Toast.show({
+                type: 'error',
+                text1: 'Empty fields!'
+            })
+            return
+        }
+
+        try {
+            const teacherID = await AsyncStorage.getItem('AuthState')
+            console.log(teacherID);
+            axios.post(
+                `${CONST.baseUrl}/messages/addmessage`, {
+                msg_title: title,
+                msg_description: message,
+                sent_teacher_id: teacherID
+            }
+            ).then((response) => {
+                Toast.show({
+                    type: 'success',
+                    text1: 'Ticket Sent!'
+                })
+                setTitle("")
+                setMessage("")
+              
+                // navigation.dispatch(StackActions.pop(1))
+
+            })
+        } catch (e) {
+            // error reading value
+            Toast.show({
+                type: 'error',
+                text1: 'Unknown error occured'
+            })
+            console.error(e.response)
+        }
+    }
+
+
+    const [title, setTitle] = useState("")
+    const [message, setMessage] = useState("")
 
     return (
         <SafeAreaView style={{ backgroundColor: COLORS.blueShade, width: '100%', height: '100%', alignItems: 'center' }}>
@@ -55,11 +102,23 @@ const ContactSpoc = () => {
                 marginStart: 24
 
             }}>
-                Type
+                Title
             </Text>
 
 
-            <Dropdown
+            <TextInput
+                underlineColorAndroid='transparent'
+                onChangeText={title => setTitle(title)}
+                returnKeyType="next"
+                blurOnSubmit={true}
+                fontSize={16}
+                value={title}
+                placeholder="Type Here" style={{ width: '90%', backgroundColor: 'white', marginTop: 4, padding: 8, borderRadius: 4, minHeight: 50 }}>
+
+            </TextInput>
+
+
+            {/* <Dropdown
                 style={styles.dropdown}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
@@ -75,7 +134,7 @@ const ContactSpoc = () => {
                     //  setValue(item.value);
                 }}
 
-            />
+            /> */}
 
 
             <Text style={{
@@ -92,9 +151,13 @@ const ContactSpoc = () => {
             </Text>
 
             <TextInput multiline
+                maxLength={200}
+                onChangeText={message => setMessage(message)}
+                underlineColorAndroid='transparent'
                 returnKeyType="done"
                 blurOnSubmit={true}
                 fontSize={16}
+                value={message}
                 placeholder="Type Here" style={{ width: '90%', backgroundColor: 'white', marginTop: 4, padding: 8, height: 200, borderRadius: 8 }}>
 
             </TextInput>
@@ -119,11 +182,13 @@ const ContactSpoc = () => {
                     color: COLORS.primary,
                     alignSelf: 'flex-start',
                 }}>
-                    0/200
+                    {message.length}/200
                 </Text>
             </View>
 
-            <TouchableOpacity style={{ width: '90%', height: 60, backgroundColor: COLORS.blue, borderRadius: 10, marginTop: 48, justifyContent: 'center', alignItems: 'center' }}>
+            <TouchableOpacity 
+            onPress={postTicket}
+            style={{ width: '90%', height: 60, backgroundColor: COLORS.blue, borderRadius: 10, marginTop: 48, justifyContent: 'center', alignItems: 'center' }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                     <Text style={{
                         fontSize: 18,
@@ -139,7 +204,10 @@ const ContactSpoc = () => {
                     <FontAwesome name="send" size={22} color="white" />
                 </View>
             </TouchableOpacity>
-
+            <Toast
+                position='bottom'
+                bottomOffset={20}
+            />
 
         </SafeAreaView>
     )

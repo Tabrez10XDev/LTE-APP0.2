@@ -24,6 +24,7 @@ import ProfileRoutes from "../Profile/ProfileRoutes";
 import TicketStatus from "../Tickets/TicketStatus";
 import moment from 'moment';
 import { StatusBar } from "expo-status-bar";
+import * as mime from 'mime';
 
 const Tab = createMaterialTopTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -194,14 +195,12 @@ function UploadAudioTab({ route, navigation }) {
     api_key: "164615611795246",
     timestamp: date.getTime(),
     upload_preset: "my_preset",
-    file: "",
     cloud_name: "db2bzxbn7"
   });
 
   const [fileResponse, setFileResponse] = useState({});
 
   const audioSubmitBtn = useCallback(async () => {
-    console.log("audiobutton clicked");
     try {
       const response = await DocumentPicker.getDocumentAsync({
         type: "audio/*",
@@ -218,53 +217,78 @@ function UploadAudioTab({ route, navigation }) {
   const uploadAudio = async () => {
 
 
+    
     const { name, uri } = fileResponse;
+    console.log(uri);
     let formDataObj = new FormData();
     if (uri) {
-      formDataObj.append('file', { name, uri });
+      formDataObj.append('file', {name, uri, type:"video/mp4"});
       formDataObj.append('api_key', formData.api_key);
       formDataObj.append('upload_preset', formData.upload_preset);
+      const salt = (Math.random() + 1).toString(36).substring(2)
+      formDataObj.append('public_id', teacherID + "-" + salt);
+      let config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: URL,
+        data: formDataObj,
+        headers: { "Content-Type": "multipart/form-data" },
+      };
 
-
-      try {
+      axios.request(config)
+      .then((response) => {
+        console.log("Inside");
         axios.post(
-          URL, formDataObj
+          `${CONST.baseUrl}/audio`, {
+          teacher_id: teacherID,
+          audio_file_name: name,
+          audio_source: response.data.url ?? "",
+          audio_status: "submitted",
+          audio_reason: "",
+          audio_audit_by: "tanu",
+        }
         ).then((response) => {
-          axios.post(
-            `${CONST.baseUrl}/audio`, {
-            teacher_id: teacherID,
-            audio_file_name: name,
-            audio_source: response.data.url ?? "",
-            audio_status: "submitted",
-            audio_reason: "",
-            audio_audit_by: "tanu",
+          if (response.status == 200) {
+            setAudioStatus("submitted")
+            setImage(assets.waiting)
           }
-          ).then((response) => {
-            if (response.status == 200) {
-              console.log(response.data)
-              setAudioStatus("submitted")
-              setImage(assets.waiting)
-            }
-          }
-          ).catch((err => {
-            Toast.show({
-              type: 'error',
-              text1: 'Unknown error occured'
-            })
-
-          }))
-        })
-      } catch (err) {
-        console.error(e)
+        }
+        ).catch((err => {
+          Toast.show({
+            type: 'error',
+            text1: 'Unknown error occured'
+          })
+        }))
+      }).catch((err => {
+        console.log(err.response)
         Toast.show({
           type: 'error',
-          text1: 'Unknown error in link generation'
+          text1: 'Unknown error occured'
         })
+      }))
 
-      }
 
 
     }
+
+    // let data = new FormData();
+   
+    
+    // let config = {
+    //   method: 'post',
+    //   maxBodyLength: Infinity,
+    //   url: 'https://api.cloudinary.com/v1_1/db2bzxbn7/video/upload',
+    
+    //   data : data
+    // };
+    
+    // axios.request(config)
+    // .then((response) => {
+    //   console.log(JSON.stringify(response.data));
+    // })
+    // .catch((error) => {
+    //   console.log(error);
+    // });
 
   };
   return (
@@ -369,8 +393,6 @@ function HomeTabView({ route }) {
   const getData = async () => {
     try {
       let value = await AsyncStorage.getItem('AuthState')
-      console.log("+++++++++++===============")
-      console.log(value);
       setStateID(value)
 
       axios.post(
@@ -480,6 +502,7 @@ function HomeTabView({ route }) {
             }} />
 
           <Drawer.Screen name="Ticket Status" component={TicketStatus}
+           initialParams={{ teacherID: stateID }}
             options={({ navigation, route }) => ({
               drawerIcon: ({ focused, size }) => (
                 <FontAwesome name="ticket" size={24}
