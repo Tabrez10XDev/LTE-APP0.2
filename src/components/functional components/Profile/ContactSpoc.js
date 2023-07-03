@@ -85,7 +85,7 @@ const ContactSpoc = ({navigation}) => {
                 alignContent: "center",
                 textAlign: 'center',
                 fontFamily: FONTS.semiBold,
-                marginTop: 16,
+                marginTop: 28,
             }}>
                 Contact SPOC
             </Text>
@@ -152,6 +152,7 @@ const ContactSpoc = ({navigation}) => {
 
             <TextInput multiline
                 maxLength={200}
+                textAlign='left'
                 onChangeText={message => setMessage(message)}
                 underlineColorAndroid='transparent'
                 returnKeyType="done"

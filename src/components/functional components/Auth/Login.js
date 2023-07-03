@@ -69,6 +69,7 @@ const Login = ({ navigation, route }) => {
       }
       }).catch((error) => {
         console.error(error)
+        console.log(error.response);
         Toast.show({
           type: 'error',
           text1: 'Unknown error occured'

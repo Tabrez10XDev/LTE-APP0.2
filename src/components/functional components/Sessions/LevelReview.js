@@ -9,9 +9,20 @@ import ProgressBar from 'react-native-progress/Bar'
 import { StackActions } from '@react-navigation/native';
 import { ScrollView } from "react-native-gesture-handler";
 import Style from "../Home/Style";
+import { Linking } from 'react-native';
 
 
-const viewClicked = () => {
+const openURI = async (url) => {
+    const supported = await Linking.canOpenURL(url); //To check if URL is supported or not.
+    if (supported) {
+    await Linking.openURL(url); // It will open the URL on browser.
+    } else {
+    Alert.alert(`Don't know how to open this URL: ${url}`);
+    }
+    }
+
+
+const viewClicked = (link) => {
 
     console.log("view button clicked");
 };
@@ -23,13 +34,14 @@ const submitBtn = () => {
 };
 
 
-const LevelReview = ({ navigation }) => {
+const LevelReview = ({ navigation, route }) => {
 
     const [stackIndex, setStackIndex] = useState(1);
-
+    const data = route.params
 
     return (
         <SafeAreaView style={{ height: '100%', backgroundColor: 'white' }}>
+            {console.log(route.params.sessions)}
             <View style={{ flexDirection: 'row' }}>
                 <TouchableOpacity
                     onPress={() => {
@@ -47,7 +59,7 @@ const LevelReview = ({ navigation }) => {
                             fontSize: SIZES.large,
                             flexWrap: 'wrap',
                         }}>
-                        Level 1
+                        {data.title}
                     </Text>
                     <Text
                         style={{
@@ -55,7 +67,7 @@ const LevelReview = ({ navigation }) => {
                             fontSize: SIZES.smallFont,
                             flexWrap: 'wrap',
                         }}>
-                        Mon : 4-5 PM, Wed : 4-5 PM, Fri : 4-5PM
+                        {data.nextTitle} {" "} {data.start}  {"- "} {data.end}
                     </Text>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                         <Text
@@ -64,7 +76,7 @@ const LevelReview = ({ navigation }) => {
                                 fontSize: SIZES.smallFont,
                                 color: COLORS.grey
                             }}>
-                            Next session on 12/04/21
+                            Next session on {data.date} {" "} {data.day}
                         </Text>
 
 
@@ -72,7 +84,7 @@ const LevelReview = ({ navigation }) => {
                     <View style={{ alignSelf: 'flex-start', marginTop: 8, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', width: '90%' }}>
 
 
-                        <ProgressBar unfilledColor={COLORS.unProgressed} color={COLORS.yellow} progress={0.6} width={Dimensions.get('window').width * 0.6} borderColor={COLORS.unProgressed} />
+                        <ProgressBar unfilledColor={COLORS.unProgressed} color={COLORS.yellow} progress={data.progress} width={Dimensions.get('window').width * 0.6} borderColor={COLORS.unProgressed} />
                         <Text
                             style={{
                                 fontFamily: FONTS.regular,
@@ -80,7 +92,7 @@ const LevelReview = ({ navigation }) => {
                                 color: COLORS.darkBlue,
                                 marginStart: 8
                             }}>
-                            17 of 24
+                            {data.completed} of {data.total}
                         </Text>
                     </View>
                 </View>
@@ -88,76 +100,82 @@ const LevelReview = ({ navigation }) => {
             <ScrollView showsVerticalScrollIndicator={false}>
                 <List.AccordionGroup>
 
-                    <List.Accordion theme={{ colors: { primary: COLORS.primary } }} style={{backgroundColor:'white'}} title="Level 1" id="5">
-                        <View style={{ borderColor: COLORS.borderGrey, borderWidth: 1 }}>
-                            <Text style={TrainStyle.sessionTitle}>Basic English Concepts</Text>
-                            <Text style={{ fontFamily: FONTS.regular, fontSize: SIZES.smallFont, marginHorizontal: 16 }}>
-                                We shall use it in one of these narrower senses, embracing syntax and morphology. Syntax is concerned with the way words combine to form sentences, while morphology is concerned with the form of words
-                            </Text>
-                            <View style={TrainStyle.btnContainer}>
-                                <TouchableOpacity style={TrainStyle.btnStyle} onPress={viewClicked}>
-                                    <Text style={TrainStyle.btnTextStyle}>View</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={TrainStyle.btnStyle}
-                                    onPress={downloadClicked}
-                                >
-                                    <Text style={TrainStyle.btnTextStyle}>Download</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <Text style={TrainStyle.subHeading}>Rate this session</Text>
-
-                            <ScrollView
-                                horizontal={true}
-                                showsVerticalScrollIndicator={false}
-                                showsHorizontalScrollIndicator={false}
-                                style={{ flexDirection: 'row', width: '100%', marginTop: 12 }}>
-                                <TouchableOpacity
-                                    onPress={() => { setStackIndex(1) }}
-                                    style={[stackIndex == 1 ? styles.selectedBox : styles.unSelectedBox]}
-                                >
-                                    <Text style={[stackIndex == 1 ? styles.selectedText : styles.unSelectedText]}>
-                                        Needs Improvement
+                    {data.sessions.map((ele, index) => {
+                        return (
+                            <List.Accordion theme={{ colors: { primary: COLORS.primary } }} style={{ backgroundColor: 'white' }} title={ele.session_name} id={ele.session_id}>
+                                <View style={{ borderColor: COLORS.borderGrey, borderWidth: 1 }}>
+                                    <Text style={TrainStyle.sessionTitle}>{ele.stud_res_name}</Text>
+                                    <Text style={{ fontFamily: FONTS.regular, fontSize: SIZES.smallFont, marginHorizontal: 16 }}>
+                                        {ele.stud_res_desc}
                                     </Text>
-                                </TouchableOpacity>
+                                    <View style={{alignItems:'center',justifyContent:'center'}}>
+                                        <TouchableOpacity style={TrainStyle.btnStyle} onPress={()=>openURI(ele.stud_res_url)}>
+                                            <Text style={TrainStyle.btnTextStyle}>View</Text>
+                                        </TouchableOpacity>
+                                        {/* <TouchableOpacity
+                                            style={TrainStyle.btnStyle}
+                                            onPress={downloadClicked}
+                                        >
+                                            <Text style={TrainStyle.btnTextStyle}>Download</Text>
+                                        </TouchableOpacity> */}
+                                    </View>
+                                    <Text style={TrainStyle.subHeading}>Rate this session</Text>
 
-                                <TouchableOpacity
-                                    onPress={() => { setStackIndex(2) }}
-                                    style={[stackIndex == 2 ? styles.selectedBox : styles.unSelectedBox]}>
-                                    <Text style={[stackIndex == 2 ? styles.selectedText : styles.unSelectedText]}>
-                                        Satisfactory
-                                    </Text>
-                                </TouchableOpacity>
+                                    <ScrollView
+                                        horizontal={true}
+                                        showsVerticalScrollIndicator={false}
+                                        showsHorizontalScrollIndicator={false}
+                                        style={{ flexDirection: 'row', width: '100%', marginTop: 12 }}>
+                                        <TouchableOpacity
+                                            onPress={() => { setStackIndex(1) }}
+                                            style={[stackIndex == 1 ? styles.selectedBox : styles.unSelectedBox]}
+                                        >
+                                            <Text style={[stackIndex == 1 ? styles.selectedText : styles.unSelectedText]}>
+                                                Needs Improvement
+                                            </Text>
+                                        </TouchableOpacity>
 
-                                <TouchableOpacity
-                                    onPress={() => { setStackIndex(3) }}
-                                    style={[stackIndex == 3 ? styles.selectedBox : styles.unSelectedBox]}>
-                                    <Text style={[stackIndex == 3 ? styles.selectedText : styles.unSelectedText]}>
-                                        Good
-                                    </Text>
-                                </TouchableOpacity>
+                                        <TouchableOpacity
+                                            onPress={() => { setStackIndex(2) }}
+                                            style={[stackIndex == 2 ? styles.selectedBox : styles.unSelectedBox]}>
+                                            <Text style={[stackIndex == 2 ? styles.selectedText : styles.unSelectedText]}>
+                                                Satisfactory
+                                            </Text>
+                                        </TouchableOpacity>
 
-                                <TouchableOpacity
-                                    onPress={() => { setStackIndex(3) }}
-                                    style={[stackIndex == 3 ? styles.selectedBox : styles.unSelectedBox]}>
-                                    <Text style={[stackIndex == 3 ? styles.selectedText : styles.unSelectedText]}>
-                                        Excellent
-                                    </Text>
-                                </TouchableOpacity>
-                            </ScrollView>
+                                        <TouchableOpacity
+                                            onPress={() => { setStackIndex(3) }}
+                                            style={[stackIndex == 3 ? styles.selectedBox : styles.unSelectedBox]}>
+                                            <Text style={[stackIndex == 3 ? styles.selectedText : styles.unSelectedText]}>
+                                                Good
+                                            </Text>
+                                        </TouchableOpacity>
 
-                            <View style={{ ...Style.subViewContainer }}>
-                                <TouchableOpacity style={Style.btnStyle}>
-                                    <Text style={Style.btnTextStyle}>SUBMIT</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </List.Accordion>
+                                        <TouchableOpacity
+                                            onPress={() => { setStackIndex(3) }}
+                                            style={[stackIndex == 3 ? styles.selectedBox : styles.unSelectedBox]}>
+                                            <Text style={[stackIndex == 3 ? styles.selectedText : styles.unSelectedText]}>
+                                                Excellent
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </ScrollView>
+
+                                    <View style={{ ...Style.subViewContainer }}>
+                                        <TouchableOpacity style={Style.btnStyle}>
+                                            <Text style={Style.btnTextStyle}>SUBMIT</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </List.Accordion>
+                        )
+                    })}
 
 
 
 
 
+
+                    {/* 
                     <List.Accordion theme={{ colors: { primary: COLORS.primary } }} style={{backgroundColor:'white'}} title="Level 2" id="2">
                         <View style={{ borderColor: COLORS.borderGrey, borderWidth: 1 }}>
                             <Text style={TrainStyle.sessionTitle}>Basic English Concepts</Text>
@@ -222,7 +240,7 @@ const LevelReview = ({ navigation }) => {
                                 </TouchableOpacity>
                             </View>
                         </View>
-                    </List.Accordion>
+                    </List.Accordion> */}
 
 
 
