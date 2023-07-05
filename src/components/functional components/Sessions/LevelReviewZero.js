@@ -1,10 +1,10 @@
-import { Text, View, Image, StyleSheet, TouchableOpacity, Dimensions, SafeAreaView } from "react-native";
+import { Text, View, Image, StyleSheet, TouchableOpacity, Dimensions, TextInput, SafeAreaView } from "react-native";
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { List, Chip } from "react-native-paper";
 import { Feather, Ionicons, Entypo } from "@expo/vector-icons";
 
-import { COLORS, SIZES, FONTS, assets } from "../../../../constants";
+import { COLORS, SIZES, FONTS, assets, CONST } from "../../../../constants";
 import ProgressBar from 'react-native-progress/Bar'
 import { StackActions } from '@react-navigation/native';
 import { ScrollView } from "react-native-gesture-handler";
@@ -13,9 +13,12 @@ import { Linking } from 'react-native';
 import * as DocumentPicker from "expo-document-picker";
 import { useCallback } from "react";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
-
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const openURI = async (url) => {
+
+
     if (url.trim() == "") {
         Toast.show({
             type: 'error',
@@ -23,6 +26,7 @@ const openURI = async (url) => {
         })
         return
     }
+
     const supported = await Linking.canOpenURL(url); //To check if URL is supported or not.
     if (supported) {
         await Linking.openURL(url); // It will open the URL on browser.
@@ -32,25 +36,34 @@ const openURI = async (url) => {
 }
 
 
-const viewClicked = (link) => {
-
-    console.log("view button clicked");
-};
-const downloadClicked = () => {
-    console.log("download button clicked");
-};
-const submitBtn = () => {
-    console.log("submit the rating clicked");
-};
 
 
-const LevelReview = ({ navigation, route }) => {
+
+const LevelReviewZero = ({ navigation, route }) => {
 
     const [stackIndex, setStackIndex] = useState(1);
     const [fileResponse, setFileResponse] = useState({});
+    const [stateID, setStateID] = useState(-1)
+    const [states, setStates] = useState({})
+    const [message, setMessage] = useState("")
 
     let data = route.params
     data.sessions = data.sessions.sort(function (a, b) { return (a.session_id > b.session_id) ? 1 : ((b.session_id > a.session_id) ? -1 : 0); });
+
+    async function getTeacherID() {
+        let value = await AsyncStorage.getItem('AuthState')
+        setStateID(value)
+    }
+
+
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            getTeacherID()
+        });
+
+        return unsubscribe;
+    }, [navigation]);
 
 
 
@@ -73,14 +86,87 @@ const LevelReview = ({ navigation, route }) => {
     const [formData, setFormData] = useState({
         api_key: "164615611795246",
         timestamp: date.getTime(),
-        upload_preset: "my_preset",
+        upload_preset: "student_upload",
         cloud_name: "db2bzxbn7"
     });
 
 
+    const updateFeedback = async () => {
+        axios.post(
+            `${CONST.baseUrl}/teacherapp/update/student/sessionfeedback`, {
+            student_id: 19,
+            student_name: "Fahadh",
+            audio_source: response.data.url ?? "",
+            level_id: levelId,
+            session_id: id,
+            audio_file_name: `Fahadh-${levelId}-${id}`,
+            audio_reason: "",
+            audio1: true,
+            audio2: false,
+            audio_uploaded_by: stateID,
+        }
+        )
+    }
+
+
+    const uploadAudio = async (id, levelId) => {
+
+        const URL = `https://api.cloudinary.com/v1_1/db2bzxbn7/video/upload`;
+
+        const { name, uri } = fileResponse;
+        let formDataObj = new FormData();
+        if (uri) {
+            formDataObj.append('file', { name, uri, type: "video/mp4" });
+            formDataObj.append('api_key', formData.api_key);
+            formDataObj.append('upload_preset', formData.upload_preset);
+            const salt = (Math.random() + 1).toString(36).substring(2)
+            formDataObj.append('public_id', stateID + "-" + salt);
+            let config = {
+                method: 'post',
+                maxBodyLength: Infinity,
+                url: URL,
+                data: formDataObj,
+                headers: { "Content-Type": "multipart/form-data" },
+            };
+            //TODO update student id 
+            axios.request(config)
+                .then((response) => {
+    
+                    axios.post(
+                        `${CONST.baseUrl}/audio/student/upload`, {
+                        student_id: 19,
+                        student_name: "Fahadh",
+                        audio_source: response.data.url ?? "",
+                        level_id: levelId,
+                        session_id: id,
+                        audio_file_name: `Fahadh-${levelId}-${id}`,
+                        audio_reason: "",
+                        audio1: true,
+                        audio2: false,
+                        audio_uploaded_by: stateID,
+                    }
+                    ).then((response) => {
+                        console.log(response.status)
+                        if (response.status == 200) {
+                            setStates(current => ({ ...current, [id]: true }))
+                        }
+                    }
+                    )
+                }).catch((err => {
+                    console.error(err)
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Unknown error occured'
+                    })
+                }))
+
+
+        }
+
+    };
+
     return (
         <SafeAreaView style={{ height: '100%', backgroundColor: 'white', paddingTop: 24 }}>
-            {console.log(route.params.sessions)}
             <View style={{ flexDirection: 'row' }}>
                 <TouchableOpacity
                     onPress={() => {
@@ -153,9 +239,8 @@ const LevelReview = ({ navigation, route }) => {
                                             </TouchableOpacity>
 
                                         </View>
-                                        {(ele.session_name != "session1" && ele.audio_file_count == null) ||
-                                            (ele.session_name != "session30" && ele.audio_file_count == null) ||
-                                            (ele.session_name != "session50" && ele.audio_file_count == null)
+                                        {(ele.session_name != "session5" && ele.audio_file_count == null) ||
+                                            states[ele.session_id] == true
                                             ? <>
                                                 <Text style={TrainStyle.subHeading}>Rate this session</Text>
 
@@ -198,16 +283,36 @@ const LevelReview = ({ navigation, route }) => {
                                                     </TouchableOpacity>
                                                 </ScrollView>
 
-                                                {
-                                                    ele.session_feedback == "NA" &&
+                                                <TextInput multiline
+                                                    maxLength={50}
+                                                    textAlign='left'
+                                                    onChangeText={message => setMessage(message)}
+                                                    underlineColorAndroid='transparent'
+                                                    returnKeyType="done"
+                                                    blurOnSubmit={true}
+                                                    fontSize={16}
+                                                    value={message}
+                                                    placeholder="Type Here" style={{ width: '90%', backgroundColor: 'white', marginTop: 4, padding: 8, height: 60, borderRadius: 8 }}>
 
-                                                    <View style={{ ...Style.subViewContainer }}>
+                                                </TextInput>
+
+                                                <View style={{ alignItems: 'center', justifyContent: 'space-evenly', flexDirection: 'row' }}>
+                                                    {
+                                                        ele.session_feedback == "NA" &&
+                                                        <View style={{ ...Style.subViewContainer, width: '40%', marginHorizontal: 0 }}>
+                                                            <TouchableOpacity style={Style.btnStyle}>
+                                                                <Text style={Style.btnTextStyle}>SUBMIT</Text>
+                                                            </TouchableOpacity>
+                                                        </View>
+                                                    }
+
+
+                                                    <View style={{ ...Style.subViewContainer, width: '40%', marginHorizontal: 0 }}>
                                                         <TouchableOpacity style={Style.btnStyle}>
-                                                            <Text style={Style.btnTextStyle}>SUBMIT</Text>
+                                                            <Text style={Style.btnTextStyle}>RETAKE</Text>
                                                         </TouchableOpacity>
                                                     </View>
-                                                }
-
+                                                </View>
                                             </> : <>
                                                 <Text style={TrainStyle.subHeading}>Upload Audio</Text>
                                                 <View style={{ ...Style.dragViewContainer, paddingVertical: 8 }}>
@@ -246,7 +351,7 @@ const LevelReview = ({ navigation, route }) => {
                                                     ) : null}
                                                 </View>
                                                 <View style={{ ...Style.subViewContainer }}>
-                                                    <TouchableOpacity style={Style.btnStyle}>
+                                                    <TouchableOpacity onPress={() => uploadAudio(ele.session_id, ele.level_id)} style={Style.btnStyle}>
                                                         <Text style={Style.btnTextStyle}>SUBMIT</Text>
                                                     </TouchableOpacity>
                                                 </View>
@@ -274,7 +379,7 @@ const LevelReview = ({ navigation, route }) => {
     )
 }
 
-export default LevelReview;
+export default LevelReviewZero;
 
 
 const styles = StyleSheet.create({

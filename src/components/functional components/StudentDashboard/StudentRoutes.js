@@ -8,6 +8,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import StudentsList from './StudentsList';
 import StudentProfileView from "../StudentDashboard/studdashboard";
 import LevelReview from '../Sessions/LevelReview';
+import LevelReviewZero from '../Sessions/LevelReviewZero';
 
 const Stack = createNativeStackNavigator();
 
@@ -19,6 +20,7 @@ const StudentRoutes = ({route}) => {
             <Stack.Screen name="Students List" component={StudentsList} initialParams={{teacherID: route.params.teacherID}} />
             <Stack.Screen name="Student Profile" component={StudentProfileView} />
             <Stack.Screen name="Level Review" component={LevelReview} />
+            <Stack.Screen name="Level Review Zero" component={LevelReviewZero} />
 
         </Stack.Navigator>
     )

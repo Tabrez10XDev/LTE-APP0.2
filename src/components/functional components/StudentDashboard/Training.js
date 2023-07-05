@@ -100,9 +100,14 @@ const Training = ({ navigation, route }) => {
         return unsubscribe;
     }, [navigation]);
 
-    function navToSessions() {
-        navigation.navigate("Level Review")
+    function navToSessions(ele) {
+        if(ele.level_name == "level0"){
+        navigation.navigate("Level Review Zero", { ...state[ele.level_id], ...state2[ele.level_id], title: ele.level_name, sessions: state3[ele.level_name.slice(-1)] } )
+    }else{
+        navigation.navigate("Level Review", { ...state[ele.level_id], ...state2[ele.level_id], title: ele.level_name, sessions: state3[ele.level_name.slice(-1)] } )
+
     }
+}
 
 
 
@@ -113,7 +118,7 @@ const Training = ({ navigation, route }) => {
                     return (
                         <List.Accordion theme={{ colors: { primary: COLORS.primary } }} style={{ backgroundColor: 'white', borderBottomWidth: 1, borderColor: COLORS.borderGrey }} title={ele.level_name} id={ele.level_id}>
                             <TouchableOpacity
-                                onPress={() => navigation.navigate("Level Review", { ...state[ele.level_id], ...state2[ele.level_id], title: ele.level_name, sessions: state3[ele.level_name.slice(-1)] })}
+                                onPress={()=>navToSessions(ele)}
                                 style={{ marginHorizontal: 16, marginTop: 12, borderBottomWidth: 1, borderColor: COLORS.borderGrey, paddingBottom: 8, width: '90%' }}>
                                 
                                 <Text
@@ -122,7 +127,7 @@ const Training = ({ navigation, route }) => {
                                         fontSize: SIZES.smallFont,
                                         flexWrap: 'wrap',
                                     }}>
-                                    {state2[ele.level_id] ? state2[ele.level_id].nextTitle : "undefined"}  {" "}  {state2[ele.level_id] ? state2[ele.level_id].end : "undefined"}  {" "} - {state2[ele.level_id] ? state2[ele.level_id].end : "undefined"}
+                                    {state2[ele.level_id] ? state2[ele.level_id].nextTitle : ""}   {state2[ele.level_id] ? state2[ele.level_id].start : ""} - {state2[ele.level_id] ? state2[ele.level_id].end : ""}
                                 </Text>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                     <Text
@@ -131,7 +136,7 @@ const Training = ({ navigation, route }) => {
                                             fontSize: SIZES.smallFont,
                                             color: COLORS.grey
                                         }}>
-                                        Next session on {state2[ele.level_id] ? state2[ele.level_id].date : "undefined"} {state2[ele.level_id] ? state2[ele.level_id].day : ""}
+                                        Next session on {state2[ele.level_id] ? state2[ele.level_id].date : ""} {state2[ele.level_id] ? state2[ele.level_id].day : ""}
                                     </Text>
 
 
@@ -157,46 +162,7 @@ const Training = ({ navigation, route }) => {
 
 
 
-                {/* <List.Accordion theme={{ colors: { primary: COLORS.primary } }} style={{ backgroundColor: 'white', borderBottomWidth: 1, borderColor: COLORS.borderGrey }} title="Level 2" id="2">
-                    <TouchableOpacity
-                        onPress={navToSessions}
-                        style={{ marginHorizontal: 16, marginTop: 12, borderBottomWidth: 1, borderColor: COLORS.borderGrey, paddingBottom: 8, width: '90%' }}>
-                        <Text
-                            style={{
-                                fontFamily: FONTS.semiBold,
-                                fontSize: SIZES.smallFont,
-                                flexWrap: 'wrap',
-                            }}>
-                            Mon : 4-5 PM, Wed : 4-5 PM, Fri : 4-5PM
-                        </Text>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Text
-                                style={{
-                                    fontFamily: FONTS.regular,
-                                    fontSize: SIZES.smallFont,
-                                    color: COLORS.grey
-                                }}>
-                                Next session on 12/04/21
-                            </Text>
-
-
-                        </View>
-                        <View style={{ alignSelf: 'flex-start', marginTop: 8, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
-
-
-                            <ProgressBar unfilledColor={COLORS.unProgressed} color={COLORS.green} progress={1} width={Dimensions.get('window').width * 0.7} borderColor={COLORS.unProgressed} />
-                            <Text
-                                style={{
-                                    fontFamily: FONTS.regular,
-                                    fontSize: SIZES.smallFont,
-                                    color: COLORS.darkBlue,
-                                    marginStart: 8
-                                }}>
-                                24 of 24
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                </List.Accordion> */}
+                
             </List.AccordionGroup>
 
             <TouchableOpacity
