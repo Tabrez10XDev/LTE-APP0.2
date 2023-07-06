@@ -39,10 +39,10 @@ function StudentProfileView({ route }) {
 
     axios.request(config)
       .then((response) => {
-        console.log(JSON.stringify(response.data));
+        console.log("Lock Success");
       })
       .catch((error) => {
-        console.log(error);
+        console.log("Lock error");
       });
   }
 
@@ -62,7 +62,7 @@ function StudentProfileView({ route }) {
         screenOptions={{
           contentStyle: { backgroundColor: '#FFFFFF' }, tabBarIndicatorStyle: { backgroundColor: COLORS.primary },
         }}>
-        <Tab.Screen name="Training" component={Training} initialParams={{ onClick: openSheet }} />
+        <Tab.Screen name="Training" component={Training} initialParams={{ onClick: openSheet, student_id: route.params.student_id, student_name: route.params.student_name }} />
         <Tab.Screen name="Availability" component={Availability} />
       </Tab.Navigator>
 

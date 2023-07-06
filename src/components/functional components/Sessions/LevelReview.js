@@ -190,9 +190,9 @@ const LevelReview = ({ navigation, route }) => {
                                                     </TouchableOpacity>
 
                                                     <TouchableOpacity
-                                                        onPress={() => { setStackIndex(3) }}
-                                                        style={[stackIndex == 3 ? styles.selectedBox : styles.unSelectedBox]}>
-                                                        <Text style={[stackIndex == 3 ? styles.selectedText : styles.unSelectedText]}>
+                                                        onPress={() => { setStackIndex(4) }}
+                                                        style={[stackIndex == 4 ? styles.selectedBox : styles.unSelectedBox]}>
+                                                        <Text style={[stackIndex == 4 ? styles.selectedText : styles.unSelectedText]}>
                                                             Excellent
                                                         </Text>
                                                     </TouchableOpacity>

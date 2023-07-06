@@ -13,7 +13,6 @@ import LevelReviewZero from '../Sessions/LevelReviewZero';
 const Stack = createNativeStackNavigator();
 
 const StudentRoutes = ({route}) => {
-    console.log(route.params);
     return (
         <Stack.Navigator initialParams={{ teacherID: route.params.teacherID }}
             screenOptions={{ headerShown: false }}>

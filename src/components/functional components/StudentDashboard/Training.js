@@ -15,6 +15,7 @@ const Training = ({ navigation, route }) => {
     const [state3, setState3] = useState({})
 
     async function fetchLevels() {
+        console.log(route.params.student_id)
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
@@ -22,7 +23,7 @@ const Training = ({ navigation, route }) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            data: { stud_id: 19 }
+            data: { stud_id: route.params.student_id }
         };
 
 
@@ -65,14 +66,6 @@ const Training = ({ navigation, route }) => {
                         temp5.push(ele)
                     }
 
-                    // setState3(current => ({
-                    //     ...current, [ele.level_id]: 
-                    //     { 
-                    //         [ele.session_id]: {
-                    //             ...ele
-                    //         }
-                    //     }
-                    // }))
                 })
 
                 setState3({
@@ -102,9 +95,9 @@ const Training = ({ navigation, route }) => {
 
     function navToSessions(ele) {
         if(ele.level_name == "level0"){
-        navigation.navigate("Level Review Zero", { ...state[ele.level_id], ...state2[ele.level_id], title: ele.level_name, sessions: state3[ele.level_name.slice(-1)] } )
+        navigation.navigate("Level Review Zero", { ...state[ele.level_id], ...state2[ele.level_id], title: ele.level_name, sessions: state3[ele.level_name.slice(-1)], student_id: route.params.student_id, student_name: route.params.student_name } )
     }else{
-        navigation.navigate("Level Review", { ...state[ele.level_id], ...state2[ele.level_id], title: ele.level_name, sessions: state3[ele.level_name.slice(-1)] } )
+        navigation.navigate("Level Review", { ...state[ele.level_id], ...state2[ele.level_id], title: ele.level_name, sessions: state3[ele.level_name.slice(-1)], student_id: route.params.student_id, student_name: route.params.student_name } )
 
     }
 }
@@ -159,6 +152,12 @@ const Training = ({ navigation, route }) => {
                         </List.Accordion>
                     )
                 })}
+
+                {data.level_list.length === 0 && 
+                 <Text style={{marginTop:64, fontFamily: FONTS.bold, color:COLORS.darkGrey, fontSize: 16, alignSelf:'center'}}>
+                 No Student is available 
+             </Text>
+                }
 
 
 
