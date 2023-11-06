@@ -2,7 +2,7 @@
   "expo": {
     "name": "LTE-APP",
     "slug": "LTE-APP02",
-    "version": "1.0.1",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -15,7 +15,9 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.bwt.lte",
+      "bitcode": false
     },
     "android": {
       "adaptiveIcon": {
@@ -32,7 +34,7 @@
         "expo-build-properties",
         {
           "ios": {
-            "useFrameworks": "dynamic"
+            "useFrameworks": "static"
           }
         }
       ]

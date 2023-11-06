@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, Image } from "react-native";
+import { Text, View, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { React, useState } from "react";
 import { COLORS, SIZES, FONTS, assets, CONST } from "../../../../constants";
@@ -35,11 +35,11 @@ const Login = ({ navigation, route }) => {
 
   const saveLogin = async (id) => {
     try {
-        await AsyncStorage.setItem('AuthState', id)
+      await AsyncStorage.setItem('AuthState', id)
     } catch (err) {
-        alert(err)
+      alert(err)
     }
-}
+  }
 
   const loginSubmitBtn = () => {
     if (validateEmail(loginDetails.email) == null) {
@@ -61,12 +61,12 @@ const Login = ({ navigation, route }) => {
         `${CONST.baseUrl}/teacher/get/teacherlogin`, loginDetails
       ).then((response) => {
 
-      if(response.data[0].is_commitment_three_months === true && response.data[0].is_agreed_lte_policy === true){
-        saveLogin(response.data[0].teacher_id.toString())
-        route.params.finishAuth()
-      }else{
-        navigation.navigate('TermsConditions', {teacher_id: response.data[0].teacher_id.toString()});
-      }
+        if (response.data[0].is_commitment_three_months === true && response.data[0].is_agreed_lte_policy === true) {
+          saveLogin(response.data[0].teacher_id.toString())
+          route.params.finishAuth()
+        } else {
+          navigation.navigate('TermsConditions', { teacher_id: response.data[0].teacher_id.toString() });
+        }
       }).catch((error) => {
         console.error(error)
         console.log(error.response);
@@ -80,32 +80,26 @@ const Login = ({ navigation, route }) => {
   };
 
   return (
-    <View style={Styles.loginContainer}>
-      <Text style={{ ...Styles.header, marginTop: '40%' }}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{flex:1}}>
+        <ScrollView>
+<TouchableWithoutFeedback onPress={Keyboard.dismiss} >
+
+   <View style={Styles.loginContainer} >
+
+      <Image
+        style={{ height: 200, width: 200, resizeMode:'contain', marginTop:'25%'}}
+        source={assets.logo} />
+
+      <Text style={{ ...Styles.header, marginTop: 24 }}>
         Login
       </Text>
       <Text style={{ ...Styles.headerText, color: COLORS.grey, marginTop: SIZES.small }}>
         In learning you will teach, and in teaching {'\n'} you will learn.
       </Text>
 
-      {/* <TouchableOpacity
-        style={{ height: 48, justifyContent: 'center', alignItems: 'center', borderRadius: 8, marginTop: SIZES.doubleLarge, borderWidth: 1, borderColor: COLORS.borderGrey, width: '100%' }}
-        onPress={() => { }}
-      >
-
-        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-          <Image
-            style={{ height: 24, width: 24, marginEnd: 8 }}
-            source={assets.google}
-          />
-          <Text style={{ color: COLORS.black, fontSize: SIZES.medium, fontWeight: FONTS.semiBold }}>Sign in with Google</Text>
-        </View>
-
-      </TouchableOpacity>
-      <Text style={{ ...Styles.headerText, marginTop: SIZES.medium }}>Or</Text>
- */}
-
-
+     
       <TextInput onChangeText={username => setLoginDetails({ ...loginDetails, email: username })} value={loginDetails.email} keyboardType="email-address" variant="outlined" label="Email" style={{ marginHorizontal: 16, width: '100%', marginTop: SIZES.medium, marginTop: 72 }} color={COLORS.darkGrey} />
       <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: SIZES.medium }}>
         <TextInput onChangeText={password => setLoginDetails({ ...loginDetails, password: password })} value={loginDetails.password} secureTextEntry={!visibility} variant="outlined" label="Password" style={{ marginHorizontal: 16, width: '100%' }} color={COLORS.darkGrey} />
@@ -135,7 +129,13 @@ const Login = ({ navigation, route }) => {
         position='bottom'
         bottomOffset={20}
       />
+    
     </View>
+
+    </TouchableWithoutFeedback>
+    </ScrollView>
+
+    </KeyboardAvoidingView>
   );
 };
 
