@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import OnBoardingScreen from '../components/functional components/OnBoardingComponent/OnBoardingScreen';
 import OnBoardingRoutes from '../components/functional components/OnBoardingComponent/OnBoardingRoutes';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import ForgotPassword from '../components/functional components/Auth/ForgotPassword';
 const AppRoutes = ({ navigation }) => {
 
 
@@ -108,6 +109,7 @@ const AppRoutes = ({ navigation }) => {
                     {isBoarded ? (<Stack.Group screenOptions={{}} >
 
                         <Stack.Screen name="Login" component={Login} options={{ header: () => null }} initialParams={{ finishAuth: finishAuth }} />
+                        <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ header: () => null }}  />
 
                         <Stack.Screen name="TermsConditions" component={TermsConditions} options={{ header: () => null }} initialParams={{ finishAuth: finishAuth }} />
                     </Stack.Group>)

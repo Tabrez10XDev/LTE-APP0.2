@@ -61,7 +61,16 @@ const Login = ({ navigation, route }) => {
         `${CONST.baseUrl}/teacher/get/teacherlogin`, loginDetails
       ).then((response) => {
 
-        if (response.data[0].is_commitment_three_months === true && response.data[0].is_agreed_lte_policy === true) {
+        console.log(response.data)
+
+        if (response.data == "invalid password") {
+          Toast.show({
+            type: 'error',
+            text1: 'Invalid password'
+          })
+        }
+
+        else if (response.data[0].is_commitment_three_months === true && response.data[0].is_agreed_lte_policy === true) {
           saveLogin(response.data[0].teacher_id.toString())
           route.params.finishAuth()
         } else {
@@ -82,58 +91,64 @@ const Login = ({ navigation, route }) => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{flex:1}}>
-        <ScrollView>
-<TouchableWithoutFeedback onPress={Keyboard.dismiss} >
+      style={{ flex: 1 }}>
+      <ScrollView>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
 
-   <View style={Styles.loginContainer} >
+          <View style={Styles.loginContainer} >
 
-      <Image
-        style={{ height: 200, width: 200, resizeMode:'contain', marginTop:'25%'}}
-        source={assets.logo} />
+            <Image
+              style={{ height: 200, width: 200, resizeMode: 'contain', marginTop: '25%' }}
+              source={assets.logo} />
 
-      <Text style={{ ...Styles.header, marginTop: 24 }}>
-        Login
-      </Text>
-      <Text style={{ ...Styles.headerText, color: COLORS.grey, marginTop: SIZES.small }}>
-        In learning you will teach, and in teaching {'\n'} you will learn.
-      </Text>
-
-     
-      <TextInput onChangeText={username => setLoginDetails({ ...loginDetails, email: username })} value={loginDetails.email} keyboardType="email-address" variant="outlined" label="Email" style={{ marginHorizontal: 16, width: '100%', marginTop: SIZES.medium, marginTop: 72 }} color={COLORS.darkGrey} />
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: SIZES.medium }}>
-        <TextInput onChangeText={password => setLoginDetails({ ...loginDetails, password: password })} value={loginDetails.password} secureTextEntry={!visibility} variant="outlined" label="Password" style={{ marginHorizontal: 16, width: '100%' }} color={COLORS.darkGrey} />
-        <TouchableOpacity
-          onPress={() => {
-            setVisibility(!visibility)
-            setPassIcon(!passIcon)
-          }}
-          style={{ alignItems: 'center', justifyContent: 'center', width: 32, height: 32, position: 'absolute', right: 24, zIndex: 5 }}
-        >
-          <Image
-            source={passIcon ? (assets.hidePassword) : assets.showPassword}
-            style={{ width: 32, height: 32, resizeMode: "contain" }}
-          />
-
-        </TouchableOpacity>
-      </View>
+            <Text style={{ ...Styles.header, marginTop: 24 }}>
+              Login
+            </Text>
+            <Text style={{ ...Styles.headerText, color: COLORS.grey, marginTop: SIZES.small }}>
+              In learning you will teach, and in teaching {'\n'} you will learn.
+            </Text>
 
 
-      <View style={Styles.subViewContainer}>
-        <TouchableOpacity onPress={loginSubmitBtn}
-          style={Styles.btnStyle}>
-          <Text style={Styles.btnTextStyle}>LOGIN</Text>
-        </TouchableOpacity>
-      </View>
-      <Toast
-        position='bottom'
-        bottomOffset={20}
-      />
-    
-    </View>
+            <TextInput onChangeText={username => setLoginDetails({ ...loginDetails, email: username.trim().toLowerCase() })} value={loginDetails.email} keyboardType="email-address" variant="outlined" label="Email" style={{ marginHorizontal: 16, width: '100%', marginTop: SIZES.medium, marginTop: 72 }} color={COLORS.darkGrey} />
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: SIZES.medium }}>
+              <TextInput onChangeText={password => setLoginDetails({ ...loginDetails, password: password })} value={loginDetails.password} secureTextEntry={!visibility} variant="outlined" label="Password" style={{ marginHorizontal: 16, width: '100%' }} color={COLORS.darkGrey} />
+              <TouchableOpacity
+                onPress={() => {
+                  setVisibility(!visibility)
+                  setPassIcon(!passIcon)
+                }}
+                style={{ alignItems: 'center', justifyContent: 'center', width: 32, height: 32, position: 'absolute', right: 24, zIndex: 5 }}
+              >
+                <Image
+                  source={passIcon ? (assets.hidePassword) : assets.showPassword}
+                  style={{ width: 32, height: 32, resizeMode: "contain" }}
+                />
 
-    </TouchableWithoutFeedback>
-    </ScrollView>
+              </TouchableOpacity>
+            </View>
+            <Text onPress={() => {
+              navigation.navigate('ForgotPassword');
+
+            }} style={{ ...Styles.headerText, color: COLORS.blue, marginTop: SIZES.small, textAlign: 'right', alignSelf: 'flex-end', fontSize: 14 }}>
+              Forgot Password ?
+            </Text>
+
+
+            <View style={Styles.subViewContainer}>
+              <TouchableOpacity onPress={loginSubmitBtn}
+                style={Styles.btnStyle}>
+                <Text style={Styles.btnTextStyle}>LOGIN</Text>
+              </TouchableOpacity>
+            </View>
+            <Toast
+              position='bottom'
+              bottomOffset={20}
+            />
+
+          </View>
+
+        </TouchableWithoutFeedback>
+      </ScrollView>
 
     </KeyboardAvoidingView>
   );
