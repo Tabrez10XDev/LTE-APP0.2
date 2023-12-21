@@ -28,13 +28,14 @@ const StudentsList = ({ navigation, route }) => {
 
 
     const getStudentList = async () => {
-        try {
             let teacherID = await AsyncStorage.getItem('AuthState')
+            console.log(teacherID)
             axios.post(
                 `${CONST.baseUrl}/teacherapp/get/student/training`, {
                 teacher_id: teacherID
             }
             ).then((response) => {
+                console.log("asd");
                 setStudents(response.data)
                 setStudentData(response.data)
                 response.data.map((ele, index) => {
@@ -44,11 +45,10 @@ const StudentsList = ({ navigation, route }) => {
                         setArchiveStudents(oldArray => [...oldArray, ele]);
                     }
                 })
+            }).catch((err)=>{
+                console.log(err.response.data);
             })
-        } catch (e) {
-            // error reading value
-            console.error(e)
-        }
+        
     }
 
     function handleSearch(text) {

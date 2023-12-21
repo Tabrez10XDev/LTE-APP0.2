@@ -2,7 +2,7 @@ import { Text, View, Image, StyleSheet, TouchableOpacity, Dimensions } from "rea
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { List, Chip } from "react-native-paper";
-import { COLORS, SIZES, FONTS, assets } from "../../../../constants";
+import { COLORS, SIZES, FONTS, assets, CONST } from "../../../../constants";
 import ProgressBar from 'react-native-progress/Bar'
 import { Feather, Ionicons } from "@expo/vector-icons";
 import axios from "axios";
@@ -19,7 +19,7 @@ const Training = ({ navigation, route }) => {
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: 'https://lte-backend.onrender.com/api/teacherapp/get/student/details',
+            url: `${CONST.baseUrl}/teacherapp/get/student/details`,
             headers: {
                 'Content-Type': 'application/json'
             },

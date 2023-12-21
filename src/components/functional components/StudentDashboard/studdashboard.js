@@ -63,7 +63,7 @@ function StudentProfileView({ route }) {
           contentStyle: { backgroundColor: '#FFFFFF' }, tabBarIndicatorStyle: { backgroundColor: COLORS.primary },
         }}>
         <Tab.Screen name="Training" component={Training} initialParams={{ onClick: openSheet, student_id: route.params.student_id, student_name: route.params.student_name }} />
-        <Tab.Screen name="Availability" component={Availability} />
+        <Tab.Screen name="Availability" component={Availability} initialParams={{student_id: route.params.student_id}}  />
       </Tab.Navigator>
 
 
