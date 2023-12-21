@@ -453,7 +453,7 @@ function HomeTabView({ route }) {
 
             options={({ route }) => {
               const routeName = getFocusedRouteNameFromRoute(route) ?? 'Items'
-              if (routeName == "Level Review") {
+              if (routeName == "Level Review" || routeName == "Student Profile" || routeName == "Level Review Zero" || routeName == "Level Review Zero") {
                 return ({
                   drawerIcon: ({ focused, size }) => (
                     <Fontisto name="room" size={24}

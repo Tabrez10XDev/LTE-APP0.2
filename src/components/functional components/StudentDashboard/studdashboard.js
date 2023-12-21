@@ -56,7 +56,7 @@ function StudentProfileView({ route }) {
 
 
   return (
-    <View style={{ height: '100%', width: '100%', backgroundColor: 'white' }}>
+    <View style={{ height: '100%', width: '100%', backgroundColor: 'white,', paddingTop:42 }}>
 
       <Tab.Navigator
         screenOptions={{

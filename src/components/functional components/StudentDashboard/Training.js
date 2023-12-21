@@ -1,4 +1,4 @@
-import { Text, View, Image, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
+import { Text, View, Image, StyleSheet, TouchableOpacity, Dimensions, SafeAreaView } from "react-native";
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { List, Chip } from "react-native-paper";

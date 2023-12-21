@@ -88,7 +88,7 @@ const Availability = ({ navigation, route }) => {
             "start_date": formattedDateString,
             "level_id": data.next_level_id,
             "level_status": "Not Completed",
-            "created_by": data.teacher_id,
+            "created_by": data.created_by,
             "teacher_id": data.teacher_id,
             "session_details": trueSwitches
         }
@@ -445,8 +445,6 @@ const Availability = ({ navigation, route }) => {
                     onConfirm={
                         (date) => {
                             setTemp(date.date.toString().substring(4, 15))
-                            // setTemp2(date.endDate.toString().substring(4, 15))
-
                             setOpen(false)
                         }
                         //    onConfirmSingle
