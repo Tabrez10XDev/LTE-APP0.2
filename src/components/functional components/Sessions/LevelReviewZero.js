@@ -3,6 +3,7 @@ import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { List, Chip } from "react-native-paper";
 import { Feather, Ionicons, Entypo } from "@expo/vector-icons";
+import Lottie from 'lottie-react-native';
 
 import { COLORS, SIZES, FONTS, assets, CONST } from "../../../../constants";
 import ProgressBar from 'react-native-progress/Bar'
@@ -41,6 +42,24 @@ const openURI = async (url) => {
 
 
 const LevelReviewZero = ({ navigation, route }) => {
+
+    const [animSpeed, setAnimSpeed] = useState(false)
+    const animRef = useRef()
+
+    function playAnimation() {
+        setAnimSpeed(true)
+    }
+
+
+    function pauseAnimation() {
+        setAnimSpeed(false)
+    }
+
+    useEffect(() => {
+        setTimeout(() => {
+            animRef.current?.play();
+        }, 100)
+    }, [animSpeed])
 
     const reviewMap = {
         1: "Needs Improvement",
@@ -250,14 +269,22 @@ const LevelReviewZero = ({ navigation, route }) => {
             data: _data
         };
 
+        playAnimation()
+
         axios.request(config)
             .then((response) => {
+                pauseAnimation()
                 console.log(JSON.stringify(response.data));
+                Toast.show({
+                    type: 'success',
+                    text1: 'Successfully updated'
+                })
                 setStackIndex(1)
                 setMessage("")
                 fetchLevels(levelId, id, level_name)
             })
             .catch((error) => {
+                pauseAnimation()
                 console.log(error.response);
             });
 
@@ -286,6 +313,7 @@ const LevelReviewZero = ({ navigation, route }) => {
                 headers: { "Content-Type": "multipart/form-data" },
             };
             //TODO update student id 
+            playAnimation()
             axios.request(config)
                 .then((response) => {
 
@@ -304,14 +332,17 @@ const LevelReviewZero = ({ navigation, route }) => {
                     }
                     ).then((response) => {
                         console.log(response.status)
+                        pauseAnimation()
                         if (response.status == 200) {
                             uploadAudio2(id, levelId, level_name, index)
                             // setStates(current => ({ ...current, [id]: true }))
                             // updateFeedback(levelId, id, level_name, index)
                         }
+
                     }
                     )
                 }).catch((err => {
+                    pauseAnimation()
                     console.error(err)
                     Toast.show({
                         type: 'error',
@@ -344,6 +375,7 @@ const LevelReviewZero = ({ navigation, route }) => {
                 headers: { "Content-Type": "multipart/form-data" },
             };
             //TODO update student id 
+            playAnimation()
             axios.request(config)
                 .then((response) => {
 
@@ -362,6 +394,7 @@ const LevelReviewZero = ({ navigation, route }) => {
                     }
                     ).then((response) => {
                         console.log(response.status)
+                        pauseAnimation()
                         if (response.status == 200) {
                             setStates(current => ({ ...current, [id]: true }))
                             // updateFeedback(levelId, id, level_name, index)
@@ -369,6 +402,7 @@ const LevelReviewZero = ({ navigation, route }) => {
                     }
                     )
                 }).catch((err => {
+                    pauseAnimation()
                     console.error(err)
                     Toast.show({
                         type: 'error',
@@ -424,7 +458,7 @@ const LevelReviewZero = ({ navigation, route }) => {
                     <View style={{ alignSelf: 'flex-start', marginTop: 8, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', width: '90%' }}>
 
 
-                        <ProgressBar unfilledColor={COLORS.unProgressed} color={COLORS.yellow} progress={data.progress} width={Dimensions.get('window').width * 0.6} borderColor={COLORS.unProgressed} />
+                        <ProgressBar unfilledColor={COLORS.unProgressed} color={data.progress == data.total ? COLORS.green : COLORS.yellow} progress={data.progress / data.total} width={Dimensions.get('window').width * 0.6} borderColor={COLORS.unProgressed} />
                         <Text
                             style={{
                                 fontFamily: FONTS.regular,
@@ -439,19 +473,27 @@ const LevelReviewZero = ({ navigation, route }) => {
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <List.AccordionGroup>
-
+                    {console.log(data.sessions[7])}
                     {data.sessions.map((ele, index) => {
+
                         return (
-                            (ele.session_unlock_status === true) || data2.sessions[index].session_unlock_status  ? (
-                                <List.Accordion theme={{ colors: { primary: COLORS.primary } }} style={{ backgroundColor: 'white' }} title={ele.session_name} id={ele.session_id}>
+                            (ele.session_unlock_status === true) || data2.sessions[index].session_unlock_status || index == 0 ? (
+                                <List.Accordion theme={{ colors: { primary: COLORS.primary } }} style={{ backgroundColor: 'white' }} title={ele.session_name} id={ele.session_id}
+                                    right={props =>
+                                        ele.session_feedback !== 'NA' ?  (
+                                            <List.Icon {...props} icon="check" color="green" />
+                                        ) :  (
+                                            <List.Icon {...props} icon="clock"  />
+                                        )
+                                    }                                >
                                     <View style={{ borderColor: COLORS.borderGrey, borderWidth: 1 }}>
                                         <Text style={TrainStyle.sessionTitle}>{ele.stud_res_name}</Text>
                                         <Text style={{ fontFamily: FONTS.regular, fontSize: SIZES.smallFont, marginHorizontal: 16 }}>
                                             {ele.stud_res_desc}
                                         </Text>
                                         <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                                            <TouchableOpacity style={TrainStyle.btnStyle} onPress={() => openURI(ele.stud_res_url)}>
-                                                <Text style={TrainStyle.btnTextStyle}>View</Text>
+                                            <TouchableOpacity style={{ ...TrainStyle.btnStyle, width: '60%', marginTop: 8 }} onPress={() => openURI(ele.stud_res_url)}>
+                                                <Text style={TrainStyle.btnTextStyle}>View Material</Text>
                                             </TouchableOpacity>
 
                                         </View>
@@ -526,12 +568,12 @@ const LevelReviewZero = ({ navigation, route }) => {
                                                     }
 
 
-                                                    <View style={{ ...Style.subViewContainer, width: '40%', marginHorizontal: 0 }}>
+                                                    {/* <View style={{ ...Style.subViewContainer, width: '40%', marginHorizontal: 0 }}>
                                                         <TouchableOpacity
                                                             style={Style.btnStyle}>
                                                             <Text style={Style.btnTextStyle}>RETAKE</Text>
                                                         </TouchableOpacity>
-                                                    </View>
+                                                    </View> */}
                                                 </View>
                                             </> : <>
                                                 <Text style={TrainStyle.subHeading}>Upload Audioa</Text>
@@ -627,6 +669,35 @@ const LevelReviewZero = ({ navigation, route }) => {
 
                 </List.AccordionGroup>
             </ScrollView>
+            {animSpeed &&
+                <View style={{
+                    shadowColor: COLORS.homeCard,
+                    shadowOffset: {
+                        width: 0,
+                        height: 2,
+                    },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 2,
+                    elevation: 8,
+                    position: 'absolute', height: '120%', width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(52, 52, 52, 0.0)', alignSelf: 'center', padding: 24, marginTop: 16
+                }}>
+
+                    <View style={{ width: '90%', borderRadius: 16, justifyContent: 'center', alignItems: 'center', marginTop: '0%' }}>
+                        <Lottie source={require('../../../../assets/loading.json')} autoPlay style={{ height: 300, width: 300, alignSelf: 'center' }} loop ref={animRef} speed={1} />
+                        <Text
+                            style={{
+                                fontFamily: FONTS.bold,
+                                fontSize: SIZES.large,
+                                flexWrap: 'wrap',
+                                marginTop: -48
+                            }}>
+                            Loading
+                        </Text>
+                    </View>
+
+                </View>
+
+            }
 
             <Toast
                 position='bottom'

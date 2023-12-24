@@ -10,6 +10,7 @@ import boardingOne from "../assets/icons/boardingOne.png"
 import arrowCircleRight from "../assets/icons/arrowcircleright.png"
 import notFound from "../assets/icons/notFound.png"
 import logo from "../assets/icon.jpg"
+import loader from "../assets/loading.json"
 
 export default {
     google,
@@ -23,5 +24,6 @@ export default {
     boardingOne,
     arrowCircleRight,
     notFound,
-    logo
+    logo,
+    loader
 }

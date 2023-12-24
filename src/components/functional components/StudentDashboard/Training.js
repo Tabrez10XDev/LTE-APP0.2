@@ -137,7 +137,7 @@ const Training = ({ navigation, route }) => {
                                 <View style={{ alignSelf: 'flex-start', marginTop: 8, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
 
 
-                                    <ProgressBar unfilledColor={COLORS.unProgressed} color={COLORS.yellow} progress={state[ele.level_id].progress} width={Dimensions.get('window').width * 0.7} borderColor={COLORS.unProgressed} />
+                                    <ProgressBar unfilledColor={COLORS.unProgressed} color={ state[ele.level_id].progress == state[ele.level_id].total ? COLORS.green :COLORS.yellow} progress={state[ele.level_id].progress / state[ele.level_id].total} width={Dimensions.get('window').width * 0.7} borderColor={COLORS.unProgressed} />
                                     <Text
                                         style={{
                                             fontFamily: FONTS.regular,
@@ -155,7 +155,7 @@ const Training = ({ navigation, route }) => {
 
                 {data.level_list.length === 0 && 
                  <Text style={{marginTop:64, fontFamily: FONTS.bold, color:COLORS.darkGrey, fontSize: 16, alignSelf:'center'}}>
-                 No Student is available 
+                 No Training data is available 
              </Text>
                 }
 

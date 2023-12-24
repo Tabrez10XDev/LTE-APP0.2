@@ -1,11 +1,12 @@
 import { Text, View, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { React, useState } from "react";
+import { React, useState, useEffect, useRef } from "react";
 import { COLORS, SIZES, FONTS, assets, CONST } from "../../../../constants";
 import { TextInput } from "@react-native-material/core";
 import Toast from 'react-native-toast-message';
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Lottie from 'lottie-react-native';
 
 
 
@@ -14,6 +15,23 @@ import { log } from "react-native-reanimated";
 
 const Login = ({ navigation, route }) => {
 
+  const [animSpeed, setAnimSpeed] = useState(false)
+  const animRef = useRef()
+
+  function playAnimation() {
+    setAnimSpeed(true)
+  }
+
+
+  function pauseAnimation() {
+    setAnimSpeed(false)
+  }
+
+  useEffect(() => {
+    setTimeout(() => {
+      animRef.current?.play();
+    }, 100)
+  }, [animSpeed])
 
 
   const [passIcon, setPassIcon] = useState(false)
@@ -55,13 +73,15 @@ const Login = ({ navigation, route }) => {
     } else {
 
       // navigation.navigate('TermsConditions');
-
+      playAnimation()
 
       axios.post(
         `${CONST.baseUrl}/teacher/get/teacherlogin`, loginDetails
       ).then((response) => {
 
         console.log(response.data)
+
+        pauseAnimation()
 
         if (response.data == "invalid password") {
           Toast.show({
@@ -77,6 +97,7 @@ const Login = ({ navigation, route }) => {
           navigation.navigate('TermsConditions', { teacher_id: response.data[0].teacher_id.toString() });
         }
       }).catch((error) => {
+        pauseAnimation()
         console.error(error)
         console.log(error.response);
         Toast.show({
@@ -149,6 +170,35 @@ const Login = ({ navigation, route }) => {
 
         </TouchableWithoutFeedback>
       </ScrollView>
+      {animSpeed &&
+        <View style={{
+          shadowColor: COLORS.homeCard,
+          shadowOffset: {
+            width: 0,
+            height: 2,
+          },
+          shadowOpacity: 0.3,
+          shadowRadius: 2,
+          elevation: 8,
+          position: 'absolute', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(52, 52, 52, 0.0)', alignSelf: 'center', padding: 24, marginTop: 16
+        }}>
+
+<View>
+<Lottie source={require('../../../../assets/loading.json')} autoPlay style={{ height: 300, width: 300, alignSelf: 'center' }} loop ref={animRef} speed={1} />
+                        <Text
+                        style={{
+                            fontFamily: FONTS.bold,
+                            fontSize: SIZES.large,
+                            flexWrap: 'wrap',
+                            marginTop:-48
+                        }}>
+                        Loading
+                    </Text>
+</View>
+
+        </View>
+
+      }
 
     </KeyboardAvoidingView>
   );

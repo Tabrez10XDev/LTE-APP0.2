@@ -1,4 +1,4 @@
-import { React, useLayoutEffect, useCallback, useState, useEffect } from "react";
+import { React, useLayoutEffect, useCallback, useState, useEffect, useRef } from "react";
 import { Text, View, Image, TouchableOpacity, Dimensions } from "react-native";
 import {
   createDrawerNavigator, DrawerContentScrollView,
@@ -9,7 +9,7 @@ import { Feather, Ionicons, Fontisto, FontAwesome } from "@expo/vector-icons";
 import axios from "axios";
 import { StyleSheet } from "react-native";
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
-
+import Lottie from 'lottie-react-native';
 import "react-native-gesture-handler";
 import * as DocumentPicker from "expo-document-picker";
 import Style from "./Style";
@@ -134,6 +134,27 @@ function TrainingMaterialTab({ navigation }) {
 
 
 function UploadAudioTab({ route, navigation }) {
+
+
+  const [animSpeed, setAnimSpeed] = useState(false)
+  const animRef = useRef()
+
+  function playAnimation() {
+    setAnimSpeed(true)
+  }
+
+
+  function pauseAnimation() {
+    setAnimSpeed(false)
+  }
+
+  useEffect(() => {
+    setTimeout(() => {
+      animRef.current?.play();
+    }, 100)
+  }, [animSpeed])
+
+
   const teacherID = useContext(TeacherIDContext);
 
   const [audioStatus, setAudioStatus] = useState("null")
@@ -144,6 +165,7 @@ function UploadAudioTab({ route, navigation }) {
       axios.get(
         `${CONST.baseUrl}/audio/get/teacherdetails/audiostatus/${teacherID}`
       ).then((response) => {
+        console.log(response.data)
         setAudioStatus(response.data.at(-1).audio_status)
         if (response.data.at(-1).audio_status == "submitted") {
           setImage(assets.waiting)
@@ -217,12 +239,12 @@ function UploadAudioTab({ route, navigation }) {
   const uploadAudio = async () => {
 
 
-    
+
     const { name, uri } = fileResponse;
     console.log(uri);
     let formDataObj = new FormData();
     if (uri) {
-      formDataObj.append('file', {name, uri, type:"video/mp4"});
+      formDataObj.append('file', { name, uri, type: "video/mp4" });
       formDataObj.append('api_key', formData.api_key);
       formDataObj.append('upload_preset', formData.upload_preset);
       const salt = (Math.random() + 1).toString(36).substring(2)
@@ -235,53 +257,65 @@ function UploadAudioTab({ route, navigation }) {
         headers: { "Content-Type": "multipart/form-data" },
       };
 
+      playAnimation()
+
       axios.request(config)
-      .then((response) => {
-        console.log("Inside");
-        axios.post(
-          `${CONST.baseUrl}/audio`, {
-          teacher_id: teacherID,
-          audio_file_name: name,
-          audio_source: response.data.url ?? "",
-          audio_status: "submitted",
-          audio_reason: "",
-          audio_audit_by: "tanu",
-        }
-        ).then((response) => {
-          if (response.status == 200) {
-            setAudioStatus("submitted")
-            setImage(assets.waiting)
+        .then((response) => {
+          console.log("Inside");
+          axios.post(
+            `${CONST.baseUrl}/audio`, {
+            teacher_id: teacherID,
+            audio_file_name: name,
+            audio_source: response.data.url ?? "",
+            audio_status: "submitted",
+            audio_reason: "",
+            audio_audit_by: "tanu",
+            teacher_name: ""
           }
-        }
-        ).catch((err => {
+          ).then((response) => {
+
+            pauseAnimation()
+
+            if (response.status == 200) {
+              setAudioStatus("submitted")
+              setImage(assets.waiting)
+            }
+          }
+          ).catch((err => {
+
+            pauseAnimation()
+
+            Toast.show({
+              type: 'error',
+              text1: 'Unknown error occured'
+            })
+          }))
+        }).catch((err => {
+
+          pauseAnimation()
+
+          console.log(err.response)
           Toast.show({
             type: 'error',
             text1: 'Unknown error occured'
           })
         }))
-      }).catch((err => {
-        console.log(err.response)
-        Toast.show({
-          type: 'error',
-          text1: 'Unknown error occured'
-        })
-      }))
 
 
 
     }
 
     // let data = new FormData();
-   
-    
+
+
     // let config = {
     //   method: 'post',
     //   maxBodyLength: Infinity,
     //   url: 'https://api.cloudinary.com/v1_1/db2bzxbn7/video/upload',
-    
+
     //   data : data
     // };
-    
+
     // axios.request(config)
     // .then((response) => {
     //   console.log(JSON.stringify(response.data));
@@ -343,6 +377,35 @@ function UploadAudioTab({ route, navigation }) {
             </TouchableOpacity>
           </View>
         </View>)
+      }
+      {animSpeed &&
+        <View style={{
+          shadowColor: COLORS.homeCard,
+          shadowOffset: {
+            width: 0,
+            height: 2,
+          },
+          shadowOpacity: 0.3,
+          shadowRadius: 2,
+          elevation: 8,
+          position: 'absolute', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(52, 52, 52, 0.0)', alignSelf: 'center', padding: 24, marginTop: 16
+        }}>
+
+          <View>
+            <Lottie source={require('../../../../assets/loading.json')} autoPlay style={{ height: 300, width: 300, alignSelf: 'center' }} loop ref={animRef} speed={1} />
+            <Text
+              style={{
+                fontFamily: FONTS.bold,
+                fontSize: SIZES.large,
+                flexWrap: 'wrap',
+                marginTop: -48
+              }}>
+              Loading
+            </Text>
+          </View>
+
+        </View>
+
       }
       <Toast
         position='bottom'
@@ -502,7 +565,7 @@ function HomeTabView({ route }) {
             }} />
 
           <Drawer.Screen name="Ticket Status" component={TicketStatus}
-           initialParams={{ teacherID: stateID }}
+            initialParams={{ teacherID: stateID }}
             options={({ navigation, route }) => ({
               drawerIcon: ({ focused, size }) => (
                 <FontAwesome name="ticket" size={24}

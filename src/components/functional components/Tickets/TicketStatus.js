@@ -1,4 +1,4 @@
-import { Text, View, Image, StyleSheet, SafeAreaView, TextInput, TouchableOpacity, Modal } from "react-native";
+import { Text, View, Image, StyleSheet, SafeAreaView, TextInput, TouchableOpacity, Modal, Pressable } from "react-native";
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { List, Chip } from "react-native-paper";
@@ -17,11 +17,15 @@ const TicketStatus = ({ navigation, route }) => {
 
     const [stackIndex, setStackIndex] = useState(1);
     const [modalVisible, setModalVisible] = useState(false);
+    const [popup, setPopup] = useState(false)
 
     const [allTickets, setAllTickets] = useState([])
     const [activeTickets, setActiveTickets] = useState([])
     const [resolvedTickets, setResolvedTickets] = useState([])
     const [ticketList, setTicketList] = useState([])
+    const [content, setContent] = useState("")
+    const [title, setTitle] = useState("")
+
 
 
     const getTicketsList = async () => {
@@ -109,10 +113,13 @@ const TicketStatus = ({ navigation, route }) => {
             <ScrollView style={{ marginTop: 12, marginBottom: 8 }} showsVerticalScrollIndicator={false} contentContainerStyle={{ width: Dimensions.get('window').width * 0.9 }}>
 
                 {
-
                     ticketList.map((ele, index) => {
+                        console.log(ele);
                         return (
-                            <TicketListItem id={index + 1} name={ele.msg_title} time={`Since ${moment(ele.created_at.substring(0, 16), "YYYY-MM-DDTHH:mm").fromNow()}`} status={ele.replied_by == null ? false : true} />
+                            <TicketListItem id={index + 1} name={ele.msg_title} time={`Since ${moment(ele.created_at.substring(0, 16), "YYYY-MM-DDTHH:mm").fromNow()}`} status={ele.replied_by == null ? false : true} onClick={()=>{
+                                setTitle(ele.msg_title)
+                                setContent(ele.msg_description)
+                                setPopup(true)}} />
                         )
                     })
                 }
@@ -123,6 +130,53 @@ const TicketStatus = ({ navigation, route }) => {
                     </Text> : null
                 }
             </ScrollView>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={popup}
+                onRequestClose={() => {
+                    setPopup(!popup);
+                }}
+            >
+                <View style={styles.modalView}>
+                <Text
+                        style={{
+                            textAlign: 'justify',
+                            fontSize: SIZES.medium,
+                            fontFamily: FONTS.bold,
+                            color: COLORS.textBlack,
+                        }}
+                    >{title}</Text>
+                    <Text
+                        style={{
+                            textAlign: 'justify',
+                            fontSize: SIZES.medium,
+                            fontFamily: FONTS.semiBold,
+                            color: COLORS.textBlack,
+                            marginTop:8
+                        }}
+                    >{content}</Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', width: '100%', marginTop: 24 }}>
+
+                        <Pressable
+                            style={{ width: '45%', borderRadius: 6, borderWidth: 0, backgroundColor: COLORS.blue, padding: 6 }}
+                            onPress={() => {
+                                setPopup(!popup)
+                            }
+                            }
+                        >
+                            <Text style={{
+                                fontSize: SIZES.font,
+                                fontFamily: FONTS.regular,
+                                color: 'white',
+                                textAlign: 'center'
+                            }}>Close</Text>
+                        </Pressable>
+                    </View>
+
+                </View>
+            </Modal>
 
             {/* <Modal
                 animationType="slide"
@@ -172,7 +226,30 @@ const styles = StyleSheet.create({
     },
     selectedText: {
         fontFamily: FONTS.regular, color: 'white', fontSize: 14
-    }
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        alignSelf:'center',
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+        position: 'absolute',
+        top: '40%',
+        width: '95%'
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: "center"
+    },
 
 });
 

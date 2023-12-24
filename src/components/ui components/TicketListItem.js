@@ -7,12 +7,13 @@ import { Ionicons } from '@expo/vector-icons';
 
 
 
-const TicketListItem = ({onclick, name, education, id, time, status}) => {
+const TicketListItem = ({onclick, name, education, id, time, status, onClick}) => {
 
 
 
     return (
         <TouchableOpacity 
+        onPress={onClick}
         style={{ width: '100%', flexDirection: 'row', height: 75, padding: 12, marginTop:4, backgroundColor:'white', borderRadius:8, marginTop:16 }}>
             <View style={{ height: 50, width: 50, backgroundColor: COLORS.primary, justifyContent: 'center', alignItems: 'center', borderRadius:4 }}>
                 <Text style={{

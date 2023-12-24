@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { List, Chip } from "react-native-paper";
 import { TextInput } from "@react-native-material/core";
 import axios from 'axios'
+import Lottie from 'lottie-react-native';
 
 import { COLORS, SIZES, FONTS, assets, CONST } from "../../../../constants";
 import { DatePickerModal } from 'react-native-paper-dates';
@@ -16,9 +17,28 @@ import { Switch } from 'react-native-paper';
 
 const Availability = ({ navigation, route }) => {
 
-    const [date, setDate] = useState()
 
-    const [temp, setTemp] = useState()
+    const [animSpeed, setAnimSpeed] = useState(false)
+    const animRef = useRef()
+
+    function playAnimation() {
+        setAnimSpeed(true)
+    }
+
+
+    function pauseAnimation() {
+        setAnimSpeed(false)
+    }
+
+    useEffect(() => {
+        setTimeout(() => {
+            animRef.current?.play();
+        }, 100)
+    }, [animSpeed])
+
+    const [date, setDate] = useState(new Date())
+
+    const [temp, setTemp] = useState("")
     const [open, setOpen] = React.useState(false);
 
     const [temp2, setTemp2] = useState()
@@ -35,10 +55,12 @@ const Availability = ({ navigation, route }) => {
 
         axios.get(`${CONST.baseUrl}/student/assign/next/session/${route.params.student_id}`)
             .then((response) => {
+                console.log("fetching");
                 console.log(response.data)
                 setData(response.data)
             })
             .catch((error) => {
+                console.log("error");
                 console.log(error);
             });
 
@@ -76,6 +98,7 @@ const Availability = ({ navigation, route }) => {
 
         const originalDate = new Date(temp);
 
+
         const year = originalDate.getFullYear();
         const month = (originalDate.getMonth() + 1).toString().padStart(2, '0');
         const day = originalDate.getDate().toString().padStart(2, '0');
@@ -88,18 +111,20 @@ const Availability = ({ navigation, route }) => {
             "start_date": formattedDateString,
             "level_id": data.next_level_id,
             "level_status": "Not Completed",
-            "created_by": data.created_by,
+            "created_by": data.teacher_id,
             "teacher_id": data.teacher_id,
             "session_details": trueSwitches
         }
 
-        console.log(JSON.stringify(payload));
-        console.log(`${CONST.baseUrl}/student/assign/assignlevel`);
+        playAnimation()
+
+        // console.log(JSON.stringify(payload));
+        // console.log(`${CONST.baseUrl}/student/assign/assignlevel`);
 
         axios.post(`${CONST.baseUrl}/student/assign/assignlevel`, payload)
             .then(async (response) => {
                 console.log(response.data)
-                setData(response.data)
+                pauseAnimation()
                 await fetchAvailability()
                 Toast.show({
                     type: 'success',
@@ -111,6 +136,7 @@ const Availability = ({ navigation, route }) => {
             })
             .catch((error) => {
                 console.log(error);
+                pauseAnimation()
                 Toast.show({
                     type: 'error',
                     text1: "Please try again later"
@@ -190,7 +216,7 @@ const Availability = ({ navigation, route }) => {
             <ScrollView style={{ backgroundColor: 'white', height: '100%' }} contentContainerStyle={{ alignItems: 'center', }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 24 }}>
                     <Text style={{ fontFamily: FONTS.semiBold, fontSize: SIZES.font }}>
-                        Level {data.next_level_name.replace("level", "")}
+                        Level {data.next_level_name?.replace("level", "")}
                     </Text>
                     <View style={{ flexDirection: 'row', marginStart: 8 }}>
                         <View style={{ height: 4, width: 4, borderRadius: 2, backgroundColor: COLORS.grey, marginHorizontal: 2 }} />
@@ -205,7 +231,7 @@ const Availability = ({ navigation, route }) => {
                         <Ionicons name="calendar-outline" size={22} color={COLORS.grey} style={{ position: 'absolute', right: 12 }} />
                         <TextInput
                             onPressOut={() => { setOpen(true) }}
-                            value={temp} editable={false} variant="flat" label="Start Date" style={{ backgroundColor: COLORS.borderGrey, borderRadius: 4, paddingTop: 6 }} color={COLORS.darkGrey} />
+                            value={temp.substring(4, 15)} editable={false} variant="flat" label="Start Date" style={{ backgroundColor: COLORS.borderGrey, borderRadius: 4, paddingTop: 6 }} color={COLORS.darkGrey} />
                     </View>
 
                     {/* <View style={{ marginHorizontal: 16, flex: 1, justifyContent: 'center' }}>
@@ -222,14 +248,21 @@ const Availability = ({ navigation, route }) => {
                 </Text>
 
                 <Text style={{ fontFamily: FONTS.regular, fontSize: SIZES.font, color: COLORS.almostBlack, alignSelf: 'flex-start', marginStart: 16, marginTop: 4 }}>
-                    Total {data.next_level_session_count.toString()} sessions in Level {data.next_level_name.replace("level", "")}. End Date will auto calculate based on the selection of the start date.
+                    Total {data.next_level_session_count.toString()} sessions in Level {data.next_level_name?.replace("level", "")}. End Date will auto calculate based on the selection of the start date.
                 </Text>
 
 
                 <View style={{ width: '95%' }}>
 
                     <List.AccordionGroup>
-                        <List.Accordion style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Sunday" id="1">
+                        <List.Accordion 
+                         right={props =>
+                            switches[0] ? (
+                                <List.Icon {...props} icon="check" color="green" />
+                            ) : (
+                                <List.Icon {...props} icon="chevron-down" />
+                            )
+                        } style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Sunday" id="1">
                             <View style={{ width: '98%', marginTop: SIZES.font, flexDirection: 'row' }}>
                                 <TextInput value={time[0]} editable={false} onPressOut={() => {
                                     setCurrentTimeIndex(0)
@@ -242,11 +275,11 @@ const Availability = ({ navigation, route }) => {
                             </View>
                             <View style={{ width: '95%', marginTop: SIZES.medium, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', alignSelf: 'center' }}>
 
-                                <Text
+                                {/* <Text
                                     onPress={() => { }}
                                     style={{ fontFamily: FONTS.semiBold, fontSize: SIZES.font, color: COLORS.blue, alignSelf: 'center' }}>
                                     Request Postpone
-                                </Text>
+                                </Text> */}
                                 <Switch value={switches[0]} onValueChange={(value) => {
                                     if (totalDays >= 3 && value) return
                                     setSwitches(curr => ({ ...curr, 0: value }))
@@ -255,7 +288,15 @@ const Availability = ({ navigation, route }) => {
                             </View>
                         </List.Accordion>
 
-                        <List.Accordion style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Monday" id="2">
+                        <List.Accordion 
+                         right={props =>
+                            switches[1] ? (
+                                <List.Icon {...props} icon="check" color="green" />
+                            ) : (
+                                <List.Icon {...props} icon="chevron-down" />
+                            )
+                        }
+                        style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Monday" id="2">
                             <View style={{ width: '98%', marginTop: SIZES.font, flexDirection: 'row' }}>
                                 <TextInput value={time[1]} editable={false} onPressOut={() => {
                                     setCurrentTimeIndex(1)
@@ -268,11 +309,11 @@ const Availability = ({ navigation, route }) => {
                             </View>
                             <View style={{ width: '95%', marginTop: SIZES.medium, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', alignSelf: 'center' }}>
 
-                                <Text
+                                {/* <Text
                                     onPress={() => { }}
                                     style={{ fontFamily: FONTS.semiBold, fontSize: SIZES.font, color: COLORS.blue, alignSelf: 'center' }}>
                                     Request Postpone
-                                </Text>
+                                </Text> */}
 
                                 <Switch value={switches[1]} onValueChange={(value) => {
                                     if (totalDays >= 3 && value) return
@@ -282,7 +323,13 @@ const Availability = ({ navigation, route }) => {
                             </View>
                         </List.Accordion>
 
-                        <List.Accordion style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Tuesday" id="3">
+                        <List.Accordion  right={props =>
+                                switches[2] ? (
+                                    <List.Icon {...props} icon="check" color="green" />
+                                ) : (
+                                    <List.Icon {...props} icon="chevron-down" />
+                                )
+                            } style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Tuesday" id="3">
                             <View style={{ width: '98%', marginTop: SIZES.font, flexDirection: 'row' }}>
                                 <TextInput value={time[2]} editable={false} onPressOut={() => {
                                     setCurrentTimeIndex(2)
@@ -295,11 +342,11 @@ const Availability = ({ navigation, route }) => {
                             </View>
                             <View style={{ width: '95%', marginTop: SIZES.medium, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', alignSelf: 'center' }}>
 
-                                <Text
+                                {/* <Text
                                     onPress={() => { }}
                                     style={{ fontFamily: FONTS.semiBold, fontSize: SIZES.font, color: COLORS.blue, alignSelf: 'center' }}>
                                     Request Postpone
-                                </Text>
+                                </Text> */}
 
                                 <Switch value={switches[2]} onValueChange={(value) => {
                                     if (totalDays >= 3 && value) return
@@ -309,7 +356,14 @@ const Availability = ({ navigation, route }) => {
                             </View>
                         </List.Accordion>
 
-                        <List.Accordion style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Wednesday" id="4">
+                        <List.Accordion  right={props =>
+                                switches[3] ? (
+                                    <List.Icon {...props} icon="check" color="green" />
+                                ) : (
+                                    <List.Icon {...props} icon="chevron-down" />
+                                )
+                            } 
+                            style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Wednesday" id="4">
                             <View style={{ width: '98%', marginTop: SIZES.font, flexDirection: 'row' }}>
                                 <TextInput value={time[3]} editable={false} onPressOut={() => {
                                     setCurrentTimeIndex(3)
@@ -322,11 +376,11 @@ const Availability = ({ navigation, route }) => {
                             </View>
                             <View style={{ width: '95%', marginTop: SIZES.medium, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', alignSelf: 'center' }}>
 
-                                <Text
+                                {/* <Text
                                     onPress={() => { }}
                                     style={{ fontFamily: FONTS.semiBold, fontSize: SIZES.font, color: COLORS.blue, alignSelf: 'center' }}>
                                     Request Postpone
-                                </Text>
+                                </Text> */}
 
                                 <Switch value={switches[3]} onValueChange={(value) => {
                                     if (totalDays >= 3 && value) return
@@ -336,7 +390,13 @@ const Availability = ({ navigation, route }) => {
                             </View>
                         </List.Accordion>
 
-                        <List.Accordion style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Thursday" id="5">
+                        <List.Accordion right={props =>
+                                switches[4] ? (
+                                    <List.Icon {...props} icon="check" color="green" />
+                                ) : (
+                                    <List.Icon {...props} icon="chevron-down" />
+                                )
+                            } style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Thursday" id="5">
                             <View style={{ width: '98%', marginTop: SIZES.font, flexDirection: 'row' }}>
                                 <TextInput value={time[4]} editable={false} onPressOut={() => {
                                     setCurrentTimeIndex(4)
@@ -349,11 +409,11 @@ const Availability = ({ navigation, route }) => {
                             </View>
                             <View style={{ width: '95%', marginTop: SIZES.medium, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', alignSelf: 'center' }}>
 
-                                <Text
+                                {/* <Text
                                     onPress={() => { }}
                                     style={{ fontFamily: FONTS.semiBold, fontSize: SIZES.font, color: COLORS.blue, alignSelf: 'center' }}>
                                     Request Postpone
-                                </Text>
+                                </Text> */}
 
                                 <Switch value={switches[4]} onValueChange={(value) => {
                                     if (totalDays >= 3 && value) return
@@ -363,7 +423,13 @@ const Availability = ({ navigation, route }) => {
                             </View>
                         </List.Accordion>
 
-                        <List.Accordion style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Friday" id="6">
+                        <List.Accordion  right={props =>
+                                switches[5] ? (
+                                    <List.Icon {...props} icon="check" color="green" />
+                                ) : (
+                                    <List.Icon {...props} icon="chevron-down" />
+                                )
+                            } style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Friday" id="6">
                             <View style={{ width: '98%', marginTop: SIZES.font, flexDirection: 'row' }}>
                                 <TextInput value={time[5]} editable={false} onPressOut={() => {
                                     setCurrentTimeIndex(5)
@@ -376,11 +442,11 @@ const Availability = ({ navigation, route }) => {
                             </View>
                             <View style={{ width: '95%', marginTop: SIZES.medium, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', alignSelf: 'center' }}>
 
-                                <Text
+                                {/* <Text
                                     onPress={() => { }}
                                     style={{ fontFamily: FONTS.semiBold, fontSize: SIZES.font, color: COLORS.blue, alignSelf: 'center' }}>
                                     Request Postpone
-                                </Text>
+                                </Text> */}
 
                                 <Switch value={switches[5]} onValueChange={(value) => {
                                     if (totalDays >= 3 && value) return
@@ -392,7 +458,15 @@ const Availability = ({ navigation, route }) => {
 
 
 
-                        <List.Accordion style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Saturday" id="7">
+                        <List.Accordion
+                            right={props =>
+                                switches[6] ? (
+                                    <List.Icon {...props} icon="check" color="green" />
+                                ) : (
+                                    <List.Icon {...props} icon="chevron-down" />
+                                )
+                            }
+                            style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Saturday" id="7">
                             <View style={{ width: '98%', marginTop: SIZES.font, flexDirection: 'row' }}>
                                 <TextInput value={time[6]} editable={false} onPressOut={() => {
                                     setCurrentTimeIndex(6)
@@ -405,11 +479,11 @@ const Availability = ({ navigation, route }) => {
                             </View>
                             <View style={{ width: '95%', marginTop: SIZES.medium, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', alignSelf: 'center' }}>
 
-                                <Text
+                                {/* <Text
                                     onPress={() => { }}
                                     style={{ fontFamily: FONTS.semiBold, fontSize: SIZES.font, color: COLORS.blue, alignSelf: 'center' }}>
                                     Request Postpone
-                                </Text>
+                                </Text> */}
 
                                 <Switch value={switches[6]} onValueChange={(value) => {
                                     if (totalDays >= 3 && value) return
@@ -418,6 +492,8 @@ const Availability = ({ navigation, route }) => {
                                 }} color={COLORS.primary} />
                             </View>
                         </List.Accordion>
+
+
                     </List.AccordionGroup>
                 </View>
                 <TimePickerModal
@@ -440,11 +516,12 @@ const Availability = ({ navigation, route }) => {
                     onDismiss={onDismissSingle}
                     label='Select Date'
                     date={date}
-                    validRange={{ startDate: new Date(data.date) }}
-                    startDate={new Date(data.date)}
+                    // validRange={{ startDate: new Date(data.date) }}
+                    startDate={data.date ? new Date(data.date) : new Date()}
                     onConfirm={
                         (date) => {
-                            setTemp(date.date.toString().substring(4, 15))
+                            setDate(new Date(date.date.toString()))
+                            setTemp(date.date.toString())
                             setOpen(false)
                         }
                         //    onConfirmSingle
@@ -477,6 +554,35 @@ const Availability = ({ navigation, route }) => {
                 </View>
 
             </ScrollView>
+            {animSpeed &&
+                <View style={{
+                    shadowColor: COLORS.homeCard,
+                    shadowOffset: {
+                        width: 0,
+                        height: 2,
+                    },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 2,
+                    elevation: 8,
+                    position: 'absolute', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(52, 52, 52, 0.0)', alignSelf: 'center', padding: 24, marginTop: 16
+                }}>
+
+                    <View>
+                        <Lottie source={require('../../../../assets/loading.json')} autoPlay style={{ height: 300, width: 300, alignSelf: 'center' }} loop ref={animRef} speed={1} />
+                        <Text
+                            style={{
+                                fontFamily: FONTS.bold,
+                                fontSize: SIZES.large,
+                                flexWrap: 'wrap',
+                                marginTop: -48
+                            }}>
+                            Loading
+                        </Text>
+                    </View>
+
+                </View>
+
+            }
             <Toast
                 position='bottom'
                 bottomOffset={20}

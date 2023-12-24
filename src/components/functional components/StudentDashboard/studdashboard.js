@@ -1,6 +1,7 @@
-import { Text, View, Image } from "react-native";
+import { Text, View, Image, SafeAreaView } from "react-native";
 import React from "react";
 import { useState, useEffect, useRef } from "react";
+import { StackActions } from '@react-navigation/native';
 
 import PerformanceBottomSheet from "../../ui components/PerformanceBottomSheet";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
@@ -12,7 +13,7 @@ import { Feather, Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 
 
-function StudentProfileView({ route }) {
+function StudentProfileView({ route, navigation }) {
 
   const refRBSheet = useRef();
 
@@ -56,8 +57,18 @@ function StudentProfileView({ route }) {
 
 
   return (
-    <View style={{ height: '100%', width: '100%', backgroundColor: 'white,', paddingTop:42 }}>
+    <SafeAreaView style={{ height: '100%', width: '100%', backgroundColor: 'white,', paddingTop:0 }}>
 
+<View style={{ flexDirection: 'row', marginBottom:6 }}>
+                <TouchableOpacity
+                    onPress={() => {
+                        navigation.dispatch(StackActions.pop(1))
+                    }}
+                    style={{ marginTop: 8, marginStart: 8 }}>
+                    <Ionicons name="arrow-back" size={32} color={COLORS.grey} style={{ }} />
+                </TouchableOpacity>
+               
+            </View>
       <Tab.Navigator
         screenOptions={{
           contentStyle: { backgroundColor: '#FFFFFF' }, tabBarIndicatorStyle: { backgroundColor: COLORS.primary },
@@ -80,7 +91,7 @@ function StudentProfileView({ route }) {
         group={route.params.group_name}
         refRBSheet={refRBSheet} />
 
-    </View>
+    </SafeAreaView>
   );
 }
 

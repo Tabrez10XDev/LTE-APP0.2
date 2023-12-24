@@ -67,12 +67,12 @@ export default PerformanceBottomSheet = ({ refRBSheet, name, number, level, sati
 
                     <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-evenly' }}>
                         <View style={{ ...Style.completionAlign, width: '50%' }}>
-                            <Text style={[Style.textStyle, Style.completedText]}>{needsImprov}</Text>
+                            <Text style={[Style.textStyle, Style.completedText]}>{needsImprov ?? 0}</Text>
                             <Text style={Style.subTextStyle}>Needs Improvement</Text>
                         </View>
 
                         <View style={{ ...Style.completionAlign, width: '50%' }}>
-                            <Text style={[Style.textStyle, Style.studyingText]}>{satisfied}</Text>
+                            <Text style={[Style.textStyle, Style.studyingText]}>{satisfied ?? 0}</Text>
                             <Text style={Style.subTextStyle}>Satisfactory</Text>
                         </View>
                     </View>
@@ -80,12 +80,12 @@ export default PerformanceBottomSheet = ({ refRBSheet, name, number, level, sati
 
                     <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 64 }}>
                         <View style={{ ...Style.completionAlign, width: '50%' }}>
-                            <Text style={[Style.textStyle, Style.goodText]}>{good}</Text>
+                            <Text style={[Style.textStyle, Style.goodText]}>{good ?? 0}</Text>
                             <Text style={Style.subTextStyle}>Good</Text>
                         </View>
 
                         <View style={{ ...Style.completionAlign, width: '50%' }}>
-                            <Text style={[Style.textStyle, Style.excellentText]}>{excellent}</Text>
+                            <Text style={[Style.textStyle, Style.excellentText]}>{excellent ?? 0}</Text>
                             <Text style={Style.subTextStyle}>Excellent</Text>
                         </View>
                     </View>

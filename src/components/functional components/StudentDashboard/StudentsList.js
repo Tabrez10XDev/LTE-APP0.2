@@ -35,9 +35,10 @@ const StudentsList = ({ navigation, route }) => {
                 teacher_id: teacherID
             }
             ).then((response) => {
-                console.log("asd");
+                console.log(response.data);
                 setStudents(response.data)
                 setStudentData(response.data)
+                setActiveStudents([])
                 response.data.map((ele, index) => {
                     if (ele.student_status == "active") {
                         setActiveStudents(oldArray => [...oldArray, ele]);

@@ -10,6 +10,7 @@ import { Ionicons, MaterialIcons, Feather, FontAwesome } from "@expo/vector-icon
 import { Dropdown } from 'react-native-element-dropdown';
 import Toast from 'react-native-toast-message';
 import { StackActions } from '@react-navigation/native';
+import Lottie from 'lottie-react-native';
 
 import { ScrollView } from "react-native-gesture-handler";
 import { TimePickerModal } from 'react-native-paper-dates';
@@ -20,20 +21,25 @@ import axios from "axios";
 
 const ContactSpoc = ({navigation}) => {
 
-    // const genderList = [
-    //     {
-    //         label: "Male",
-    //         value: "MALE",
-    //     },
-    //     {
-    //         label: "Female",
-    //         value: "FEMALE",
-    //     },
-    //     {
-    //         label: "Others",
-    //         value: "UNSPECIFIED",
-    //     },
-    // ]
+
+    const [animSpeed, setAnimSpeed] = useState(false)
+    const animRef = useRef()
+  
+    function playAnimation() {
+      setAnimSpeed(true)
+    }
+  
+  
+    function pauseAnimation() {
+      setAnimSpeed(false)
+    }
+  
+    useEffect(() => {
+      setTimeout(() => {
+        animRef.current?.play();
+      }, 100)
+    }, [animSpeed])
+  
 
     const postTicket = async () => {
         if(title.trim().length === 0 || message.trim().length === 0 ){
@@ -47,6 +53,9 @@ const ContactSpoc = ({navigation}) => {
         try {
             const teacherID = await AsyncStorage.getItem('AuthState')
             console.log(teacherID);
+
+            playAnimation()
+
             axios.post(
                 `${CONST.baseUrl}/messages/addmessage`, {
                 msg_title: title,
@@ -54,6 +63,7 @@ const ContactSpoc = ({navigation}) => {
                 sent_teacher_id: teacherID
             }
             ).then((response) => {
+                pauseAnimation()
                 Toast.show({
                     type: 'success',
                     text1: 'Ticket Sent!'
@@ -66,6 +76,7 @@ const ContactSpoc = ({navigation}) => {
             })
         } catch (e) {
             // error reading value
+            pauseAnimation()
             Toast.show({
                 type: 'error',
                 text1: 'Unknown error occured'
@@ -205,6 +216,36 @@ const ContactSpoc = ({navigation}) => {
                     <FontAwesome name="send" size={22} color="white" />
                 </View>
             </TouchableOpacity>
+            {animSpeed &&
+        <View style={{
+          shadowColor: COLORS.homeCard,
+          shadowOffset: {
+            width: 0,
+            height: 2,
+          },
+          shadowOpacity: 0.3,
+          shadowRadius: 2,
+          elevation: 8,
+          position: 'absolute', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(52, 52, 52, 0.0)', alignSelf: 'center', padding: 24, marginTop: 0
+        }}>
+
+<View>
+<Lottie source={require('../../../../assets/loading.json')} autoPlay style={{ height: 300, width: 300, alignSelf: 'center' }} loop ref={animRef} speed={1} />
+                        <Text
+                        style={{
+                            fontFamily: FONTS.bold,
+                            fontSize: SIZES.large,
+                            flexWrap: 'wrap',
+                            marginTop:-48
+                        }}>
+                        Loading
+                    </Text>
+</View>
+
+
+        </View>
+
+      }
             <Toast
                 position='bottom'
                 bottomOffset={20}
