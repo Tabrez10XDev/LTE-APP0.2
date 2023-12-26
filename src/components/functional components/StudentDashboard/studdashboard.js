@@ -1,4 +1,4 @@
-import { Text, View, Image, SafeAreaView } from "react-native";
+import { Text, View, Image, SafeAreaView, Platform } from "react-native";
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { StackActions } from '@react-navigation/native';
@@ -64,7 +64,7 @@ function StudentProfileView({ route, navigation }) {
                     onPress={() => {
                         navigation.dispatch(StackActions.pop(1))
                     }}
-                    style={{ marginTop: 8, marginStart: 8 }}>
+                    style={{ marginTop: Platform.OS === "ios" ? 8 : 28, marginStart: 8 }}>
                     <Ionicons name="arrow-back" size={32} color={COLORS.grey} style={{ }} />
                 </TouchableOpacity>
                

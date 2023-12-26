@@ -116,10 +116,11 @@ const TicketStatus = ({ navigation, route }) => {
                     ticketList.map((ele, index) => {
                         console.log(ele);
                         return (
-                            <TicketListItem id={index + 1} name={ele.msg_title} time={`Since ${moment(ele.created_at.substring(0, 16), "YYYY-MM-DDTHH:mm").fromNow()}`} status={ele.replied_by == null ? false : true} onClick={()=>{
+                            <TicketListItem id={index + 1} name={ele.msg_title} time={`Since ${moment(ele.created_at.substring(0, 16), "YYYY-MM-DDTHH:mm").fromNow()}`} status={ele.replied_by == null ? false : true} onClick={() => {
                                 setTitle(ele.msg_title)
-                                setContent(ele.msg_description)
-                                setPopup(true)}} />
+                                setContent({ descp: ele.msg_description, reply: ele.reply_message, createdAt: ele.created_at })
+                                setPopup(true)
+                            }} />
                         )
                     })
                 }
@@ -140,23 +141,47 @@ const TicketStatus = ({ navigation, route }) => {
                 }}
             >
                 <View style={styles.modalView}>
-                <Text
+                    <Text
                         style={{
-                            textAlign: 'justify',
+                            textAlign: 'left',
                             fontSize: SIZES.medium,
                             fontFamily: FONTS.bold,
                             color: COLORS.textBlack,
                         }}
-                    >{title}</Text>
+                    >Title: {title}</Text>
                     <Text
                         style={{
-                            textAlign: 'justify',
+                            textAlign: 'left',
                             fontSize: SIZES.medium,
                             fontFamily: FONTS.semiBold,
                             color: COLORS.textBlack,
-                            marginTop:8
+                            marginTop: 8,
+                            width:'100%'
                         }}
-                    >{content}</Text>
+                    >Description: {content.descp}</Text>
+
+                    <Text
+                        style={{
+                            textAlign: 'left',
+                            fontSize: SIZES.medium,
+                            fontFamily: FONTS.semiBold,
+                            color: COLORS.textBlack,
+                            marginTop: 8,
+                            width:'100%'
+
+                        }}
+                    >Reply Message: {content.reply}</Text>
+
+                    <Text
+                        style={{
+                            textAlign: 'left',
+                            fontSize: SIZES.medium,
+                            fontFamily: FONTS.semiBold,
+                            color: COLORS.textBlack,
+                            marginTop: 8,
+                            width:'100%'
+                        }}
+                    >Created {moment(content.createdAt).fromNow()}</Text>
                     <View style={{ flexDirection: 'row', justifyContent: 'center', width: '100%', marginTop: 24 }}>
 
                         <Pressable
@@ -232,7 +257,7 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         borderRadius: 20,
         padding: 35,
-        alignSelf:'center',
+        alignSelf: 'center',
         alignItems: "center",
         shadowColor: "#000",
         shadowOffset: {

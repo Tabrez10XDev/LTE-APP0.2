@@ -297,6 +297,14 @@ const LevelReviewZero = ({ navigation, route }) => {
 
         const URL = `https://api.cloudinary.com/v1_1/db2bzxbn7/video/upload`;
 
+        if(fileResponse.name === undefined || fileResponse2.name === undefined){
+            Toast.show({
+                type: 'error',
+                text1: 'Upload both audios to continue'
+            })
+            return
+        }
+
         const { name, uri } = fileResponse;
         let formDataObj = new FormData();
         if (uri) {
@@ -332,11 +340,16 @@ const LevelReviewZero = ({ navigation, route }) => {
                     }
                     ).then((response) => {
                         console.log(response.status)
-                        pauseAnimation()
                         if (response.status == 200) {
                             uploadAudio2(id, levelId, level_name, index)
                             // setStates(current => ({ ...current, [id]: true }))
                             // updateFeedback(levelId, id, level_name, index)
+                        }else{
+                            Toast.show({
+                                type: 'error',
+                                text1: 'Failed uploading first audio'
+                            })
+                            pauseAnimation()
                         }
 
                     }
@@ -397,6 +410,14 @@ const LevelReviewZero = ({ navigation, route }) => {
                         pauseAnimation()
                         if (response.status == 200) {
                             setStates(current => ({ ...current, [id]: true }))
+                            Toast.show({
+                                type: 'success',
+                                text1: 'Success'
+                            })
+                            Toast.show({
+                                type: 'error',
+                                text1: 'Failed uploading second audio'
+                            })
                             // updateFeedback(levelId, id, level_name, index)
                         }
                     }

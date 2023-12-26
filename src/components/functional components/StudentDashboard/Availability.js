@@ -229,9 +229,12 @@ const Availability = ({ navigation, route }) => {
                 <View style={{ width: '98%', marginTop: SIZES.doubleLarge, flexDirection: 'row' }}>
                     <View style={{ marginHorizontal: 16, flex: 1, justifyContent: 'center' }}>
                         <Ionicons name="calendar-outline" size={22} color={COLORS.grey} style={{ position: 'absolute', right: 12 }} />
-                        <TextInput
-                            onPressOut={() => { setOpen(true) }}
-                            value={temp.substring(4, 15)} editable={false} variant="flat" label="Start Date" style={{ backgroundColor: COLORS.borderGrey, borderRadius: 4, paddingTop: 6 }} color={COLORS.darkGrey} />
+                        <TouchableOpacity onPress={() => {
+                            setOpen(true)
+                        }}>
+                            <TextInput
+                                value={temp.substring(4, 15)} editable={false} variant="flat" label="Start Date" style={{ backgroundColor: COLORS.borderGrey, borderRadius: 4, paddingTop: 6 }} color={COLORS.darkGrey} />
+                        </TouchableOpacity>
                     </View>
 
                     {/* <View style={{ marginHorizontal: 16, flex: 1, justifyContent: 'center' }}>
@@ -255,14 +258,14 @@ const Availability = ({ navigation, route }) => {
                 <View style={{ width: '95%' }}>
 
                     <List.AccordionGroup>
-                        <List.Accordion 
-                         right={props =>
-                            switches[0] ? (
-                                <List.Icon {...props} icon="check" color="green" />
-                            ) : (
-                                <List.Icon {...props} icon="chevron-down" />
-                            )
-                        } style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Sunday" id="1">
+                        <List.Accordion
+                            right={props =>
+                                switches[0] ? (
+                                    <List.Icon {...props} icon="check" color="green" />
+                                ) : (
+                                    <List.Icon {...props} icon="chevron-down" />
+                                )
+                            } style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Sunday" id="1">
                             <View style={{ width: '98%', marginTop: SIZES.font, flexDirection: 'row' }}>
                                 <TextInput value={time[0]} editable={false} onPressOut={() => {
                                     setCurrentTimeIndex(0)
@@ -288,15 +291,15 @@ const Availability = ({ navigation, route }) => {
                             </View>
                         </List.Accordion>
 
-                        <List.Accordion 
-                         right={props =>
-                            switches[1] ? (
-                                <List.Icon {...props} icon="check" color="green" />
-                            ) : (
-                                <List.Icon {...props} icon="chevron-down" />
-                            )
-                        }
-                        style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Monday" id="2">
+                        <List.Accordion
+                            right={props =>
+                                switches[1] ? (
+                                    <List.Icon {...props} icon="check" color="green" />
+                                ) : (
+                                    <List.Icon {...props} icon="chevron-down" />
+                                )
+                            }
+                            style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Monday" id="2">
                             <View style={{ width: '98%', marginTop: SIZES.font, flexDirection: 'row' }}>
                                 <TextInput value={time[1]} editable={false} onPressOut={() => {
                                     setCurrentTimeIndex(1)
@@ -323,13 +326,13 @@ const Availability = ({ navigation, route }) => {
                             </View>
                         </List.Accordion>
 
-                        <List.Accordion  right={props =>
-                                switches[2] ? (
-                                    <List.Icon {...props} icon="check" color="green" />
-                                ) : (
-                                    <List.Icon {...props} icon="chevron-down" />
-                                )
-                            } style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Tuesday" id="3">
+                        <List.Accordion right={props =>
+                            switches[2] ? (
+                                <List.Icon {...props} icon="check" color="green" />
+                            ) : (
+                                <List.Icon {...props} icon="chevron-down" />
+                            )
+                        } style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Tuesday" id="3">
                             <View style={{ width: '98%', marginTop: SIZES.font, flexDirection: 'row' }}>
                                 <TextInput value={time[2]} editable={false} onPressOut={() => {
                                     setCurrentTimeIndex(2)
@@ -356,13 +359,13 @@ const Availability = ({ navigation, route }) => {
                             </View>
                         </List.Accordion>
 
-                        <List.Accordion  right={props =>
-                                switches[3] ? (
-                                    <List.Icon {...props} icon="check" color="green" />
-                                ) : (
-                                    <List.Icon {...props} icon="chevron-down" />
-                                )
-                            } 
+                        <List.Accordion right={props =>
+                            switches[3] ? (
+                                <List.Icon {...props} icon="check" color="green" />
+                            ) : (
+                                <List.Icon {...props} icon="chevron-down" />
+                            )
+                        }
                             style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Wednesday" id="4">
                             <View style={{ width: '98%', marginTop: SIZES.font, flexDirection: 'row' }}>
                                 <TextInput value={time[3]} editable={false} onPressOut={() => {
@@ -391,12 +394,12 @@ const Availability = ({ navigation, route }) => {
                         </List.Accordion>
 
                         <List.Accordion right={props =>
-                                switches[4] ? (
-                                    <List.Icon {...props} icon="check" color="green" />
-                                ) : (
-                                    <List.Icon {...props} icon="chevron-down" />
-                                )
-                            } style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Thursday" id="5">
+                            switches[4] ? (
+                                <List.Icon {...props} icon="check" color="green" />
+                            ) : (
+                                <List.Icon {...props} icon="chevron-down" />
+                            )
+                        } style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Thursday" id="5">
                             <View style={{ width: '98%', marginTop: SIZES.font, flexDirection: 'row' }}>
                                 <TextInput value={time[4]} editable={false} onPressOut={() => {
                                     setCurrentTimeIndex(4)
@@ -423,13 +426,13 @@ const Availability = ({ navigation, route }) => {
                             </View>
                         </List.Accordion>
 
-                        <List.Accordion  right={props =>
-                                switches[5] ? (
-                                    <List.Icon {...props} icon="check" color="green" />
-                                ) : (
-                                    <List.Icon {...props} icon="chevron-down" />
-                                )
-                            } style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Friday" id="6">
+                        <List.Accordion right={props =>
+                            switches[5] ? (
+                                <List.Icon {...props} icon="check" color="green" />
+                            ) : (
+                                <List.Icon {...props} icon="chevron-down" />
+                            )
+                        } style={{ backgroundColor: 'white', borderTopWidth: 1, borderColor: COLORS.borderGrey, marginTop: 12 }} title="Friday" id="6">
                             <View style={{ width: '98%', marginTop: SIZES.font, flexDirection: 'row' }}>
                                 <TextInput value={time[5]} editable={false} onPressOut={() => {
                                     setCurrentTimeIndex(5)

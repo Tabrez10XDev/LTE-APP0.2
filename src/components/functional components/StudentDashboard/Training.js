@@ -1,4 +1,4 @@
-import { Text, View, Image, StyleSheet, TouchableOpacity, Dimensions, SafeAreaView } from "react-native";
+import { Text, View, Image, StyleSheet, TouchableOpacity, Dimensions, SafeAreaView, Platform } from "react-native";
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { List, Chip } from "react-native-paper";
@@ -15,7 +15,6 @@ const Training = ({ navigation, route }) => {
     const [state3, setState3] = useState({})
 
     async function fetchLevels() {
-        console.log(route.params.student_id)
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
@@ -26,7 +25,7 @@ const Training = ({ navigation, route }) => {
             data: { stud_id: route.params.student_id }
         };
 
-
+        
         axios.request(config)
             .then((response) => {
 

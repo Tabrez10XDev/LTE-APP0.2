@@ -53,7 +53,7 @@ const CustomDrawer = props => {
           <View>
             <Text style={Styles.bold}>{teacher.teacher_name}</Text>
             <Text style={Styles.greyText}>{teacher.role}</Text>
-            {teacher.tentative_start_date ? <Text style={Styles.greyText}>Since {moment(teacher.tentative_start_date.substring(0, 10), "YYYY-MM-DD").fromNow()}</Text> : null}
+            {teacher.tentative_start_date ? <Text style={Styles.greyText}>Since {moment(teacher.tentative_start_date).fromNow()}</Text> : null}
           </View>
 
         </View>
@@ -114,14 +114,22 @@ function TrainingMaterialTab({ navigation }) {
 
         <View style={{ width: Dimensions.get('window').width * 0.9, alignItems: 'center', justifyContent: 'center' }}>
           {trainingMaterial.map((ele, index) => {
+            console.log(ele)
             return (<TeacherMaterial
               name={ele.teacher_res_name}
               desc={ele.teacher_res_desc}
               type={ele.teacher_res_type}
               size={ele.teacher_res_file_size}
-              link="https://asset.cloudinary.com/db2bzxbn7/b91cab6fe5884dfe635a0e5c9b6151ff"
+              link={ele.teacher_res_url ?? ""}
               key={index} />)
           })}
+
+          {
+            trainingMaterial.length === 0 **
+            <Text style={{ fontSize: 16, fontWeight: 500, position:'absolute', top:'40%', alignSelf:'center' }}>
+            No Training Material available
+          </Text>
+          }
         </View>
 
       </ScrollView>
@@ -138,6 +146,8 @@ function UploadAudioTab({ route, navigation }) {
 
   const [animSpeed, setAnimSpeed] = useState(false)
   const animRef = useRef()
+  const teacher = useContext(TeacherProfileContext);
+
 
   function playAnimation() {
     setAnimSpeed(true)
@@ -261,7 +271,7 @@ function UploadAudioTab({ route, navigation }) {
 
       axios.request(config)
         .then((response) => {
-          console.log("Inside");
+          console.log("Inside--", response.data.url );
           axios.post(
             `${CONST.baseUrl}/audio`, {
             teacher_id: teacherID,
@@ -269,8 +279,8 @@ function UploadAudioTab({ route, navigation }) {
             audio_source: response.data.url ?? "",
             audio_status: "submitted",
             audio_reason: "",
-            audio_audit_by: "tanu",
-            teacher_name: ""
+            audio_audit_by: "",
+            teacher_name: teacher.teacher_name
           }
           ).then((response) => {
 
@@ -284,10 +294,11 @@ function UploadAudioTab({ route, navigation }) {
           ).catch((err => {
 
             pauseAnimation()
+            console.log(err.response.data);
 
             Toast.show({
               type: 'error',
-              text1: 'Unknown error occured'
+              text1: err.response.data.detail ?? "Please try again later"
             })
           }))
         }).catch((err => {

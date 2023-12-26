@@ -19,30 +19,30 @@ import { createContext, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from "axios";
 
-const ContactSpoc = ({navigation}) => {
+const ContactSpoc = ({ navigation }) => {
 
 
     const [animSpeed, setAnimSpeed] = useState(false)
     const animRef = useRef()
-  
+
     function playAnimation() {
-      setAnimSpeed(true)
+        setAnimSpeed(true)
     }
-  
-  
+
+
     function pauseAnimation() {
-      setAnimSpeed(false)
+        setAnimSpeed(false)
     }
-  
+
     useEffect(() => {
-      setTimeout(() => {
-        animRef.current?.play();
-      }, 100)
+        setTimeout(() => {
+            animRef.current?.play();
+        }, 100)
     }, [animSpeed])
-  
+
 
     const postTicket = async () => {
-        if(title.trim().length === 0 || message.trim().length === 0 ){
+        if (title.trim().length === 0 || message.trim().length === 0) {
             Toast.show({
                 type: 'error',
                 text1: 'Empty fields!'
@@ -70,7 +70,7 @@ const ContactSpoc = ({navigation}) => {
                 })
                 setTitle("")
                 setMessage("")
-              
+
                 // navigation.dispatch(StackActions.pop(1))
 
             })
@@ -96,10 +96,18 @@ const ContactSpoc = ({navigation}) => {
                 alignContent: "center",
                 textAlign: 'center',
                 fontFamily: FONTS.semiBold,
-                marginTop: 28,
+                marginTop: 32,
             }}>
                 Contact SPOC
             </Text>
+
+            <TouchableOpacity
+                onPress={() => {
+                    navigation.dispatch(StackActions.pop(1))
+                }}
+                style={{ top:32, position:'absolute', left:10 }}>
+                <Ionicons name="arrow-back" size={32} color={COLORS.grey} style={{}} />
+            </TouchableOpacity>
 
 
             <Text style={{
@@ -198,9 +206,9 @@ const ContactSpoc = ({navigation}) => {
                 </Text>
             </View>
 
-            <TouchableOpacity 
-            onPress={postTicket}
-            style={{ width: '90%', height: 60, backgroundColor: COLORS.blue, borderRadius: 10, marginTop: 48, justifyContent: 'center', alignItems: 'center' }}>
+            <TouchableOpacity
+                onPress={postTicket}
+                style={{ width: '90%', height: 60, backgroundColor: COLORS.blue, borderRadius: 10, marginTop: 48, justifyContent: 'center', alignItems: 'center' }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                     <Text style={{
                         fontSize: 18,
@@ -217,35 +225,35 @@ const ContactSpoc = ({navigation}) => {
                 </View>
             </TouchableOpacity>
             {animSpeed &&
-        <View style={{
-          shadowColor: COLORS.homeCard,
-          shadowOffset: {
-            width: 0,
-            height: 2,
-          },
-          shadowOpacity: 0.3,
-          shadowRadius: 2,
-          elevation: 8,
-          position: 'absolute', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(52, 52, 52, 0.0)', alignSelf: 'center', padding: 24, marginTop: 0
-        }}>
+                <View style={{
+                    shadowColor: COLORS.homeCard,
+                    shadowOffset: {
+                        width: 0,
+                        height: 2,
+                    },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 2,
+                    elevation: 8,
+                    position: 'absolute', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(52, 52, 52, 0.0)', alignSelf: 'center', padding: 24, marginTop: 0
+                }}>
 
-<View>
-<Lottie source={require('../../../../assets/loading.json')} autoPlay style={{ height: 300, width: 300, alignSelf: 'center' }} loop ref={animRef} speed={1} />
+                    <View>
+                        <Lottie source={require('../../../../assets/loading.json')} autoPlay style={{ height: 300, width: 300, alignSelf: 'center' }} loop ref={animRef} speed={1} />
                         <Text
-                        style={{
-                            fontFamily: FONTS.bold,
-                            fontSize: SIZES.large,
-                            flexWrap: 'wrap',
-                            marginTop:-48
-                        }}>
-                        Loading
-                    </Text>
-</View>
+                            style={{
+                                fontFamily: FONTS.bold,
+                                fontSize: SIZES.large,
+                                flexWrap: 'wrap',
+                                marginTop: -48
+                            }}>
+                            Loading
+                        </Text>
+                    </View>
 
 
-        </View>
+                </View>
 
-      }
+            }
             <Toast
                 position='bottom'
                 bottomOffset={20}
