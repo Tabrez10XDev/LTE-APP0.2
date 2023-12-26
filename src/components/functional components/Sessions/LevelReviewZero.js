@@ -116,7 +116,6 @@ const LevelReviewZero = ({ navigation, route }) => {
             data: { stud_id: route.params.student_id }
         };
 
-        console.log(level_name)
 
         axios.request(config)
             .then((response) => {
@@ -164,15 +163,10 @@ const LevelReviewZero = ({ navigation, route }) => {
                     4: temp4,
                     5: temp5,
                 }
-                console.log("-----")
-                console.log(level_id, level_name)
                 let tempState = { ..._state[level_id], ..._state2[level_id], title: level_name, sessions: _state3[level_name.slice(-1)] }
 
                 tempState.sessions = tempState.sessions.sort(function (a, b) { return (a.session_id > b.session_id) ? 1 : ((b.session_id > a.session_id) ? -1 : 0); });
                 setData(tempState)
-                console.log("=====")
-
-                console.log(tempState.sessions.length)
                 setData(tempState)
             })
             .catch((error) => {
@@ -257,7 +251,6 @@ const LevelReviewZero = ({ navigation, route }) => {
             'feedback_notes': message,
         });
 
-        console.log(_data)
 
         let config = {
             method: 'put',
@@ -274,7 +267,6 @@ const LevelReviewZero = ({ navigation, route }) => {
         axios.request(config)
             .then((response) => {
                 pauseAnimation()
-                console.log(JSON.stringify(response.data));
                 Toast.show({
                     type: 'success',
                     text1: 'Successfully updated'
@@ -339,7 +331,7 @@ const LevelReviewZero = ({ navigation, route }) => {
                         audio_uploaded_by: stateID,
                     }
                     ).then((response) => {
-                        console.log(response.status)
+                        // console.log(response.status)
                         if (response.status == 200) {
                             uploadAudio2(id, levelId, level_name, index)
                             // setStates(current => ({ ...current, [id]: true }))
@@ -494,7 +486,6 @@ const LevelReviewZero = ({ navigation, route }) => {
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <List.AccordionGroup>
-                    {console.log(data.sessions[7])}
                     {data.sessions.map((ele, index) => {
 
                         return (
@@ -502,7 +493,7 @@ const LevelReviewZero = ({ navigation, route }) => {
                                 <List.Accordion theme={{ colors: { primary: COLORS.primary } }} style={{ backgroundColor: 'white' }} title={ele.session_name} id={ele.session_id}
                                     right={props =>
                                         ele.session_feedback !== 'NA' ?  (
-                                            <List.Icon {...props} icon="check" color="green" />
+                                            <List.Icon {...props} icon="check-circle-outline" color="green" />
                                         ) :  (
                                             <List.Icon {...props} icon="clock"  />
                                         )
@@ -511,6 +502,9 @@ const LevelReviewZero = ({ navigation, route }) => {
                                         <Text style={TrainStyle.sessionTitle}>{ele.stud_res_name}</Text>
                                         <Text style={{ fontFamily: FONTS.regular, fontSize: SIZES.smallFont, marginHorizontal: 16 }}>
                                             {ele.stud_res_desc}
+                                        </Text>
+                                        <Text style={{ fontFamily: FONTS.regular, fontSize: SIZES.smallFont, marginHorizontal: 16 }}>
+                                            {ele.session_guidelines ?? ""}
                                         </Text>
                                         <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                                             <TouchableOpacity style={{ ...TrainStyle.btnStyle, width: '60%', marginTop: 8 }} onPress={() => openURI(ele.stud_res_url)}>

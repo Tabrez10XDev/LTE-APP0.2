@@ -12,19 +12,19 @@ const TeacherMaterial = ({ name, desc, type, size, link }) => {
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
 
-                <Text style={{ ...Styles.semiBold, backgroundColor: COLORS.borderGrey, padding: 6, borderRadius: 14, paddingHorizontal: 12 }}>
+                <Text style={{ ...Styles.semiBold, backgroundColor: COLORS.borderGrey, padding: 6, borderRadius: 14, paddingHorizontal: 12, flex:10 }}>
                     {name} - {desc}
                 </Text>
 
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', flex:3, marginStart:4, justifyContent:'flex-end' }}>
 
-                    <Text style={{ marginEnd: 4, color: COLORS.grey }}>
+                    <Text style={{ marginStart: 4, color: COLORS.grey, flex:4 }}>
                         {type}
                     </Text>
 
                     <Feather
-                        style={{}}
-                        name="book"
+                        style={{flex: 3}}
+                        name= {type.toLowerCase() == "jpg" ? "image" : type.toLowerCase() == "mp4" ? "video" : "book"}
                         size={24}
                         color={COLORS.primary}
                     />

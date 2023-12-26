@@ -118,7 +118,7 @@ const TicketStatus = ({ navigation, route }) => {
                         return (
                             <TicketListItem id={index + 1} name={ele.msg_title} time={`Since ${moment(ele.created_at.substring(0, 16), "YYYY-MM-DDTHH:mm").fromNow()}`} status={ele.replied_by == null ? false : true} onClick={() => {
                                 setTitle(ele.msg_title)
-                                setContent({ descp: ele.msg_description, reply: ele.reply_message, createdAt: ele.created_at })
+                                setContent({ descp: ele.msg_description, reply: ele.reply_message, createdAt: ele.created_at, by: ele.replied_by, updatedAt: ele.updated_at })
                                 setPopup(true)
                             }} />
                         )
@@ -141,47 +141,68 @@ const TicketStatus = ({ navigation, route }) => {
                 }}
             >
                 <View style={styles.modalView}>
+
+                    <View style={{ backgroundColor: COLORS.blueShade, width: '100%' }}>
+
+
+                        <Text
+                            style={{
+                                textAlign: 'center',
+                                fontSize: SIZES.medium,
+                                fontFamily: FONTS.bold,
+                                color: COLORS.textBlack,
+                                marginVertical: 14
+                            }}
+                        >{title}</Text>
+                    </View>
                     <Text
                         style={{
-                            textAlign: 'left',
-                            fontSize: SIZES.medium,
-                            fontFamily: FONTS.bold,
-                            color: COLORS.textBlack,
-                        }}
-                    >Title: {title}</Text>
-                    <Text
-                        style={{
-                            textAlign: 'left',
+                            textAlign: 'center',
                             fontSize: SIZES.medium,
                             fontFamily: FONTS.semiBold,
                             color: COLORS.textBlack,
                             marginTop: 8,
-                            width:'100%'
+                            width: '90%'
                         }}
-                    >Description: {content.descp}</Text>
+                    >{content.descp}</Text>
+
+                    {content.reply && <Text
+                        style={{
+                            textAlign: 'center',
+                            fontSize: SIZES.medium,
+                            fontFamily: FONTS.regular,
+                            color: COLORS.textGrey,
+                            marginTop: 8,
+                            width: '90%'
+
+                        }}
+                    >{content.by} replied, {'\n'}"{content.reply}"</Text>}
 
                     <Text
                         style={{
-                            textAlign: 'left',
-                            fontSize: SIZES.medium,
-                            fontFamily: FONTS.semiBold,
-                            color: COLORS.textBlack,
+                            textAlign: 'center',
+                            fontSize: SIZES.smallFont,
+                            fontFamily: FONTS.regular,
+                            color: COLORS.textGrey,
                             marginTop: 8,
-                            width:'100%'
-
-                        }}
-                    >Reply Message: {content.reply}</Text>
-
-                    <Text
-                        style={{
-                            textAlign: 'left',
-                            fontSize: SIZES.medium,
-                            fontFamily: FONTS.semiBold,
-                            color: COLORS.textBlack,
-                            marginTop: 8,
-                            width:'100%'
+                            width: '90%'
                         }}
                     >Created {moment(content.createdAt).fromNow()}</Text>
+
+                    {
+                        content.updatedAt &&
+                        <Text
+                        style={{
+                            textAlign: 'center',
+                            fontSize: SIZES.smallFont,
+                            fontFamily: FONTS.regular,
+                            color: COLORS.textGrey,
+                            marginTop: 8,
+                            width: '90%'
+                        }}
+                    >Replied {moment(content.updatedAt).fromNow()}</Text>
+                    }
+
                     <View style={{ flexDirection: 'row', justifyContent: 'center', width: '100%', marginTop: 24 }}>
 
                         <Pressable
@@ -256,7 +277,7 @@ const styles = StyleSheet.create({
         margin: 20,
         backgroundColor: "white",
         borderRadius: 20,
-        padding: 35,
+        padding: 0,
         alignSelf: 'center',
         alignItems: "center",
         shadowColor: "#000",
@@ -269,7 +290,8 @@ const styles = StyleSheet.create({
         elevation: 5,
         position: 'absolute',
         top: '40%',
-        width: '95%'
+        width: '95%',
+        paddingBottom: 20
     },
     modalText: {
         marginBottom: 15,

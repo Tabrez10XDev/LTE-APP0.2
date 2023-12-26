@@ -190,7 +190,9 @@ const Login = ({ navigation, route }) => {
                             fontFamily: FONTS.bold,
                             fontSize: SIZES.large,
                             flexWrap: 'wrap',
-                            marginTop:-48
+                            marginTop:-48,
+                            textAlign:'center',
+                            width:'100%'
                         }}>
                         Loading
                     </Text>

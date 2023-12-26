@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { List, Chip } from "react-native-paper";
 import { COLORS, SIZES, FONTS, assets, CONST } from "../../../../constants";
 import ProgressBar from 'react-native-progress/Bar'
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons, Entypo } from "@expo/vector-icons";
 import axios from "axios";
 
 const Training = ({ navigation, route }) => {
@@ -25,7 +25,10 @@ const Training = ({ navigation, route }) => {
             data: { stud_id: route.params.student_id }
         };
 
-        
+        console.log(JSON.stringify({ stud_id: route.params.student_id }));
+        console.log(`${CONST.baseUrl}/teacherapp/get/student/details`)
+
+
         axios.request(config)
             .then((response) => {
 
@@ -46,22 +49,22 @@ const Training = ({ navigation, route }) => {
                 let temp4 = []
                 let temp5 = []
                 response.data.stud_level_details.map((ele, index) => {
-                    if(ele.level_name.slice(-1) == "0"){
+                    if (ele.level_name.slice(-1) == "0") {
                         temp0.push(ele)
                     }
-                    else if(ele.level_name.slice(-1) == "1"){
+                    else if (ele.level_name.slice(-1) == "1") {
                         temp1.push(ele)
                     }
-                    else if(ele.level_name.slice(-1) == "2"){
+                    else if (ele.level_name.slice(-1) == "2") {
                         temp2.push(ele)
                     }
-                    else if(ele.level_name.slice(-1) == "3"){
+                    else if (ele.level_name.slice(-1) == "3") {
                         temp3.push(ele)
                     }
-                    else if(ele.level_name.slice(-1) == "4"){
+                    else if (ele.level_name.slice(-1) == "4") {
                         temp4.push(ele)
                     }
-                    else if(ele.level_name.slice(-1) == "5"){
+                    else if (ele.level_name.slice(-1) == "5") {
                         temp5.push(ele)
                     }
 
@@ -93,13 +96,13 @@ const Training = ({ navigation, route }) => {
     }, [navigation]);
 
     function navToSessions(ele) {
-        if(ele.level_name == "level0"){
-        navigation.navigate("Level Review Zero", { ...state[ele.level_id], ...state2[ele.level_id], title: ele.level_name, sessions: state3[ele.level_name.slice(-1)], student_id: route.params.student_id, student_name: route.params.student_name } )
-    }else{
-        navigation.navigate("Level Review", { ...state[ele.level_id], ...state2[ele.level_id], title: ele.level_name, sessions: state3[ele.level_name.slice(-1)], student_id: route.params.student_id, student_name: route.params.student_name } )
+        if (ele.level_name == "level0") {
+            navigation.navigate("Level Review Zero", { ...state[ele.level_id], ...state2[ele.level_id], title: ele.level_name, sessions: state3[ele.level_name.slice(-1)], student_id: route.params.student_id, student_name: route.params.student_name })
+        } else {
+            navigation.navigate("Level Review", { ...state[ele.level_id], ...state2[ele.level_id], title: ele.level_name, sessions: state3[ele.level_name.slice(-1)], student_id: route.params.student_id, student_name: route.params.student_name })
 
+        }
     }
-}
 
 
 
@@ -108,59 +111,69 @@ const Training = ({ navigation, route }) => {
             <List.AccordionGroup>
                 {data.level_list.map((ele, index) => {
                     return (
-                        <List.Accordion theme={{ colors: { primary: COLORS.primary } }} style={{ backgroundColor: 'white', borderBottomWidth: 1, borderColor: COLORS.borderGrey }} title={ele.level_name} id={ele.level_id}>
-                            <TouchableOpacity
-                                onPress={()=>navToSessions(ele)}
-                                style={{ marginHorizontal: 16, marginTop: 12, borderBottomWidth: 1, borderColor: COLORS.borderGrey, paddingBottom: 8, width: '90%' }}>
-                                
-                                <Text
-                                    style={{
-                                        fontFamily: FONTS.semiBold,
-                                        fontSize: SIZES.smallFont,
-                                        flexWrap: 'wrap',
-                                    }}>
-                                    {state2[ele.level_id] ? state2[ele.level_id].nextTitle : ""}   {state2[ele.level_id] ? state2[ele.level_id].start : ""} - {state2[ele.level_id] ? state2[ele.level_id].end : ""}
-                                </Text>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <>
+                            {state2[ele.level_id] ? <List.Accordion theme={{ colors: { primary: COLORS.primary } }} style={{ backgroundColor: 'white', borderBottomWidth: 1, borderColor: COLORS.borderGrey }} title={ele.level_name} id={ele.level_id}>
+                                <TouchableOpacity
+                                    onPress={() => navToSessions(ele)}
+                                    style={{ marginHorizontal: 16, marginTop: 12, borderBottomWidth: 1, borderColor: COLORS.borderGrey, paddingBottom: 8, width: '90%' }}>
+
                                     <Text
                                         style={{
-                                            fontFamily: FONTS.regular,
+                                            fontFamily: FONTS.semiBold,
                                             fontSize: SIZES.smallFont,
-                                            color: COLORS.grey
+                                            flexWrap: 'wrap',
                                         }}>
-                                        Next session on {state2[ele.level_id] ? state2[ele.level_id].date : ""} {state2[ele.level_id] ? state2[ele.level_id].day : ""}
+                                        {state2[ele.level_id] ? state2[ele.level_id].nextTitle : ""}   {state2[ele.level_id] ? state2[ele.level_id].start : ""} - {state2[ele.level_id] ? state2[ele.level_id].end : ""}
                                     </Text>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                        <Text
+                                            style={{
+                                                fontFamily: FONTS.regular,
+                                                fontSize: SIZES.smallFont,
+                                                color: COLORS.grey
+                                            }}>
+                                            Next session on {state2[ele.level_id] ? state2[ele.level_id].date : ""} {state2[ele.level_id] ? state2[ele.level_id].day : ""}
+                                        </Text>
 
 
-                                </View>
-                                <View style={{ alignSelf: 'flex-start', marginTop: 8, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
+                                    </View>
+                                    <View style={{ alignSelf: 'flex-start', marginTop: 8, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
 
 
-                                    <ProgressBar unfilledColor={COLORS.unProgressed} color={ state[ele.level_id].progress == state[ele.level_id].total ? COLORS.green :COLORS.yellow} progress={state[ele.level_id].progress / state[ele.level_id].total} width={Dimensions.get('window').width * 0.7} borderColor={COLORS.unProgressed} />
-                                    <Text
-                                        style={{
-                                            fontFamily: FONTS.regular,
-                                            fontSize: SIZES.smallFont,
-                                            color: COLORS.darkBlue,
-                                            marginStart: 8
-                                        }}>
-                                        {state[ele.level_id].completed} of {state[ele.level_id].total}
+                                        <ProgressBar unfilledColor={COLORS.unProgressed} color={state[ele.level_id].progress == state[ele.level_id].total ? COLORS.green : COLORS.yellow} progress={state[ele.level_id].progress / state[ele.level_id].total} width={Dimensions.get('window').width * 0.7} borderColor={COLORS.unProgressed} />
+                                        <Text
+                                            style={{
+                                                fontFamily: FONTS.regular,
+                                                fontSize: SIZES.smallFont,
+                                                color: COLORS.darkBlue,
+                                                marginStart: 8
+                                            }}>
+                                            {state[ele.level_id].completed} of {state[ele.level_id].total}
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </List.Accordion> :
+
+                                <View style={{ height: 45, borderRadius: 4, backgroundColor: "#f5f5f5", alignItems: 'center', flexDirection: 'row', width: '98%', alignSelf: 'center', paddingHorizontal: 10, marginBottom: 8, justifyContent: 'space-between', marginTop:12 }}>
+                                    <Text>
+                                        {ele.level_name}
                                     </Text>
-                                </View>
-                            </TouchableOpacity>
-                        </List.Accordion>
+                                    <Entypo name="lock" size={24} color="black" />
+                                </View>}
+                        </>
+
                     )
                 })}
 
-                {data.level_list.length === 0 && 
-                 <Text style={{marginTop:64, fontFamily: FONTS.bold, color:COLORS.darkGrey, fontSize: 16, alignSelf:'center'}}>
-                 No Training data is available 
-             </Text>
+                {data.level_list.length === 0 &&
+                    <Text style={{ marginTop: 64, fontFamily: FONTS.bold, color: COLORS.darkGrey, fontSize: 16, alignSelf: 'center' }}>
+                        No Training data is available
+                    </Text>
                 }
 
 
 
-                
+
             </List.AccordionGroup>
 
             <TouchableOpacity
