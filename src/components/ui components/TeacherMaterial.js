@@ -12,19 +12,23 @@ const TeacherMaterial = ({ name, desc, type, size, link }) => {
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
 
-                <Text style={{ ...Styles.semiBold, backgroundColor: COLORS.borderGrey, padding: 6, borderRadius: 14, paddingHorizontal: 12, flex:10 }}>
-                    {name} - {desc}
+                <Text
+                    onPress={() => {
+                        Linking.openURL(link);
+                    }}
+                    style={{ color: COLORS.primary, fontSize: 16, flex:10 }}>
+                    {name}
                 </Text>
 
-                <View style={{ flexDirection: 'row', alignItems: 'center', flex:3, marginStart:4, justifyContent:'flex-end' }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', flex: 3, marginStart: 4, justifyContent: 'flex-end' }}>
 
-                    <Text style={{ marginStart: 4, color: COLORS.grey, flex:4 }}>
+                    <Text style={{ marginStart: 4, color: COLORS.grey, flex: 4 }}>
                         {type}
                     </Text>
 
                     <Feather
-                        style={{flex: 3}}
-                        name= {type.toLowerCase() == "jpg" ? "image" : type.toLowerCase() == "mp4" ? "video" : "book"}
+                        style={{ flex: 3 }}
+                        name={type.toLowerCase() == "jpg" ? "image" : type.toLowerCase() == "mp4" ? "video" : "book"}
                         size={24}
                         color={COLORS.primary}
                     />
@@ -36,10 +40,10 @@ const TeacherMaterial = ({ name, desc, type, size, link }) => {
 
                 <Text
                     onPress={() => {
-                        Linking.openURL("https://res.cloudinary.com/db2bzxbn7/image/upload/s--hoSiWtBi--/v1683041135/lte_teacher_training_materials/sample2_jhxpzc.pdf");
+                        Linking.openURL(link);
                     }}
-                    style={{ color: COLORS.primary, fontSize: 18 }}>
-                    Click here to view the file
+                    style={{ color: COLORS.textBlack, fontSize: 14 }}>
+                    {desc}
                 </Text>
 
                 <View style={{ borderWidth: 1, borderColor: 'grey', borderRadius: 4, padding: 4 }}>

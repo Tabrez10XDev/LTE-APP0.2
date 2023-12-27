@@ -1,4 +1,4 @@
-import { Text, View, Image, StyleSheet, TouchableOpacity, Dimensions, TextInput, SafeAreaView } from "react-native";
+import { Text, View, Image, StyleSheet, TouchableOpacity, Dimensions, TextInput, SafeAreaView, Modal, Pressable } from "react-native";
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { List, Chip } from "react-native-paper";
@@ -42,6 +42,12 @@ const openURI = async (url) => {
 
 
 const LevelReviewZero = ({ navigation, route }) => {
+
+    const [popup, setPopup] = useState(false)
+    const [guidelines, setGuidelines] = useState({
+        session: "",
+        text: ""
+    })
 
     const [animSpeed, setAnimSpeed] = useState(false)
     const animRef = useRef()
@@ -232,7 +238,7 @@ const LevelReviewZero = ({ navigation, route }) => {
     });
 
 
-    const updateFeedback = async (levelId, id, level_name, index) => {
+    const updateFeedback = async (levelId, id, level_name, index, name, guidelines) => {
         let prelevel_id = 0
         let presession_id = 0
         if (index > 0) {
@@ -262,7 +268,16 @@ const LevelReviewZero = ({ navigation, route }) => {
             data: _data
         };
 
+
         playAnimation()
+
+        // if (index >= 1 && index < 12) {
+        //     setGuidelines({
+        //         session: name,
+        //         text: guidelines
+        //     })
+        //     setPopup(true)
+        // }
 
         axios.request(config)
             .then((response) => {
@@ -273,6 +288,13 @@ const LevelReviewZero = ({ navigation, route }) => {
                 })
                 setStackIndex(1)
                 setMessage("")
+                if (index >= 1 && index < 12) {
+                    setGuidelines({
+                        session: name,
+                        text: guidelines
+                    })
+                    setPopup(true)
+                }
                 fetchLevels(levelId, id, level_name)
             })
             .catch((error) => {
@@ -289,7 +311,7 @@ const LevelReviewZero = ({ navigation, route }) => {
 
         const URL = `https://api.cloudinary.com/v1_1/db2bzxbn7/video/upload`;
 
-        if(fileResponse.name === undefined || fileResponse2.name === undefined){
+        if (fileResponse.name === undefined || fileResponse2.name === undefined) {
             Toast.show({
                 type: 'error',
                 text1: 'Upload both audios to continue'
@@ -336,7 +358,7 @@ const LevelReviewZero = ({ navigation, route }) => {
                             uploadAudio2(id, levelId, level_name, index)
                             // setStates(current => ({ ...current, [id]: true }))
                             // updateFeedback(levelId, id, level_name, index)
-                        }else{
+                        } else {
                             Toast.show({
                                 type: 'error',
                                 text1: 'Failed uploading first audio'
@@ -428,6 +450,14 @@ const LevelReviewZero = ({ navigation, route }) => {
 
     };
 
+    const feedbackMap = {
+        "Needs Improvement": 1,
+        "Satisfactory": 2,
+        "Good": 3,
+        "Excellent": 4
+
+    }
+
     return (
         <SafeAreaView style={{ height: '100%', backgroundColor: 'white', paddingTop: 24 }}>
             <View style={{ flexDirection: 'row' }}>
@@ -486,26 +516,29 @@ const LevelReviewZero = ({ navigation, route }) => {
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <List.AccordionGroup>
+                    {console.log(data.sessions.at(0))}
                     {data.sessions.map((ele, index) => {
 
                         return (
                             (ele.session_unlock_status === true) || data2.sessions[index].session_unlock_status || index == 0 ? (
-                                <List.Accordion theme={{ colors: { primary: COLORS.primary } }} style={{ backgroundColor: 'white' }} title={ele.session_name} id={ele.session_id}
+                                <List.Accordion
+                                    onPress={() => { console.log(index) }}
+                                    theme={{ colors: { primary: COLORS.primary } }} style={{ backgroundColor: 'white' }} title={ele.session_name} id={ele.session_id}
                                     right={props =>
-                                        ele.session_feedback !== 'NA' ?  (
+                                        ele.session_feedback !== 'NA' ? (
                                             <List.Icon {...props} icon="check-circle-outline" color="green" />
-                                        ) :  (
-                                            <List.Icon {...props} icon="clock"  />
+                                        ) : (
+                                            <List.Icon {...props} icon="clock" />
                                         )
                                     }                                >
                                     <View style={{ borderColor: COLORS.borderGrey, borderWidth: 1 }}>
-                                        <Text style={TrainStyle.sessionTitle}>{ele.stud_res_name}</Text>
-                                        <Text style={{ fontFamily: FONTS.regular, fontSize: SIZES.smallFont, marginHorizontal: 16 }}>
-                                            {ele.stud_res_desc}
-                                        </Text>
-                                        <Text style={{ fontFamily: FONTS.regular, fontSize: SIZES.smallFont, marginHorizontal: 16 }}>
+                                        <Text style={TrainStyle.sessionTitle}>{ele.stud_res_desc}</Text>
+                                        {/* <Text style={{ fontFamily: FONTS.regular, fontSize: SIZES.smallFont, marginHorizontal: 16 }}>
                                             {ele.session_guidelines ?? ""}
-                                        </Text>
+                                        </Text> */}
+                                        {/* <Text style={{ fontFamily: FONTS.regular, fontSize: SIZES.smallFont, marginHorizontal: 16 }}>
+                                            {ele.session_guidelines ?? ""}
+                                        </Text> */}
                                         <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                                             <TouchableOpacity style={{ ...TrainStyle.btnStyle, width: '60%', marginTop: 8 }} onPress={() => openURI(ele.stud_res_url)}>
                                                 <Text style={TrainStyle.btnTextStyle}>View Material</Text>
@@ -513,7 +546,7 @@ const LevelReviewZero = ({ navigation, route }) => {
 
                                         </View>
                                         {(ele.audio_file_count == null) ||
-                                            states[ele.session_id] == true
+                                            states[ele.session_id] == true || (ele.audio1 !== "null" && ele.audio2 !== "null")
                                             ? <>
                                                 <Text style={TrainStyle.subHeading}>Rate this session</Text>
 
@@ -575,7 +608,7 @@ const LevelReviewZero = ({ navigation, route }) => {
                                                         <View style={{ ...Style.subViewContainer, width: '40%', marginHorizontal: 0 }}>
                                                             <TouchableOpacity
                                                                 // onPress={()=>console.log("hii")}
-                                                                onPress={() => { updateFeedback(ele.level_id, ele.session_id, ele.level_name, index) }}
+                                                                onPress={() => { updateFeedback(ele.level_id, ele.session_id, ele.level_name, index, ele.session_name, ele.session_guidelines) }}
                                                                 style={Style.btnStyle}>
                                                                 <Text style={Style.btnTextStyle}>SUBMIT</Text>
                                                             </TouchableOpacity>
@@ -714,6 +747,76 @@ const LevelReviewZero = ({ navigation, route }) => {
 
             }
 
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={popup}
+                onRequestClose={() => {
+                    setPopup(!popup);
+                }}
+            >
+                <View style={{
+                    ...styles.modalView, top: '40%', width: '90%', borderRadius: 16, alignSelf: 'center', backgroundColor: 'white', paddingBottom: 20,
+                    shadowColor: COLORS.homeCard,
+                    shadowOffset: {
+                        width: 0,
+                        height: 2,
+                    },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 4,
+                    elevation:4
+                }}>
+
+                    <View style={{ backgroundColor: COLORS.blueShade, width: '100%', borderTopLeftRadius:16, borderTopRightRadius:16 }}>
+
+
+                        <Text
+                            style={{
+                                textAlign: 'center',
+                                fontSize: SIZES.medium,
+                                fontFamily: FONTS.bold,
+                                color: COLORS.textBlack,
+                                marginVertical: 14
+                            }}
+                        >{guidelines.session} Guidelines</Text>
+                    </View>
+                    <Text
+                        style={{
+                            textAlign: 'center',
+                            fontSize: SIZES.medium,
+                            fontFamily: FONTS.semiBold,
+                            color: COLORS.textBlack,
+                            marginTop: 8,
+                            width: '100%'
+                        }}
+                    >{guidelines.text ?? "NA"}</Text>
+
+
+
+
+
+
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', width: '100%', marginTop: 24 }}>
+
+                        <Pressable
+                            style={{ width: '45%', borderRadius: 6, borderWidth: 0, backgroundColor: COLORS.blue, padding: 6 }}
+                            onPress={() => {
+                                setPopup(!popup)
+                            }
+                            }
+                        >
+                            <Text style={{
+                                fontSize: SIZES.font,
+                                fontFamily: FONTS.regular,
+                                color: 'white',
+                                textAlign: 'center'
+                            }}>Close</Text>
+                        </Pressable>
+                    </View>
+
+                </View>
+            </Modal>
+
             <Toast
                 position='bottom'
                 bottomOffset={20}
@@ -735,7 +838,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingVertical: 8,
         paddingHorizontal: 24,
-        marginHorizontal: 8
+        marginHorizontal: 8,
     },
     selectedBox: {
         borderRadius: 30,
@@ -824,4 +927,29 @@ const TrainStyle = StyleSheet.create({
         fontSize: 15,
         color: "#FF758F",
     },
+    modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 0,
+        alignSelf: 'center',
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+        position: 'absolute',
+        top: '40%',
+        width: '95%',
+        paddingBottom: 20
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: "center"
+    },
+
 });
