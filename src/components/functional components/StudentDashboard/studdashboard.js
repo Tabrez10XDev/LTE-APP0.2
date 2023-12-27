@@ -82,12 +82,12 @@ function StudentProfileView({ route, navigation }) {
       <PerformanceBottomSheet
         name={route.params.student_name}
         number={route.params.whatsappno}
-        level={route.params.current_level_id}
+        level={route.params?.current_level_name?.at(-1)}
         needsImprov={route.params.needs_improvement}
         satisfied={route.params.satisfied}
         good={route.params.good}
         excellent={route.params.excellent}
-        session={route.params.current_session_id}
+        session={route.params?.current_session_name?.replace(/\D/g,'')}
         group={route.params.group_name}
         refRBSheet={refRBSheet} />
 

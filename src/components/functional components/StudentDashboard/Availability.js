@@ -118,7 +118,7 @@ const Availability = ({ navigation, route }) => {
 
         playAnimation()
 
-        console.log(JSON.stringify(payload));
+        // console.log(JSON.stringify(data));
         // console.log(`${CONST.baseUrl}/student/assign/assignlevel`);
 
         axios.post(`${CONST.baseUrl}/student/assign/assignlevel`, payload)

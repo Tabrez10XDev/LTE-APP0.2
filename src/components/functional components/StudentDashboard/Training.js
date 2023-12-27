@@ -108,53 +108,72 @@ const Training = ({ navigation, route }) => {
 
     return (
         <View style={{ height: '100%', backgroundColor: 'white', paddingTop: 16 }}>
+            {console.log(state[6])}
             <List.AccordionGroup>
                 {data.level_list.map((ele, index) => {
                     return (
                         <>
-                            {state2[ele.level_id] ? <List.Accordion theme={{ colors: { primary: COLORS.primary } }} style={{ backgroundColor: 'white', borderBottomWidth: 1, borderColor: COLORS.borderGrey }} title={ele.level_name} id={ele.level_id}>
-                                <TouchableOpacity
-                                    onPress={() => navToSessions(ele)}
-                                    style={{ marginHorizontal: 16, marginTop: 12, borderBottomWidth: 1, borderColor: COLORS.borderGrey, paddingBottom: 8, width: '90%' }}>
+                            {state2[ele.level_id] || (parseInt(parseInt(state[ele.level_id].completed) / parseInt(state[ele.level_id].total)) == 1) ?
+                                <List.Accordion
+                                    right={props =>
+                                        (parseInt(parseInt(state[ele.level_id].completed) / parseInt(state[ele.level_id].total)) == 1)
+                                        ? (
+                                            <List.Icon {...props} icon="check-circle-outline" color="green" />
+                                        ) : (
+                                            <List.Icon {...props} icon="clock" />
+                                        )
+                                    }
+                                    theme={{ colors: { primary: COLORS.primary } }} style={{ backgroundColor: 'white', borderBottomWidth: 1, borderColor: COLORS.borderGrey }} title={ele.level_name} id={ele.level_id}>
+                                    <TouchableOpacity
+                                        onPress={() => navToSessions(ele)}
+                                        style={{ marginHorizontal: 16, marginTop: 12, borderBottomWidth: 1, borderColor: COLORS.borderGrey, paddingBottom: 8, width: '90%' }}>
 
-                                    <Text
-                                        style={{
-                                            fontFamily: FONTS.semiBold,
-                                            fontSize: SIZES.smallFont,
-                                            flexWrap: 'wrap',
-                                        }}>
-                                        {state2[ele.level_id] ? state2[ele.level_id].nextTitle : ""}   {state2[ele.level_id] ? state2[ele.level_id].start : ""} - {state2[ele.level_id] ? state2[ele.level_id].end : ""}
-                                    </Text>
-                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                        <Text
+                                            style={{
+                                                fontFamily: FONTS.semiBold,
+                                                fontSize: SIZES.smallFont,
+                                                flexWrap: 'wrap',
+                                            }}>
+                                            {state2[ele.level_id] ? state2[ele.level_id].nextTitle : ""}   {state2[ele.level_id] ? state2[ele.level_id].start : ""} - {state2[ele.level_id] ? state2[ele.level_id].end : ""}
+                                        </Text>
+                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                            <Text
+                                                style={{
+                                                    fontFamily: FONTS.regular,
+                                                    fontSize: SIZES.smallFont,
+                                                    color: COLORS.grey
+                                                }}>
+                                                Next session on {state2[ele.level_id] ? state2[ele.level_id].date : ""} {state2[ele.level_id] ? state2[ele.level_id].day : ""}
+                                            </Text>
+
+                                        </View>
+
                                         <Text
                                             style={{
                                                 fontFamily: FONTS.regular,
                                                 fontSize: SIZES.smallFont,
                                                 color: COLORS.grey
                                             }}>
-                                            Next session on {state2[ele.level_id] ? state2[ele.level_id].date : ""} {state2[ele.level_id] ? state2[ele.level_id].day : ""}
+                                            From {ele?.start_date?.substring(0, 10)} to {ele?.end_date?.substring(0, 10)}
                                         </Text>
+                                        <View style={{ alignSelf: 'flex-start', marginTop: 8, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
 
 
-                                    </View>
-                                    <View style={{ alignSelf: 'flex-start', marginTop: 8, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
+                                            <ProgressBar unfilledColor={COLORS.unProgressed} color={state[ele.level_id].progress == state[ele.level_id].total ? COLORS.green : COLORS.yellow} progress={state[ele.level_id].progress / state[ele.level_id].total} width={Dimensions.get('window').width * 0.7} borderColor={COLORS.unProgressed} />
+                                            <Text
+                                                style={{
+                                                    fontFamily: FONTS.regular,
+                                                    fontSize: SIZES.smallFont,
+                                                    color: COLORS.darkBlue,
+                                                    marginStart: 8
+                                                }}>
+                                                {state[ele.level_id].completed} of {state[ele.level_id].total}
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </List.Accordion> :
 
-
-                                        <ProgressBar unfilledColor={COLORS.unProgressed} color={state[ele.level_id].progress == state[ele.level_id].total ? COLORS.green : COLORS.yellow} progress={state[ele.level_id].progress / state[ele.level_id].total} width={Dimensions.get('window').width * 0.7} borderColor={COLORS.unProgressed} />
-                                        <Text
-                                            style={{
-                                                fontFamily: FONTS.regular,
-                                                fontSize: SIZES.smallFont,
-                                                color: COLORS.darkBlue,
-                                                marginStart: 8
-                                            }}>
-                                            {state[ele.level_id].completed} of {state[ele.level_id].total}
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                            </List.Accordion> :
-
-                                <View style={{ height: 45, borderRadius: 4, backgroundColor: "#f5f5f5", alignItems: 'center', flexDirection: 'row', width: '98%', alignSelf: 'center', paddingHorizontal: 10, marginBottom: 8, justifyContent: 'space-between', marginTop:12 }}>
+                                <View style={{ height: 45, borderRadius: 4, backgroundColor: "#f5f5f5", alignItems: 'center', flexDirection: 'row', width: '98%', alignSelf: 'center', paddingHorizontal: 10, marginBottom: 8, justifyContent: 'space-between', marginTop: 12 }}>
                                     <Text>
                                         {ele.level_name}
                                     </Text>
