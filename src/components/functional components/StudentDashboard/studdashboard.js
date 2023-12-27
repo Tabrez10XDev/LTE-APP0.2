@@ -1,4 +1,4 @@
-import { Text, View, Image, SafeAreaView, Platform } from "react-native";
+import { Text, View, Image, SafeAreaView, Platform, TouchableOpacity } from "react-native";
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { StackActions } from '@react-navigation/native';
@@ -8,7 +8,6 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { COLORS, SIZES, FONTS, assets } from "../../../../constants";
 import Training from "./Training";
 import Availability from "./Availability";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 
@@ -34,7 +33,7 @@ function StudentProfileView({ route, navigation }) {
         'Content-Type': 'application/json'
       },
       data: {
-        todayDate: yourDate 
+        todayDate: yourDate
       }
     };
 
@@ -57,24 +56,33 @@ function StudentProfileView({ route, navigation }) {
 
 
   return (
-    <SafeAreaView style={{ height: '100%', width: '100%', backgroundColor: 'white,', paddingTop:0 }}>
+    <SafeAreaView style={{ height: '100%', width: '100%', backgroundColor: 'white,', paddingTop: 0 }}>
 
-<View style={{ flexDirection: 'row', marginBottom:6 }}>
-                <TouchableOpacity
-                    onPress={() => {
-                        navigation.dispatch(StackActions.pop(1))
-                    }}
-                    style={{ marginTop: Platform.OS === "ios" ? 8 : 28, marginStart: 8 }}>
-                    <Ionicons name="arrow-back" size={32} color={COLORS.grey} style={{ }} />
-                </TouchableOpacity>
-               
-            </View>
+      <View style={{ flexDirection: 'row', marginBottom: 6, alignItems:'center', justifyContent:'center', width:'100%' }}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.dispatch(StackActions.pop(1))
+          }}
+          style={{ marginTop: Platform.OS === "ios" ? 8 : 28, position:'absolute', left:12 }}>
+          <Ionicons name="arrow-back" size={32} color={COLORS.grey} style={{}} />
+        </TouchableOpacity>
+
+        <Text
+          style={{
+            fontFamily: FONTS.semiBold,
+            fontSize: SIZES.medium,
+            flexWrap: 'wrap',
+          }}>
+            {route.params.student_name}
+        </Text>
+
+      </View>
       <Tab.Navigator
         screenOptions={{
           contentStyle: { backgroundColor: '#FFFFFF' }, tabBarIndicatorStyle: { backgroundColor: COLORS.primary },
         }}>
         <Tab.Screen name="Training" component={Training} initialParams={{ onClick: openSheet, student_id: route.params.student_id, student_name: route.params.student_name }} />
-        <Tab.Screen name="Availability" component={Availability} initialParams={{student_id: route.params.student_id}}  />
+        <Tab.Screen name="Availability" component={Availability} initialParams={{ student_id: route.params.student_id }} />
       </Tab.Navigator>
 
 
@@ -87,7 +95,7 @@ function StudentProfileView({ route, navigation }) {
         satisfied={route.params.satisfied}
         good={route.params.good}
         excellent={route.params.excellent}
-        session={route.params?.current_session_name?.replace(/\D/g,'')}
+        session={route.params?.current_session_name?.replace(/\D/g, '')}
         group={route.params.group_name}
         refRBSheet={refRBSheet} />
 

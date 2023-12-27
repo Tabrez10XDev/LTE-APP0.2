@@ -6,7 +6,7 @@ import { Dimensions } from "react-native";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { COLORS, SIZES, FONTS, assets, CONST } from "../../../../constants";
 import { DatePickerModal } from 'react-native-paper-dates';
-import { Ionicons, MaterialIcons, Feather, FontAwesome } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons, Feather, FontAwesome, AntDesign } from "@expo/vector-icons";
 import TicketListItem from "../../ui components/TicketListItem";
 import axios from "axios";
 import moment from 'moment';
@@ -69,7 +69,7 @@ const TicketStatus = ({ navigation, route }) => {
         <View style={{ backgroundColor: COLORS.blueShade, width: '100%', height: '100%', padding: 16, alignItems: 'center' }}>
             <View style={{ width: '100%', justifyContent: 'center' }}>
 
-                <TextInput onChangeText={(text) => handleSearch(text)} placeholder="Search..." style={{ height: 60, width: '100%', borderRadius: 16, backgroundColor: 'white', paddingHorizontal: 42, alignItems: 'center', flexDirection: 'row' }} selectionColor={COLORS.grey}>
+                <TextInput onChangeText={(text) => {}} placeholder="Search..." style={{ height: 60, width: '100%', borderRadius: 16, backgroundColor: 'white', paddingHorizontal: 42, alignItems: 'center', flexDirection: 'row' }} selectionColor={COLORS.grey}>
 
                 </TextInput>
                 <Ionicons name="md-search" size={22} color={COLORS.primary} style={{ position: 'absolute', left: 16 }} />
@@ -140,70 +140,164 @@ const TicketStatus = ({ navigation, route }) => {
                     setPopup(!popup);
                 }}
             >
-                <View style={styles.modalView}>
+                <View style={{ ...styles.modalView, paddingBottom: 0 }}>
 
-                    <View style={{ backgroundColor: COLORS.blueShade, width: '100%' }}>
+                    <View style={{
+                        backgroundColor: COLORS.blueShade, width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: '5%'
+                    }}>
 
 
                         <Text
                             style={{
-                                textAlign: 'center',
+                                textAlign: 'left',
                                 fontSize: SIZES.medium,
                                 fontFamily: FONTS.bold,
                                 color: COLORS.textBlack,
-                                marginVertical: 14
+                                marginVertical: 14,
+                            }}
+                        >Issue Information</Text>
+                        <TouchableOpacity
+                            style={{padding:4}}
+                            onPress={() => {
+                                setPopup(!popup)
+                            }
+                            }
+                        >
+                            <AntDesign name="closecircle" size={24} color="black" />
+                        </TouchableOpacity>
+                    </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '90%', paddingBottom: 0 }}>
+                        <Text
+                            style={{
+                                textAlign: 'left',
+                                fontSize: SIZES.medium,
+                                fontFamily: FONTS.semiBold,
+                                color: COLORS.grey,
+                                marginTop: 8,
+                                flex: 4
+                            }}
+                        >Subject</Text>
+                        <Text
+                            style={{
+                                textAlign: 'left',
+                                fontSize: SIZES.medium,
+                                fontFamily: FONTS.semiBold,
+                                color: COLORS.textBlack,
+                                marginTop: 8,
+                                flex: 11
                             }}
                         >{title}</Text>
                     </View>
-                    <Text
-                        style={{
-                            textAlign: 'center',
-                            fontSize: SIZES.medium,
-                            fontFamily: FONTS.semiBold,
-                            color: COLORS.textBlack,
-                            marginTop: 8,
-                            width: '90%'
-                        }}
-                    >{content.descp}</Text>
 
-                    {content.reply && <Text
-                        style={{
-                            textAlign: 'center',
-                            fontSize: SIZES.medium,
-                            fontFamily: FONTS.regular,
-                            color: COLORS.textGrey,
-                            marginTop: 8,
-                            width: '90%'
-
-                        }}
-                    >{content.by} replied, {'\n'}"{content.reply}"</Text>}
-
-                    <Text
-                        style={{
-                            textAlign: 'center',
-                            fontSize: SIZES.smallFont,
-                            fontFamily: FONTS.regular,
-                            color: COLORS.textGrey,
-                            marginTop: 8,
-                            width: '90%'
-                        }}
-                    >Created {moment(content.createdAt).fromNow()}</Text>
-
-                    {
-                        content.updatedAt &&
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '90%' }}>
                         <Text
-                        style={{
-                            textAlign: 'center',
-                            fontSize: SIZES.smallFont,
-                            fontFamily: FONTS.regular,
-                            color: COLORS.textGrey,
-                            marginTop: 8,
-                            width: '90%'
-                        }}
-                    >Replied {moment(content.updatedAt).fromNow()}</Text>
-                    }
+                            style={{
+                                textAlign: 'left',
+                                fontSize: SIZES.medium,
+                                fontFamily: FONTS.semiBold,
+                                color: COLORS.grey,
+                                marginTop: 8,
+                                flex: 4
+                            }}
+                        >Ticket</Text>
+                        <Text
+                            style={{
+                                textAlign: 'left',
+                                fontSize: SIZES.medium,
+                                fontFamily: FONTS.semiBold,
+                                color: COLORS.textBlack,
+                                marginTop: 8,
+                                flex: 11
+                            }}
+                        >{content.descp}</Text>
+                    </View>
 
-                    <View style={{ flexDirection: 'row', justifyContent: 'center', width: '100%', marginTop: 24 }}>
+
+
+                    {content.reply &&
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '90%' }}>
+                            <Text
+                                style={{
+                                    textAlign: 'left',
+                                    fontSize: SIZES.medium,
+                                    fontFamily: FONTS.semiBold,
+                                    color: COLORS.grey,
+                                    marginTop: 8,
+                                    flex: 4
+                                }}
+                            >Reply{'\n'}Message</Text>
+                            <Text
+                                style={{
+                                    textAlign: 'left',
+                                    fontSize: SIZES.medium,
+                                    fontFamily: FONTS.semiBold,
+                                    color: COLORS.textBlack,
+                                    marginTop: 8,
+                                    flex: 11
+                                }}
+                            >{content.reply}</Text>
+                        </View>}
+
+                    {content.reply &&
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '90%' }}>
+                            <Text
+                                style={{
+                                    textAlign: 'left',
+                                    fontSize: SIZES.medium,
+                                    fontFamily: FONTS.semiBold,
+                                    color: COLORS.grey,
+                                    marginTop: 8,
+                                    flex: 4
+                                }}
+                            >Replied{'\n'}By</Text>
+                            <Text
+                                style={{
+                                    textAlign: 'left',
+                                    fontSize: SIZES.medium,
+                                    fontFamily: FONTS.semiBold,
+                                    color: COLORS.textBlack,
+                                    marginTop: 8,
+                                    flex: 11
+                                }}
+                            >{content.by}</Text>
+                        </View>}
+
+
+
+
+
+                    <View style={{ backgroundColor: COLORS.blueShade, width: '100%', borderBottomLeftRadius: 16, borderBottomRightRadius: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal:'5%', marginTop:2 }}>
+
+
+                        <Text
+                            style={{
+                                textAlign: 'left',
+                                fontSize: SIZES.regular,
+                                fontStyle: 'italic',
+                                color: COLORS.textBlack,
+                                marginVertical: 14,
+                                flex:1
+                            }}
+                        >Issue Raised {moment(content.createdAt).fromNow()}</Text>
+
+                        {content.updatedAt &&
+
+                            <Text
+                                style={{
+                                    textAlign: 'left',
+                                    fontSize: SIZES.regular,
+                                    fontStyle: 'italic',
+                                    color: COLORS.textBlack,
+                                    marginVertical: 14,
+                                    flex:1
+                                }}
+                            >Issue Resolved {moment(content.updatedAt).fromNow()}</Text>
+                        }
+                    </View>
+
+
+
+                    {/* <View style={{ flexDirection: 'row', justifyContent: 'center', width: '100%', marginTop: 24 }}>
 
                         <Pressable
                             style={{ width: '45%', borderRadius: 6, borderWidth: 0, backgroundColor: COLORS.blue, padding: 6 }}
@@ -219,21 +313,11 @@ const TicketStatus = ({ navigation, route }) => {
                                 textAlign: 'center'
                             }}>Close</Text>
                         </Pressable>
-                    </View>
+                    </View> */}
 
                 </View>
             </Modal>
 
-            {/* <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                    Alert.alert('Modal has been closed.');
-                    setModalVisible(!modalVisible);
-                }}>
-
-            </Modal> */}
 
 
 

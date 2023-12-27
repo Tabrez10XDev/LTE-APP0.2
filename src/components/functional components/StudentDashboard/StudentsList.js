@@ -29,13 +29,11 @@ const StudentsList = ({ navigation, route }) => {
 
     const getStudentList = async () => {
             let teacherID = await AsyncStorage.getItem('AuthState')
-            console.log(teacherID)
             axios.post(
                 `${CONST.baseUrl}/teacherapp/get/student/training`, {
                 teacher_id: teacherID
             }
             ).then((response) => {
-                console.log(response.data);
                 setStudents(response.data)
                 setStudentData(response.data)
                 setActiveStudents([])

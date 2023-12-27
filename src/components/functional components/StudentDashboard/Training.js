@@ -117,37 +117,44 @@ const Training = ({ navigation, route }) => {
                                 <List.Accordion
                                     right={props =>
                                         (parseInt(parseInt(state[ele.level_id].completed) / parseInt(state[ele.level_id].total)) == 1)
-                                        ? (
-                                            <List.Icon {...props} icon="check-circle-outline" color="green" />
-                                        ) : (
-                                            <List.Icon {...props} icon="clock" />
-                                        )
+                                            ? (
+                                                <List.Icon {...props} icon="check-circle-outline" color="green" />
+                                            ) : (
+                                                <List.Icon {...props} icon="clock" />
+                                            )
                                     }
                                     theme={{ colors: { primary: COLORS.primary } }} style={{ backgroundColor: 'white', borderBottomWidth: 1, borderColor: COLORS.borderGrey }} title={ele.level_name} id={ele.level_id}>
                                     <TouchableOpacity
                                         onPress={() => navToSessions(ele)}
                                         style={{ marginHorizontal: 16, marginTop: 12, borderBottomWidth: 1, borderColor: COLORS.borderGrey, paddingBottom: 8, width: '90%' }}>
-
-                                        <Text
-                                            style={{
-                                                fontFamily: FONTS.semiBold,
-                                                fontSize: SIZES.smallFont,
-                                                flexWrap: 'wrap',
-                                            }}>
-                                            {state2[ele.level_id] ? state2[ele.level_id].nextTitle : ""}   {state2[ele.level_id] ? state2[ele.level_id].start : ""} - {state2[ele.level_id] ? state2[ele.level_id].end : ""}
-                                        </Text>
-                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                        {(parseInt(parseInt(state[ele.level_id].completed) / parseInt(state[ele.level_id].total)) != 1) &&
                                             <Text
+                                                style={{
+                                                    fontFamily: FONTS.semiBold,
+                                                    fontSize: SIZES.smallFont,
+                                                    flexWrap: 'wrap',
+                                                }}>
+                                                {state2[ele.level_id] ? state2[ele.level_id].nextTitle : ""}   {state2[ele.level_id] ? state2[ele.level_id].start : ""} - {state2[ele.level_id] ? state2[ele.level_id].end : ""}
+                                            </Text>}
+                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                            {(parseInt(parseInt(state[ele.level_id].completed) / parseInt(state[ele.level_id].total)) != 1) ? <Text
                                                 style={{
                                                     fontFamily: FONTS.regular,
                                                     fontSize: SIZES.smallFont,
                                                     color: COLORS.grey
                                                 }}>
                                                 Next session on {state2[ele.level_id] ? state2[ele.level_id].date : ""} {state2[ele.level_id] ? state2[ele.level_id].day : ""}
-                                            </Text>
-
+                                            </Text> :
+                                                <Text
+                                                    style={{
+                                                        fontFamily: FONTS.regular,
+                                                        fontSize: SIZES.smallFont,
+                                                        color: COLORS.grey
+                                                    }}>
+                                                    Session Completed
+                                                </Text>
+                                            }
                                         </View>
-
                                         <Text
                                             style={{
                                                 fontFamily: FONTS.regular,
