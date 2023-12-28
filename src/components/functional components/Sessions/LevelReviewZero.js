@@ -478,26 +478,54 @@ const LevelReviewZero = ({ navigation, route }) => {
                         }}>
                         {data.title}
                     </Text>
-                    <Text
-                        style={{
-                            fontFamily: FONTS.semiBold,
-                            fontSize: SIZES.smallFont,
-                            flexWrap: 'wrap',
-                        }}>
-                        {data.nextTitle} {" "} {data.start}  {"- "} {data.end}
-                    </Text>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <Text
-                            style={{
-                                fontFamily: FONTS.regular,
-                                fontSize: SIZES.smallFont,
-                                color: COLORS.grey
-                            }}>
-                            Next session on {data.date} {" "} {data.day}
-                        </Text>
+
+                    {data.progress != data.total ?
+                        <>
+                            <Text
+                                style={{
+                                    fontFamily: FONTS.semiBold,
+                                    fontSize: SIZES.smallFont,
+                                    flexWrap: 'wrap',
+                                }}>
+                                {data.nextTitle} {" "} {data.start}  {"- "} {data.end}
+                            </Text>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                <Text
+                                    style={{
+                                        fontFamily: FONTS.regular,
+                                        fontSize: SIZES.smallFont,
+                                        color: COLORS.grey
+                                    }}>
+                                    Next session on {data.date} {" "} {data.day}
+                                </Text>
 
 
-                    </View>
+                            </View>
+                        </>
+                        :
+                        <>
+                            <Text
+                                style={{
+                                    fontFamily: FONTS.semiBold,
+                                    fontSize: SIZES.smallFont,
+                                    flexWrap: 'wrap',
+                                }}>
+                                Session
+                            </Text>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                <Text
+                                    style={{
+                                        fontFamily: FONTS.regular,
+                                        fontSize: SIZES.smallFont,
+                                        color: COLORS.grey
+                                    }}>
+                                    From {data?.start_date?.substring(0, 10)} to {data?.end_date?.substring(0, 10)}
+                                </Text>
+
+
+                            </View>
+                        </>
+                    }
                     <View style={{ alignSelf: 'flex-start', marginTop: 8, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', width: '90%' }}>
 
 
@@ -520,9 +548,8 @@ const LevelReviewZero = ({ navigation, route }) => {
                         return (
                             (ele.session_unlock_status === true) || data2.sessions[index].session_unlock_status || index == 0 ? (
                                 <List.Accordion
-                            
+
                                     onPress={() => { console.log(index) }}
-                                   
                                     theme={{ colors: { primary: COLORS.primary } }} style={{ backgroundColor: 'white' }} title={ele.session_name} id={ele.session_id}
                                     right={props =>
                                         ele.session_feedback !== 'NA' ? (
@@ -533,8 +560,8 @@ const LevelReviewZero = ({ navigation, route }) => {
                                     }                                >
                                     <View style={{ borderColor: COLORS.borderGrey, borderWidth: 1, }}>
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <Text style={{ ...TrainStyle.sessionTitle, flex: 8, alignSelf:'center' }}>{ele.stud_res_desc}</Text>
-                                        
+                                            <Text style={{ ...TrainStyle.sessionTitle, flex: 8, alignSelf: 'center' }}>{ele.stud_res_desc}</Text>
+
                                             <TouchableOpacity style={{ flex: 1 }} onPress={() => openURI(ele.stud_res_url)}>
                                                 <AntDesign name="folderopen" size={24} color="blue" />
                                             </TouchableOpacity>
@@ -552,7 +579,7 @@ const LevelReviewZero = ({ navigation, route }) => {
                                                     showsHorizontalScrollIndicator={false}
                                                     style={{ flexDirection: 'row', width: '100%', marginTop: 12 }}>
                                                     <TouchableOpacity
-                                                        onPress={() => { if(ele.session_feedback === "NA")setStackIndex(1) }}
+                                                        onPress={() => { if (ele.session_feedback === "NA") setStackIndex(1) }}
                                                         style={[ele.session_feedback === 'Needs Improvement' ? styles.selectedBox : stackIndex == 1 && ele.session_feedback === 'NA' ? styles.selectedBox : styles.unSelectedBox]}
                                                     >
                                                         <Text style={[ele.session_feedback === 'Needs Improvement' ? styles.selectedText : stackIndex == 1 && ele.session_feedback === 'NA' ? styles.selectedText : styles.unSelectedText]}>
@@ -561,15 +588,15 @@ const LevelReviewZero = ({ navigation, route }) => {
                                                     </TouchableOpacity>
 
                                                     <TouchableOpacity
-                                                        onPress={() => { if(ele.session_feedback === "NA")setStackIndex(2) }}
-                                                        style={[ele.session_feedback === 'Satisfied' ? styles.selectedBox : stackIndex == 2 && ele.session_feedback === 'NA'  ? styles.selectedBox : styles.unSelectedBox]}>
+                                                        onPress={() => { if (ele.session_feedback === "NA") setStackIndex(2) }}
+                                                        style={[ele.session_feedback === 'Satisfied' ? styles.selectedBox : stackIndex == 2 && ele.session_feedback === 'NA' ? styles.selectedBox : styles.unSelectedBox]}>
                                                         <Text style={[ele.session_feedback === 'Satisfied' ? styles.selectedText : stackIndex == 2 && ele.session_feedback === 'NA' ? styles.selectedText : styles.unSelectedText]}>
                                                             Satisfied
                                                         </Text>
                                                     </TouchableOpacity>
 
                                                     <TouchableOpacity
-                                                        onPress={() => { if(ele.session_feedback === "NA")setStackIndex(3) }}
+                                                        onPress={() => { if (ele.session_feedback === "NA") setStackIndex(3) }}
                                                         style={[ele.session_feedback === 'Good' ? styles.selectedBox : stackIndex == 3 && ele.session_feedback === 'NA' ? styles.selectedBox : styles.unSelectedBox]}>
                                                         <Text style={[ele.session_feedback === 'Good' ? styles.selectedText : stackIndex == 3 && ele.session_feedback === 'NA' ? styles.selectedText : styles.unSelectedText]}>
                                                             Good
@@ -577,7 +604,7 @@ const LevelReviewZero = ({ navigation, route }) => {
                                                     </TouchableOpacity>
 
                                                     <TouchableOpacity
-                                                        onPress={() => { if(ele.session_feedback === "NA")setStackIndex(4) }}
+                                                        onPress={() => { if (ele.session_feedback === "NA") setStackIndex(4) }}
                                                         style={[ele.session_feedback === 'Excellent' ? styles.selectedBox : stackIndex == 4 && ele.session_feedback === 'NA' ? styles.selectedBox : styles.unSelectedBox]}>
                                                         <Text style={[ele.session_feedback === 'Excellent' ? styles.selectedText : stackIndex == 4 && ele.session_feedback === 'NA' ? styles.selectedText : styles.unSelectedText]}>
                                                             Excellent
@@ -588,7 +615,7 @@ const LevelReviewZero = ({ navigation, route }) => {
                                                 <TextInput multiline
                                                     maxLength={50}
                                                     textAlign='left'
-                                                    onChangeText={message => {if(ele.feedback_notes === null)setMessage(message)}}
+                                                    onChangeText={message => { if (ele.feedback_notes === null) setMessage(message) }}
                                                     underlineColorAndroid='transparent'
                                                     returnKeyType="done"
                                                     blurOnSubmit={true}
@@ -666,7 +693,7 @@ const LevelReviewZero = ({ navigation, route }) => {
                                                             color="blue"
                                                         />
                                                         <Text style={Style.uploadText}>
-                                                        {ele.audio2 === "null" ? "Drop files here or click to upload 2nd audio" : ele.audio2}
+                                                            {ele.audio2 === "null" ? "Drop files here or click to upload 2nd audio" : ele.audio2}
                                                         </Text>
 
                                                     </TouchableOpacity>

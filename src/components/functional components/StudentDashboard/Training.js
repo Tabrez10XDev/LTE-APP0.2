@@ -97,9 +97,9 @@ const Training = ({ navigation, route }) => {
 
     function navToSessions(ele) {
         if (ele.level_name == "level0") {
-            navigation.navigate("Level Review Zero", { ...state[ele.level_id], ...state2[ele.level_id], title: ele.level_name, sessions: state3[ele.level_name.slice(-1)], student_id: route.params.student_id, student_name: route.params.student_name })
+            navigation.navigate("Level Review Zero", { ...state[ele.level_id], ...state2[ele.level_id], title: ele.level_name, sessions: state3[ele.level_name.slice(-1)], student_id: route.params.student_id, student_name: route.params.student_name, start_date: ele.start_date, end_date: ele.end_date })
         } else {
-            navigation.navigate("Level Review", { ...state[ele.level_id], ...state2[ele.level_id], title: ele.level_name, sessions: state3[ele.level_name.slice(-1)], student_id: route.params.student_id, student_name: route.params.student_name })
+            navigation.navigate("Level Review", { ...state[ele.level_id], ...state2[ele.level_id], title: ele.level_name, sessions: state3[ele.level_name.slice(-1)], student_id: route.params.student_id, student_name: route.params.student_name, start_date: ele.start_date, end_date: ele.end_date })
 
         }
     }

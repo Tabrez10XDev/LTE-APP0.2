@@ -155,7 +155,7 @@ const TicketStatus = ({ navigation, route }) => {
                                 color: COLORS.textBlack,
                                 marginVertical: 14,
                             }}
-                        >Issue Information</Text>
+                        >Ticket Information</Text>
                         <TouchableOpacity
                             style={{padding:4}}
                             onPress={() => {
@@ -278,7 +278,7 @@ const TicketStatus = ({ navigation, route }) => {
                                 marginVertical: 14,
                                 flex:1
                             }}
-                        >Issue Raised {moment(content.createdAt).fromNow()}</Text>
+                        >Ticket Raised {moment(content.createdAt).fromNow()}</Text>
 
                         {content.updatedAt &&
 
@@ -291,7 +291,7 @@ const TicketStatus = ({ navigation, route }) => {
                                     marginVertical: 14,
                                     flex:1
                                 }}
-                            >Issue Resolved {moment(content.updatedAt).fromNow()}</Text>
+                            >Ticket Resolved {moment(content.updatedAt).fromNow()}</Text>
                         }
                     </View>
 
