@@ -246,6 +246,15 @@ const LevelReviewZero = ({ navigation, route }) => {
             presession_id = data.sessions[index - 1].session_id
         }
 
+        if(message.length == 0){
+            Toast.show({
+                type: 'error',
+                text1: 'Please enter feedback'
+            })
+            return
+        }
+
+
         let _data = JSON.stringify({
             'stud_id': route.params.student_id,
             'level_id': levelId,
@@ -450,7 +459,6 @@ const LevelReviewZero = ({ navigation, route }) => {
 
     };
 
-
     return (
         <SafeAreaView style={{ height: '100%', backgroundColor: 'white', paddingTop: 24 }}>
             <View style={{ flexDirection: 'row' }}>
@@ -559,12 +567,17 @@ const LevelReviewZero = ({ navigation, route }) => {
                                                 <AntDesign name="folderopen" size={24} color="blue" />
                                             </TouchableOpacity>
                                         </View>
+                                        <Text style={{
+                                                    marginHorizontal: 16,
+                                                    fontSize: 14,
+                                                    fontWeight: "600",
+                                        }}>{ele.common_desc}</Text>
 
 
-                                        {(ele.audio_file_count == null) ||
+                                        {(ele.audio_file_count == null) || (ele.audio_file_count == 0) ||
                                             states[ele.session_id] == true || (ele.audio1 === "approved" && ele.audio2 === "approved")
                                             ? <>
-                                                <Text style={TrainStyle.subHeading}>Rate this session</Text>
+                                                <Text style={{...TrainStyle.subHeading, marginTop:4}}>Rate this session</Text>
 
                                                 <ScrollView
                                                     horizontal={true}
@@ -640,7 +653,7 @@ const LevelReviewZero = ({ navigation, route }) => {
                                                     </View> */}
                                                 </View>
                                             </> : <>
-                                                <Text style={TrainStyle.subHeading}>Upload Audioa</Text>
+                                                <Text style={TrainStyle.subHeading}>Upload Audios</Text>
                                                 <View style={{ ...Style.dragViewContainer, paddingVertical: 8 }}>
                                                     <TouchableOpacity onPress={audioSubmitBtn}>
                                                         <Feather
@@ -933,7 +946,7 @@ const TrainStyle = StyleSheet.create({
         marginTop: 100,
     },
     subHeading: {
-        marginTop: 16,
+        marginTop: 12,
         marginHorizontal: 16,
         fontSize: 15,
         fontWeight: "bold",

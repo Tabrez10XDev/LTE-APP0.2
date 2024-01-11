@@ -77,6 +77,7 @@ function StudentProfileView({ route, navigation }) {
         </Text>
 
       </View>
+      {console.log(route.params)}
       <Tab.Navigator
         screenOptions={{
           contentStyle: { backgroundColor: '#FFFFFF' }, tabBarIndicatorStyle: { backgroundColor: COLORS.primary },

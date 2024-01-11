@@ -10,6 +10,7 @@ import { COLORS, SIZES, FONTS, assets, CONST } from "../../../../constants";
 import { DatePickerModal } from 'react-native-paper-dates';
 import { Ionicons } from "@expo/vector-icons";
 import Toast from 'react-native-toast-message';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { ScrollView } from "react-native-gesture-handler";
 import { TimePickerModal } from 'react-native-paper-dates';
@@ -53,16 +54,30 @@ const Availability = ({ navigation, route }) => {
 
     async function fetchAvailability() {
 
-        axios.get(`${CONST.baseUrl}/student/assign/next/session/${route.params.student_id}`)
-            .then((response) => {
-                console.log("fetching");
-                console.log(response.data)
-                setData(response.data)
-            })
+        let value = await AsyncStorage.getItem('AuthState')
+
+        console.log(`${CONST.baseUrl}/teacherapp/get/teacher/availablity/${value}`);
+
+        axios.get(`${CONST.baseUrl}/teacherapp/get/teacher/availablity/${value}`).then((response) => {
+            console.log(response.data, " hii");
+            // console.log(response.data)
+            // setData(response.data)
+        })
             .catch((error) => {
                 console.log("error");
                 console.log(error);
             });
+
+        // axios.get(`${CONST.baseUrl}/student/assign/next/session/${route.params.student_id}`)
+        //     .then((response) => {
+        //         console.log(response.data, " hii");
+        //         // console.log(response.data)
+        //         setData(response.data)
+        //     })
+        //     .catch((error) => {
+        //         console.log("error");
+        //         console.log(error);
+        //     });
 
     }
 
@@ -342,7 +357,7 @@ const Availability = ({ navigation, route }) => {
                     onConfirm={onConfirm2}
                 />
 
-{console.log(data.date)}
+                {console.log(data.date)}
 
                 <DatePickerModal
                     locale="en"
@@ -402,7 +417,7 @@ const Availability = ({ navigation, route }) => {
                     position: 'absolute', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(52, 52, 52, 0.0)', alignSelf: 'center', padding: 24, marginTop: 16
                 }}>
 
-                    <View style={{marginTop:'-40%'}}>
+                    <View style={{ marginTop: '-40%' }}>
                         <Lottie source={require('../../../../assets/loading.json')} autoPlay style={{ height: 300, width: 300, alignSelf: 'center' }} loop ref={animRef} speed={1} />
                         <Text
                             style={{
