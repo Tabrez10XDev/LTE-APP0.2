@@ -575,7 +575,7 @@ function HomeTabView({ route }) {
               })
             }} />
 
-          <Drawer.Screen name="Ticket Status" component={TicketStatus}
+          <Drawer.Screen name="Tickets" component={TicketStatus}
             initialParams={{ teacherID: stateID }}
             options={({ navigation, route }) => ({
               drawerIcon: ({ focused, size }) => (

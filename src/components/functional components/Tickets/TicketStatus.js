@@ -69,7 +69,7 @@ const TicketStatus = ({ navigation, route }) => {
         <View style={{ backgroundColor: COLORS.blueShade, width: '100%', height: '100%', padding: 16, alignItems: 'center' }}>
             <View style={{ width: '100%', justifyContent: 'center' }}>
 
-                <TextInput onChangeText={(text) => {}} placeholder="Search..." style={{ height: 60, width: '100%', borderRadius: 16, backgroundColor: 'white', paddingHorizontal: 42, alignItems: 'center', flexDirection: 'row' }} selectionColor={COLORS.grey}>
+                <TextInput onChangeText={(text) => { }} placeholder="Search..." style={{ height: 60, width: '100%', borderRadius: 16, backgroundColor: 'white', paddingHorizontal: 42, alignItems: 'center', flexDirection: 'row' }} selectionColor={COLORS.grey}>
 
                 </TextInput>
                 <Ionicons name="md-search" size={22} color={COLORS.primary} style={{ position: 'absolute', left: 16 }} />
@@ -110,6 +110,18 @@ const TicketStatus = ({ navigation, route }) => {
                     </Text>
                 </TouchableOpacity>
             </View>
+
+
+            <TouchableOpacity
+                onPress={() => {
+                    console.log("hii");
+                    navigation.navigate('Contact SPOC');
+                }}
+                style={{ position: 'absolute', bottom: 96, right: 36, zIndex:16 }}>
+                <AntDesign name="pluscircle" size={48} color={COLORS.primary} />
+            </TouchableOpacity>
+
+
             <ScrollView style={{ marginTop: 12, marginBottom: 8 }} showsVerticalScrollIndicator={false} contentContainerStyle={{ width: Dimensions.get('window').width * 0.9 }}>
 
                 {
@@ -157,7 +169,7 @@ const TicketStatus = ({ navigation, route }) => {
                             }}
                         >Ticket Information</Text>
                         <TouchableOpacity
-                            style={{padding:4}}
+                            style={{ padding: 4 }}
                             onPress={() => {
                                 setPopup(!popup)
                             }
@@ -266,7 +278,7 @@ const TicketStatus = ({ navigation, route }) => {
 
 
 
-                    <View style={{ backgroundColor: COLORS.blueShade, width: '100%', borderBottomLeftRadius: 16, borderBottomRightRadius: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal:'5%', marginTop:2 }}>
+                    <View style={{ backgroundColor: COLORS.blueShade, width: '100%', borderBottomLeftRadius: 16, borderBottomRightRadius: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: '5%', marginTop: 2 }}>
 
 
                         <Text
@@ -276,7 +288,7 @@ const TicketStatus = ({ navigation, route }) => {
                                 fontStyle: 'italic',
                                 color: COLORS.textBlack,
                                 marginVertical: 14,
-                                flex:1
+                                flex: 1
                             }}
                         >Ticket Raised {moment(content.createdAt).fromNow()}</Text>
 
@@ -289,7 +301,7 @@ const TicketStatus = ({ navigation, route }) => {
                                     fontStyle: 'italic',
                                     color: COLORS.textBlack,
                                     marginVertical: 14,
-                                    flex:1
+                                    flex: 1
                                 }}
                             >Ticket Resolved {moment(content.updatedAt).fromNow()}</Text>
                         }

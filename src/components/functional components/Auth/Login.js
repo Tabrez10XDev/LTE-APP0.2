@@ -185,7 +185,7 @@ const Login = ({ navigation, route }) => {
 
 <View>
 <Lottie source={require('../../../../assets/loading.json')} autoPlay style={{ height: 300, width: 300, alignSelf: 'center' }} loop ref={animRef} speed={1} />
-                        <Text
+                        {/* <Text
                         style={{
                             fontFamily: FONTS.bold,
                             fontSize: SIZES.large,
@@ -195,7 +195,7 @@ const Login = ({ navigation, route }) => {
                             width:'100%'
                         }}>
                         Loading
-                    </Text>
+                    </Text> */}
 </View>
 
         </View>

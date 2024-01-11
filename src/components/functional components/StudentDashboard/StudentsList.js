@@ -116,7 +116,7 @@ const StudentsList = ({ navigation, route }) => {
                     }}
                     style={[stackIndex == 3 ? styles.selectedBox : styles.unSelectedBox]}>
                     <Text style={[stackIndex == 3 ? styles.selectedText : styles.unSelectedText]}>
-                        Archived
+                        Completed
                     </Text>
                 </TouchableOpacity>
             </View>

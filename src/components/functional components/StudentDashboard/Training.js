@@ -137,14 +137,17 @@ const Training = ({ navigation, route }) => {
                                                 {state2[ele.level_id] ? state2[ele.level_id].nextTitle : ""}   {state2[ele.level_id] ? state2[ele.level_id].start : ""} - {state2[ele.level_id] ? state2[ele.level_id].end : ""}
                                             </Text>}
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                            {(parseInt(parseInt(state[ele.level_id].completed) / parseInt(state[ele.level_id].total)) != 1) ? <Text
-                                                style={{
-                                                    fontFamily: FONTS.regular,
-                                                    fontSize: SIZES.smallFont,
-                                                    color: COLORS.grey
-                                                }}>
-                                                Next session on {state2[ele.level_id] ? state2[ele.level_id].date : ""} {state2[ele.level_id] ? state2[ele.level_id].day : ""}
-                                            </Text> :
+                                            {(parseInt(parseInt(state[ele.level_id].completed) / parseInt(state[ele.level_id].total)) != 1) ? 
+                                            // <Text
+                                            //     style={{
+                                            //         fontFamily: FONTS.regular,
+                                            //         fontSize: SIZES.smallFont,
+                                            //         color: COLORS.grey
+                                            //     }}>
+                                            //     Next session on {state2[ele.level_id] ? state2[ele.level_id].date : ""} {state2[ele.level_id] ? state2[ele.level_id].day : ""}
+                                            // </Text> 
+                                            null
+                                            :
                                                 <Text
                                                     style={{
                                                         fontFamily: FONTS.regular,
@@ -155,14 +158,14 @@ const Training = ({ navigation, route }) => {
                                                 </Text>
                                             }
                                         </View>
-                                        <Text
+                                        {/* <Text
                                             style={{
                                                 fontFamily: FONTS.regular,
                                                 fontSize: SIZES.smallFont,
                                                 color: COLORS.grey
                                             }}>
                                             From {ele?.start_date?.substring(0, 10)} to {ele?.end_date?.substring(0, 10)}
-                                        </Text>
+                                        </Text> */}
                                         <View style={{ alignSelf: 'flex-start', marginTop: 8, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
 
 

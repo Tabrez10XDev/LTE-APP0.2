@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import OnBoardingScreen from '../components/functional components/OnBoardingComponent/OnBoardingScreen';
 import OnBoardingRoutes from '../components/functional components/OnBoardingComponent/OnBoardingRoutes';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import ContactSpoc from '../components/functional components/Profile/ContactSpoc';
 import ForgotPassword from '../components/functional components/Auth/ForgotPassword';
 const AppRoutes = ({ navigation }) => {
 
@@ -123,6 +124,9 @@ const AppRoutes = ({ navigation }) => {
                     : (<Stack.Group screenOptions={{}}  >
 
                         <Stack.Screen name="HomeTabView" component={HomeTabView} initialParams={{ logout: logout }} options={({ navigation, route }) => ({
+                            headerShown: false,
+                        })} />
+                         <Stack.Screen name="Contact SPOC" component={ContactSpoc} initialParams={{ logout: logout }} options={({ navigation, route }) => ({
                             headerShown: false,
                         })} />
                     </Stack.Group>)}

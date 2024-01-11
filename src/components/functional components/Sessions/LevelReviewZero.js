@@ -68,10 +68,10 @@ const LevelReviewZero = ({ navigation, route }) => {
     }, [animSpeed])
 
     const reviewMap = {
-        1: "Needs Improvement",
-        2: "Satisfied",
-        3: "Good",
-        4: "Excellent"
+        1: "needs improvement",
+        2: "satisfied",
+        3: "good",
+        4: "excellent"
     }
 
 
@@ -450,13 +450,6 @@ const LevelReviewZero = ({ navigation, route }) => {
 
     };
 
-    const feedbackMap = {
-        "Needs Improvement": 1,
-        "Satisfied": 2,
-        "Good": 3,
-        "Excellent": 4
-
-    }
 
     return (
         <SafeAreaView style={{ height: '100%', backgroundColor: 'white', paddingTop: 24 }}>
@@ -580,33 +573,33 @@ const LevelReviewZero = ({ navigation, route }) => {
                                                     style={{ flexDirection: 'row', width: '100%', marginTop: 12 }}>
                                                     <TouchableOpacity
                                                         onPress={() => { if (ele.session_feedback === "NA") setStackIndex(1) }}
-                                                        style={[ele.session_feedback === 'Needs Improvement' ? styles.selectedBox : stackIndex == 1 && ele.session_feedback === 'NA' ? styles.selectedBox : styles.unSelectedBox]}
+                                                        style={[ele.session_feedback === 'needs improvement' ? styles.selectedBox : stackIndex == 1 && ele.session_feedback === 'NA' ? styles.selectedBox : styles.unSelectedBox]}
                                                     >
-                                                        <Text style={[ele.session_feedback === 'Needs Improvement' ? styles.selectedText : stackIndex == 1 && ele.session_feedback === 'NA' ? styles.selectedText : styles.unSelectedText]}>
+                                                        <Text style={[ele.session_feedback === 'needs improvement' ? styles.selectedText : stackIndex == 1 && ele.session_feedback === 'NA' ? styles.selectedText : styles.unSelectedText]}>
                                                             Needs Improvement
                                                         </Text>
                                                     </TouchableOpacity>
 
                                                     <TouchableOpacity
                                                         onPress={() => { if (ele.session_feedback === "NA") setStackIndex(2) }}
-                                                        style={[ele.session_feedback === 'Satisfied' ? styles.selectedBox : stackIndex == 2 && ele.session_feedback === 'NA' ? styles.selectedBox : styles.unSelectedBox]}>
-                                                        <Text style={[ele.session_feedback === 'Satisfied' ? styles.selectedText : stackIndex == 2 && ele.session_feedback === 'NA' ? styles.selectedText : styles.unSelectedText]}>
+                                                        style={[ele.session_feedback === 'satisfied' ? styles.selectedBox : stackIndex == 2 && ele.session_feedback === 'NA' ? styles.selectedBox : styles.unSelectedBox]}>
+                                                        <Text style={[ele.session_feedback === 'satisfied' ? styles.selectedText : stackIndex == 2 && ele.session_feedback === 'NA' ? styles.selectedText : styles.unSelectedText]}>
                                                             Satisfied
                                                         </Text>
                                                     </TouchableOpacity>
 
                                                     <TouchableOpacity
                                                         onPress={() => { if (ele.session_feedback === "NA") setStackIndex(3) }}
-                                                        style={[ele.session_feedback === 'Good' ? styles.selectedBox : stackIndex == 3 && ele.session_feedback === 'NA' ? styles.selectedBox : styles.unSelectedBox]}>
-                                                        <Text style={[ele.session_feedback === 'Good' ? styles.selectedText : stackIndex == 3 && ele.session_feedback === 'NA' ? styles.selectedText : styles.unSelectedText]}>
+                                                        style={[ele.session_feedback === 'good' ? styles.selectedBox : stackIndex == 3 && ele.session_feedback === 'NA' ? styles.selectedBox : styles.unSelectedBox]}>
+                                                        <Text style={[ele.session_feedback === 'good' ? styles.selectedText : stackIndex == 3 && ele.session_feedback === 'NA' ? styles.selectedText : styles.unSelectedText]}>
                                                             Good
                                                         </Text>
                                                     </TouchableOpacity>
 
                                                     <TouchableOpacity
                                                         onPress={() => { if (ele.session_feedback === "NA") setStackIndex(4) }}
-                                                        style={[ele.session_feedback === 'Excellent' ? styles.selectedBox : stackIndex == 4 && ele.session_feedback === 'NA' ? styles.selectedBox : styles.unSelectedBox]}>
-                                                        <Text style={[ele.session_feedback === 'Excellent' ? styles.selectedText : stackIndex == 4 && ele.session_feedback === 'NA' ? styles.selectedText : styles.unSelectedText]}>
+                                                        style={[ele.session_feedback === 'excellent' ? styles.selectedBox : stackIndex == 4 && ele.session_feedback === 'NA' ? styles.selectedBox : styles.unSelectedBox]}>
+                                                        <Text style={[ele.session_feedback === 'excellent' ? styles.selectedText : stackIndex == 4 && ele.session_feedback === 'NA' ? styles.selectedText : styles.unSelectedText]}>
                                                             Excellent
                                                         </Text>
                                                     </TouchableOpacity>
