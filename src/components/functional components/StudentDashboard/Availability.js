@@ -5,6 +5,8 @@ import { List, Chip } from "react-native-paper";
 import { TextInput } from "@react-native-material/core";
 import axios from 'axios'
 import Lottie from 'lottie-react-native';
+import { Dropdown } from 'react-native-element-dropdown';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 import { COLORS, SIZES, FONTS, assets, CONST } from "../../../../constants";
 import { DatePickerModal } from 'react-native-paper-dates';
@@ -49,6 +51,9 @@ const Availability = ({ navigation, route }) => {
         next_level_session_count: "21"
     })
 
+    const [state, setState] = useState({ level_details: [] })
+    const [currentLevel, setCurrentLevel] = useState({})
+
     const [totalDays, setTotalDays] = useState(0)
     const [currentTimeIndex, setCurrentTimeIndex] = useState(0)
 
@@ -56,28 +61,18 @@ const Availability = ({ navigation, route }) => {
 
         let value = await AsyncStorage.getItem('AuthState')
 
-        console.log(`${CONST.baseUrl}/teacherapp/get/teacher/availablity/${value}`);
 
-        axios.get(`${CONST.baseUrl}/teacherapp/get/teacher/availablity/${value}`).then((response) => {
-            console.log(response.data, " hii");
-            // console.log(response.data)
-            // setData(response.data)
+        axios.post(`${CONST.baseUrl}/teacherapp/get/teacher/availablity`, {
+            "teacher_id": value,
+            "stud_id": route.params.student_id
+        }).then((response) => {
+            setState(response.data)
         })
             .catch((error) => {
                 console.log("error");
                 console.log(error);
             });
 
-        // axios.get(`${CONST.baseUrl}/student/assign/next/session/${route.params.student_id}`)
-        //     .then((response) => {
-        //         console.log(response.data, " hii");
-        //         // console.log(response.data)
-        //         setData(response.data)
-        //     })
-        //     .catch((error) => {
-        //         console.log("error");
-        //         console.log(error);
-        //     });
 
     }
 
@@ -133,9 +128,7 @@ const Availability = ({ navigation, route }) => {
 
         playAnimation()
 
-        // console.log(JSON.stringify(data));
-        // console.log(`${CONST.baseUrl}/student/assign/assignlevel`);
-
+ 
         axios.post(`${CONST.baseUrl}/student/assign/assignlevel`, payload)
             .then(async (response) => {
                 console.log(response.data)
@@ -159,6 +152,9 @@ const Availability = ({ navigation, route }) => {
             });
 
     }
+
+    const [value, setValue] = useState(null);
+    const [isFocus, setIsFocus] = useState(false);
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
@@ -232,8 +228,38 @@ const Availability = ({ navigation, route }) => {
         <View style={{ backgroundColor: 'white' }}>
 
             <ScrollView style={{ backgroundColor: 'white', height: '100%' }} contentContainerStyle={{ alignItems: 'center', }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 24 }}>
-                    <Text style={{ fontFamily: FONTS.semiBold, fontSize: SIZES.font }}>
+                <View style={{ justifyContent:'center', alignItems: 'center', marginTop: 24, width:'95%' }}>
+                    <Dropdown
+                        style={[Styles.dropdown, isFocus && { }]}
+                        placeholderStyle={Styles.placeholderStyle}
+                        selectedTextStyle={Styles.selectedTextStyle}
+                        inputSearchStyle={Styles.inputSearchStyle}
+                        iconStyle={Styles.iconStyle}
+                        data={state.level_details}
+                        maxHeight={300}
+                        labelField="level_name"
+                        valueField="level_name"
+                        placeholder={!isFocus ? 'Select Level' : 'Select Level'}
+                        searchPlaceholder="Search..."
+                        value={value}
+                        onFocus={() => setIsFocus(true)}
+                        onBlur={() => setIsFocus(false)}
+                        onChange={item => {
+                            console.log(item);
+                            setValue(item.value);
+                            setCurrentLevel(item)
+                            setIsFocus(false);
+                        }}
+                        // renderLeftIcon={() => (
+                        //     <AntDesign
+                        //         style={Styles.icon}
+                        //         color={isFocus ? 'blue' : 'black'}
+                        //         name="Safety"
+                        //         size={20}
+                        //     />
+                        // )}
+                    />
+                    {/* <Text style={{ fontFamily: FONTS.semiBold, fontSize: SIZES.font }}>
                         Level {data.next_level_name?.replace("level", "")}
                     </Text>
                     <View style={{ flexDirection: 'row', marginStart: 8 }}>
@@ -241,7 +267,7 @@ const Availability = ({ navigation, route }) => {
                         <View style={{ height: 4, width: 4, borderRadius: 2, backgroundColor: COLORS.grey, marginHorizontal: 2 }} />
                         <View style={{ height: 4, width: 4, borderRadius: 2, backgroundColor: COLORS.grey, marginHorizontal: 2 }} />
 
-                    </View>
+                    </View> */}
                 </View>
 
                 <View style={{ width: '98%', marginTop: SIZES.doubleLarge, flexDirection: 'row' }}>
@@ -272,7 +298,7 @@ const Availability = ({ navigation, route }) => {
                 </Text>
 
                 <Text style={{ fontFamily: FONTS.regular, fontSize: SIZES.font, color: COLORS.almostBlack, alignSelf: 'flex-start', marginStart: 16, marginTop: 4 }}>
-                    Total {data.next_level_session_count.toString()} sessions in Level {data.next_level_name?.replace("level", "")}. End Date will auto calculate based on the selection of the start date.
+                    Total {currentLevel.session_count} sessions in Level {data.next_level_name?.replace("level", "")}. End Date will auto calculate based on the selection of the start date.
                 </Text>
 
 
@@ -366,7 +392,7 @@ const Availability = ({ navigation, route }) => {
                     onDismiss={onDismissSingle}
                     label='Select Date'
                     date={date}
-                    validRange={{ startDate: data.date ? new Date(data.date) : new Date() }}
+                    validRange={{ startDate: state.teacher_tentative_start_date ? new Date(state.teacher_tentative_start_date[0].tentative_start_date) : new Date() }}
                     startDate={data.date ? new Date(data.date) : new Date()}
                     onConfirm={
                         (date) => {
@@ -504,5 +530,43 @@ const Styles = StyleSheet.create({
     btnTextStyle: {
         fontSize: 20,
         color: "#FFFFFF",
+    },
+    container: {
+        backgroundColor: 'white',
+        padding: 16,
+    },
+    dropdown: {
+        height: 50,
+        width:'60%',
+        borderColor: 'gray',
+        borderWidth: 0.5,
+        borderRadius: 8,
+        paddingHorizontal: 8,
+    },
+    icon: {
+        marginRight: 5,
+    },
+    label: {
+        position: 'absolute',
+        backgroundColor: 'white',
+        left: 22,
+        top: 8,
+        zIndex: 999,
+        paddingHorizontal: 8,
+        fontSize: 14,
+    },
+    placeholderStyle: {
+        fontSize: 16,
+    },
+    selectedTextStyle: {
+        fontSize: 16,
+    },
+    iconStyle: {
+        width: 20,
+        height: 20,
+    },
+    inputSearchStyle: {
+        height: 40,
+        fontSize: 16,
     },
 });
