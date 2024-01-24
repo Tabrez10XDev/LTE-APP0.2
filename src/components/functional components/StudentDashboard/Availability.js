@@ -57,15 +57,19 @@ const Availability = ({ navigation, route }) => {
     const [totalDays, setTotalDays] = useState(0)
     const [currentTimeIndex, setCurrentTimeIndex] = useState(0)
 
+    const [teacherID, setTeacherID] = useState(-1)
+
     async function fetchAvailability() {
 
         let value = await AsyncStorage.getItem('AuthState')
+        setTeacherID(value)
 
 
         axios.post(`${CONST.baseUrl}/teacherapp/get/teacher/availablity`, {
             "teacher_id": value,
             "stud_id": route.params.student_id
         }).then((response) => {
+            console.log(response.data, "fetched");
             setState(response.data)
         })
             .catch((error) => {
@@ -79,7 +83,7 @@ const Availability = ({ navigation, route }) => {
     async function postAvailability() {
 
 
-        if (temp == null || temp == undefined) {
+        if (temp == null || temp == undefined || temp.length == 0) {
             Toast.show({
                 type: 'info',
                 text1: "Please select start date"
@@ -117,21 +121,26 @@ const Availability = ({ navigation, route }) => {
         const formattedDateString = `${year}-${month}-${day}`;
 
         const payload = {
-            "stud_id": data.stud_id,
+            "stud_id": parseInt(route.params.student_id),
             "start_date": formattedDateString,
-            "level_id": data.next_level_id,
-            "level_status": "Not Completed",
-            "created_by": data.teacher_id,
-            "teacher_id": data.teacher_id,
+            "level_id": parseInt(currentLevel.level_id),
+            "created_by": parseInt(teacherID),
+            "teacher_id": parseInt(teacherID),
             "session_details": trueSwitches
         }
+
+        console.log("Payload:");
+        console.log(payload);
+        console.log("----");
 
         playAnimation()
 
  
         axios.post(`${CONST.baseUrl}/student/assign/assignlevel`, payload)
             .then(async (response) => {
+                console.log("Response:");
                 console.log(response.data)
+                console.log("----");
                 pauseAnimation()
                 await fetchAvailability()
                 Toast.show({
@@ -143,6 +152,8 @@ const Availability = ({ navigation, route }) => {
                 setTime2(["00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00"])
             })
             .catch((error) => {
+                console.log("ERROR:::");
+                console.log("----");
                 console.log(error);
                 pauseAnimation()
                 Toast.show({
@@ -217,7 +228,6 @@ const Availability = ({ navigation, route }) => {
             let _time = time2
             _time[currentTimeIndex] = _hour + ":" + _min
             setTime2(_time)
-            console.log({ hours, minutes });
         }
 
 
@@ -245,7 +255,6 @@ const Availability = ({ navigation, route }) => {
                         onFocus={() => setIsFocus(true)}
                         onBlur={() => setIsFocus(false)}
                         onChange={item => {
-                            console.log(item);
                             setValue(item.value);
                             setCurrentLevel(item)
                             setIsFocus(false);
@@ -383,7 +392,6 @@ const Availability = ({ navigation, route }) => {
                     onConfirm={onConfirm2}
                 />
 
-                {console.log(data.date)}
 
                 <DatePickerModal
                     locale="en"

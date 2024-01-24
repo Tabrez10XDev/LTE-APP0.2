@@ -25,8 +25,7 @@ const Training = ({ navigation, route }) => {
             data: { stud_id: route.params.student_id }
         };
 
-        console.log(JSON.stringify({ stud_id: route.params.student_id }));
-        console.log(`${CONST.baseUrl}/teacherapp/get/student/details`)
+ 
 
 
         axios.request(config)
@@ -36,7 +35,9 @@ const Training = ({ navigation, route }) => {
                     setState(current => ({ ...current, [ele.level_id]: { total: Number(ele.total_session_count), completed: ele.completed_session_count, progress: Number(ele.total_session_count) / Number(ele.completed_session_count) == 0 ? 1 : Number(ele.completed_session_count) } }))
                 })
 
+
                 response.data.stud_next_session.map((ele, index) => {
+                    if(ele.date == null) return
                     setState2(current => ({ ...current, [ele.level_id]: { start: ele.start_time.substring(0, 5), end: ele.end_time.substring(0, 5), nextId: ele.session_id, nextTitle: ele.session_name, date: ele.date.substring(0, 10), day: ele.day } }))
                 })
 
@@ -108,7 +109,6 @@ const Training = ({ navigation, route }) => {
 
     return (
         <View style={{ height: '100%', backgroundColor: 'white', paddingTop: 16 }}>
-            {console.log(state[6])}
             <List.AccordionGroup>
                 {data.level_list.map((ele, index) => {
                     return (

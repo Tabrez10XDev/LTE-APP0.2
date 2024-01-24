@@ -124,7 +124,7 @@ const StudentsList = ({ navigation, route }) => {
             <Text style={{marginTop:64, fontFamily: FONTS.bold, color:COLORS.darkGrey, fontSize: 16}}>
                 No Student is mapped to you 
             </Text> : null}
-            {studentData.map((ele, index) => {
+            {studentData.sort((a, b) => a.student_name.localeCompare(b.student_name)).map((ele, index) => {
                 return (
                     <StudentListItem
                         name={ele.student_name}

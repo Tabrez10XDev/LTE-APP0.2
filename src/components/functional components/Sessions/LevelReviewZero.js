@@ -125,6 +125,7 @@ const LevelReviewZero = ({ navigation, route }) => {
 
         axios.request(config)
             .then((response) => {
+                console.log("fetched");
                 response.data.stud_total_and_completed_level_session_details.map((ele, index) => {
                     _state = { ..._state, [ele.level_id]: { total: Number(ele.total_session_count), completed: ele.completed_session_count, progress: Number(ele.total_session_count) / Number(ele.completed_session_count) == 0 ? 1 : Number(ele.completed_session_count) } }
                 })
@@ -172,7 +173,6 @@ const LevelReviewZero = ({ navigation, route }) => {
                 let tempState = { ..._state[level_id], ..._state2[level_id], title: level_name, sessions: _state3[level_name.slice(-1)] }
 
                 tempState.sessions = tempState.sessions.sort(function (a, b) { return (a.session_id > b.session_id) ? 1 : ((b.session_id > a.session_id) ? -1 : 0); });
-                setData(tempState)
                 setData(tempState)
             })
             .catch((error) => {
@@ -246,7 +246,7 @@ const LevelReviewZero = ({ navigation, route }) => {
             presession_id = data.sessions[index - 1].session_id
         }
 
-        if(message.length == 0){
+        if (message.length == 0) {
             Toast.show({
                 type: 'error',
                 text1: 'Please enter feedback'
@@ -266,7 +266,7 @@ const LevelReviewZero = ({ navigation, route }) => {
             'feedback_notes': message,
         });
 
-
+console.log(_data);
         let config = {
             method: 'put',
             maxBodyLength: Infinity,
@@ -297,7 +297,7 @@ const LevelReviewZero = ({ navigation, route }) => {
                 })
                 setStackIndex(1)
                 setMessage("")
-                if (index >= 1 && index < 12) {
+                if (index >= 1) {
                     setGuidelines({
                         session: name,
                         text: guidelines
@@ -549,11 +549,10 @@ const LevelReviewZero = ({ navigation, route }) => {
                         return (
                             (ele.session_unlock_status === true) || data2.sessions[index].session_unlock_status || index == 0 ? (
                                 <List.Accordion
-
                                     onPress={() => { console.log(index) }}
                                     theme={{ colors: { primary: COLORS.primary } }} style={{ backgroundColor: 'white' }} title={ele.session_name} id={ele.session_id}
                                     right={props =>
-                                        ele.session_feedback !== 'NA' ? (
+                                        ele.session_feedback !== 'NA' || data2.sessions[index]?.session_feedback != "NA" ? (
                                             <List.Icon {...props} icon="check-circle-outline" color="green" />
                                         ) : (
                                             <List.Icon {...props} icon="clock" />
@@ -568,16 +567,16 @@ const LevelReviewZero = ({ navigation, route }) => {
                                             </TouchableOpacity>
                                         </View>
                                         <Text style={{
-                                                    marginHorizontal: 16,
-                                                    fontSize: 14,
-                                                    fontWeight: "600",
+                                            marginHorizontal: 16,
+                                            fontSize: 14,
+                                            fontWeight: "600",
                                         }}>{ele.common_desc}</Text>
 
 
                                         {(ele.audio_file_count == null) || (ele.audio_file_count == 0) ||
                                             states[ele.session_id] == true || (ele.audio1 === "approved" && ele.audio2 === "approved")
                                             ? <>
-                                                <Text style={{...TrainStyle.subHeading, marginTop:4}}>Rate this session</Text>
+                                                <Text style={{ ...TrainStyle.subHeading, marginTop: 4 }}>Rate this session</Text>
 
                                                 <ScrollView
                                                     horizontal={true}
