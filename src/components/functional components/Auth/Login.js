@@ -47,7 +47,8 @@ const Login = ({ navigation, route }) => {
 
   const [loginDetails, setLoginDetails] = useState({
     "email": "",
-    "password": ""
+    "password": "",
+    device_token: ""
   });
 
 
@@ -75,6 +76,8 @@ const Login = ({ navigation, route }) => {
       // navigation.navigate('TermsConditions');
       playAnimation()
 
+      console.log(`${CONST.baseUrl}/teacher/get/teacherlogin`);
+      console.log(loginDetails);
       axios.post(
         `${CONST.baseUrl}/teacher/get/teacherlogin`, loginDetails
       ).then((response) => {
@@ -98,7 +101,7 @@ const Login = ({ navigation, route }) => {
         }
       }).catch((error) => {
         pauseAnimation()
-        console.error(error)
+        
         console.log(error.response);
         Toast.show({
           type: 'error',

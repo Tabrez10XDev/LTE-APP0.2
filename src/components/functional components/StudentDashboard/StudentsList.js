@@ -80,8 +80,8 @@ const StudentsList = ({ navigation, route }) => {
                 <TextInput onChangeText={(text) => handleSearch(text)} placeholder="Search..." style={{ height: 60, width: '100%', borderRadius: 30, borderColor: COLORS.borderGrey, paddingHorizontal: 42, borderWidth: 1, alignItems: 'center', flexDirection: 'row' }} selectionColor={COLORS.grey}>
 
                 </TextInput>
-                <Ionicons name="md-search" size={22} color="#000000BD" style={{ position: 'absolute', left: 16 }} />
-                <Ionicons name="ios-funnel" size={22} color="#000000BD" style={{ position: 'absolute', right: 16 }} />
+                <Ionicons name="search" size={22} color="#000000BD" style={{ position: 'absolute', left: 16 }} />
+                <Ionicons name="funnel" size={22} color="#000000BD" style={{ position: 'absolute', right: 16 }} />
             </View>
 
             <View style={{ flexDirection: 'row', width: '100%', marginTop: 12 }}>

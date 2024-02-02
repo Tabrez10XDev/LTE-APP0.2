@@ -91,6 +91,8 @@ const Availability = ({ navigation, route }) => {
             return
         }
 
+        console.log("going");
+
         const trueSwitches = [];
         if (totalDays !== 3) {
             Toast.show({
@@ -124,6 +126,7 @@ const Availability = ({ navigation, route }) => {
             "stud_id": parseInt(route.params.student_id),
             "start_date": formattedDateString,
             "level_id": parseInt(currentLevel.level_id),
+            "level_status": "Not Completed",
             "created_by": parseInt(teacherID),
             "teacher_id": parseInt(teacherID),
             "session_details": trueSwitches
@@ -135,7 +138,6 @@ const Availability = ({ navigation, route }) => {
 
         playAnimation()
 
- 
         axios.post(`${CONST.baseUrl}/student/assign/assignlevel`, payload)
             .then(async (response) => {
                 console.log("Response:");
@@ -460,7 +462,6 @@ const Availability = ({ navigation, route }) => {
                                 flexWrap: 'wrap',
                                 marginTop: -48
                             }}>
-                            Loading
                         </Text>
                     </View>
 

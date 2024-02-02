@@ -250,7 +250,7 @@ function UploadAudioTab({ route, navigation }) {
 
 
 
-    const { name, uri } = fileResponse;
+    const { name, uri } = fileResponse.assets[0];
     console.log(uri);
     let formDataObj = new FormData();
     if (uri) {
@@ -360,10 +360,10 @@ function UploadAudioTab({ route, navigation }) {
                 Status: {audioStatus ?? ""}
               </Text>
             </TouchableOpacity>
-            {fileResponse.name != undefined ? (
+            {fileResponse.assets != undefined ? (
               <View style={{ flexDirection: 'row', marginTop: 32, alignItems: 'center' }}>
                 <Text>
-                  {fileResponse.name}
+                  {fileResponse.assets[0].name}
                 </Text>
 
                 <TouchableOpacity
@@ -411,7 +411,6 @@ function UploadAudioTab({ route, navigation }) {
                 flexWrap: 'wrap',
                 marginTop: -48
               }}>
-              Loading
             </Text>
           </View>
 
@@ -513,7 +512,7 @@ function HomeTabView({ route }) {
                 ),
                 drawerIcon: ({ focused, size }) => (
                   <Ionicons
-                    name="md-home"
+                    name="home"
                     size={size}
                     color={focused ? 'white' : 'black'}
                   />

@@ -13,8 +13,12 @@ const Training = ({ navigation, route }) => {
     const [state, setState] = useState({})
     const [state2, setState2] = useState({})
     const [state3, setState3] = useState({})
+    const [completedState, setCompletedState] = useState({})
 
     async function fetchLevels() {
+
+        console.log(route.params.student_id,);
+
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
@@ -25,9 +29,6 @@ const Training = ({ navigation, route }) => {
             data: { stud_id: route.params.student_id }
         };
 
- 
-
-
         axios.request(config)
             .then((response) => {
 
@@ -35,10 +36,26 @@ const Training = ({ navigation, route }) => {
                     setState(current => ({ ...current, [ele.level_id]: { total: Number(ele.total_session_count), completed: ele.completed_session_count, progress: Number(ele.total_session_count) / Number(ele.completed_session_count) == 0 ? 1 : Number(ele.completed_session_count) } }))
                 })
 
+                console.log(JSON.stringify(response.data.stud_next_session), "here")
 
                 response.data.stud_next_session.map((ele, index) => {
-                    if(ele.date == null) return
-                    setState2(current => ({ ...current, [ele.level_id]: { start: ele.start_time.substring(0, 5), end: ele.end_time.substring(0, 5), nextId: ele.session_id, nextTitle: ele.session_name, date: ele.date.substring(0, 10), day: ele.day } }))
+                    if(ele.start_time == null){
+                        return
+                    }
+                    setState2(current => ({ ...current, [ele.level_id]: { 
+                        start: ele.start_time.substring(0, 5), 
+                        end: ele.end_time.substring(0, 5), 
+                        nextId: ele.session_id, 
+                        nextTitle: ele.session_name, 
+                        day: ele.day 
+                    } }))
+                })
+
+
+                response.data.stud_levels_status.map((ele, index) => {
+                    setCompletedState(current => ({ ...current, [ele.level_id]: { 
+                        level_status: ele.level_status
+                    } }))
                 })
 
                 setData(response.data)
@@ -47,6 +64,7 @@ const Training = ({ navigation, route }) => {
                 let temp1 = []
                 let temp2 = []
                 let temp3 = []
+                
                 let temp4 = []
                 let temp5 = []
                 response.data.stud_level_details.map((ele, index) => {
@@ -82,7 +100,7 @@ const Training = ({ navigation, route }) => {
 
             })
             .catch((error) => {
-                console.log(error);
+                console.error(error.response.data);
             });
     }
 
@@ -114,9 +132,9 @@ const Training = ({ navigation, route }) => {
                     return (
                         <>
                             {state2[ele.level_id] || (parseInt(parseInt(state[ele.level_id].completed) / parseInt(state[ele.level_id].total)) == 1) ?
-                                <List.Accordion
+                               <List.Accordion
                                     right={props =>
-                                        (parseInt(parseInt(state[ele.level_id].completed) / parseInt(state[ele.level_id].total)) == 1)
+                                        completedState[ele.level_id].level_status == "completed"
                                             ? (
                                                 <List.Icon {...props} icon="check-circle-outline" color="green" />
                                             ) : (
@@ -124,6 +142,7 @@ const Training = ({ navigation, route }) => {
                                             )
                                     }
                                     theme={{ colors: { primary: COLORS.primary } }} style={{ backgroundColor: 'white', borderBottomWidth: 1, borderColor: COLORS.borderGrey }} title={ele.level_name} id={ele.level_id}>
+
                                     <TouchableOpacity
                                         onPress={() => navToSessions(ele)}
                                         style={{ marginHorizontal: 16, marginTop: 12, borderBottomWidth: 1, borderColor: COLORS.borderGrey, paddingBottom: 8, width: '90%' }}>

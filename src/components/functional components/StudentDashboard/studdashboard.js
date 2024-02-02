@@ -49,7 +49,7 @@ function StudentProfileView({ route, navigation }) {
 
   useEffect(() => {
     openSheet()
-    lockSessions()
+    // lockSessions()
   }, [])
 
   const Tab = createMaterialTopTabNavigator();
@@ -77,7 +77,6 @@ function StudentProfileView({ route, navigation }) {
         </Text>
 
       </View>
-      {console.log(route.params)}
       <Tab.Navigator
         screenOptions={{
           contentStyle: { backgroundColor: '#FFFFFF' }, tabBarIndicatorStyle: { backgroundColor: COLORS.primary },
@@ -87,6 +86,7 @@ function StudentProfileView({ route, navigation }) {
       </Tab.Navigator>
 
 
+{console.log(route.params, "stats")}
 
       <PerformanceBottomSheet
         name={route.params.student_name}

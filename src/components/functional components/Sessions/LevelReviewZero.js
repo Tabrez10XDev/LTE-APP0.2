@@ -49,6 +49,9 @@ const LevelReviewZero = ({ navigation, route }) => {
         text: ""
     })
 
+    const [uploaded, setUploaded] = useState({ cloud: false })
+    const [inter, setInter] = useState(false)
+
     const [animSpeed, setAnimSpeed] = useState(false)
     const animRef = useRef()
 
@@ -76,8 +79,12 @@ const LevelReviewZero = ({ navigation, route }) => {
 
 
     const [stackIndex, setStackIndex] = useState(1);
-    const [fileResponse, setFileResponse] = useState({});
-    const [fileResponse2, setFileResponse2] = useState({});
+    const [fileResponse, setFileResponse] = useState({
+        assets: [{}]
+    });
+    const [fileResponse2, setFileResponse2] = useState({
+        assets: [{}]
+    });
 
     const [stateID, setStateID] = useState(-1)
     const [states, setStates] = useState({})
@@ -88,9 +95,9 @@ const LevelReviewZero = ({ navigation, route }) => {
     let _state3;
 
 
-    const [state, setState] = useState({})
-    const [state2, setState2] = useState({})
-    const [state3, setState3] = useState({})
+    // const [state, setState] = useState({})
+    // const [state2, setState2] = useState({})
+    // const [state3, setState3] = useState({})
     let data = route.params
     data.sessions = data.sessions.sort(function (a, b) { return (a.session_id > b.session_id) ? 1 : ((b.session_id > a.session_id) ? -1 : 0); });
 
@@ -125,7 +132,6 @@ const LevelReviewZero = ({ navigation, route }) => {
 
         axios.request(config)
             .then((response) => {
-                console.log("fetched");
                 response.data.stud_total_and_completed_level_session_details.map((ele, index) => {
                     _state = { ..._state, [ele.level_id]: { total: Number(ele.total_session_count), completed: ele.completed_session_count, progress: Number(ele.total_session_count) / Number(ele.completed_session_count) == 0 ? 1 : Number(ele.completed_session_count) } }
                 })
@@ -176,7 +182,7 @@ const LevelReviewZero = ({ navigation, route }) => {
                 setData(tempState)
             })
             .catch((error) => {
-                console.log(error);
+                console.error(error);
             });
     }
 
@@ -190,9 +196,17 @@ const LevelReviewZero = ({ navigation, route }) => {
         return unsubscribe;
     }, [navigation]);
 
+    useEffect(() => {
+        if (uploaded.cloud) {
+            uploadAudio(uploaded.session_id, uploaded.level_id, uploaded.level_name, uploaded.index)
+        }
+    }, [uploaded])
 
 
-    const audioSubmitBtn = useCallback(async () => {
+    const audioSubmitBtn = useCallback(async (audioStatus) => {
+        if (audioStatus == "submitted") {
+            return
+        }
         try {
             const response = await DocumentPicker.getDocumentAsync({
                 type: "audio/*",
@@ -207,8 +221,12 @@ const LevelReviewZero = ({ navigation, route }) => {
     }, []);
 
 
-    const audioSubmitBtn2 = useCallback(async () => {
+    const audioSubmitBtn2 = useCallback(async (audioStatus) => {
+
         try {
+            if (audioStatus == "submitted") {
+                return
+            }
             const response = await DocumentPicker.getDocumentAsync({
                 type: "audio/*",
                 copyToCacheDirectory: true,
@@ -239,6 +257,7 @@ const LevelReviewZero = ({ navigation, route }) => {
 
 
     const updateFeedback = async (levelId, id, level_name, index, name, guidelines) => {
+        console.log("uploading feedback");
         let prelevel_id = 0
         let presession_id = 0
         if (index > 0) {
@@ -266,7 +285,6 @@ const LevelReviewZero = ({ navigation, route }) => {
             'feedback_notes': message,
         });
 
-console.log(_data);
         let config = {
             method: 'put',
             maxBodyLength: Infinity,
@@ -284,12 +302,13 @@ console.log(_data);
         //     setGuidelines({
         //         session: name,
         //         text: guidelines
-        //     })
+        //     })c
         //     setPopup(true)
         // }
 
         axios.request(config)
             .then((response) => {
+                console.log(response.data);
                 pauseAnimation()
                 Toast.show({
                     type: 'success',
@@ -310,17 +329,17 @@ console.log(_data);
                 pauseAnimation()
                 console.log(error.response);
             });
-
     }
 
 
 
 
     const uploadAudio = async (id, levelId, level_name, index) => {
+        console.log("uploadijg audio");
 
         const URL = `https://api.cloudinary.com/v1_1/db2bzxbn7/video/upload`;
 
-        if (fileResponse.name === undefined || fileResponse2.name === undefined) {
+        if (fileResponse.assets[0].name === undefined || fileResponse2.assets[0].name === undefined) {
             Toast.show({
                 type: 'error',
                 text1: 'Upload both audios to continue'
@@ -328,8 +347,9 @@ console.log(_data);
             return
         }
 
-        const { name, uri } = fileResponse;
+        const { name, uri } = fileResponse.assets[0];
         let formDataObj = new FormData();
+
         if (uri) {
             formDataObj.append('file', { name, uri, type: "video/mp4" });
             formDataObj.append('api_key', formData.api_key);
@@ -355,14 +375,13 @@ console.log(_data);
                         audio_source: response.data.url ?? "",
                         level_id: levelId,
                         session_id: id,
-                        audio_file_name: `Fahadh-${levelId}-${id}`,
+                        audio_file_name: `${route.params.student_name}-${levelId}-${id}`,
                         audio_reason: "",
                         audio1: true,
                         audio2: false,
                         audio_uploaded_by: stateID,
                     }
                     ).then((response) => {
-                        // console.log(response.status)
                         if (response.status == 200) {
                             uploadAudio2(id, levelId, level_name, index)
                             // setStates(current => ({ ...current, [id]: true }))
@@ -395,7 +414,7 @@ console.log(_data);
 
         const URL = `https://api.cloudinary.com/v1_1/db2bzxbn7/video/upload`;
 
-        const { name, uri } = fileResponse2;
+        const { name, uri } = fileResponse2.assets[0];
         let formDataObj = new FormData();
         if (uri) {
             formDataObj.append('file', { name, uri, type: "video/mp4" });
@@ -422,14 +441,13 @@ console.log(_data);
                         audio_source: response.data.url ?? "",
                         level_id: levelId,
                         session_id: id,
-                        audio_file_name: `Fahadh-${levelId}-${id}`,
+                        audio_file_name: `${route.params.student_name}-${levelId}-${id}`,
                         audio_reason: "",
                         audio1: false,
                         audio2: true,
                         audio_uploaded_by: stateID,
                     }
                     ).then((response) => {
-                        console.log(response.status)
                         pauseAnimation()
                         if (response.status == 200) {
                             setStates(current => ({ ...current, [id]: true }))
@@ -437,11 +455,13 @@ console.log(_data);
                                 type: 'success',
                                 text1: 'Success'
                             })
+                            console.log("Uploaded audio");
+                            // updateFeedback(levelId, id, level_name, index)
+                        } else {
                             Toast.show({
                                 type: 'error',
                                 text1: 'Failed uploading second audio'
                             })
-                            // updateFeedback(levelId, id, level_name, index)
                         }
                     }
                     )
@@ -522,14 +542,10 @@ console.log(_data);
                                     }}>
                                     From {data?.start_date?.substring(0, 10)} to {data?.end_date?.substring(0, 10)}
                                 </Text>
-
-
                             </View>
                         </>
                     }
                     <View style={{ alignSelf: 'flex-start', marginTop: 8, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', width: '90%' }}>
-
-
                         <ProgressBar unfilledColor={COLORS.unProgressed} color={data.progress == data.total ? COLORS.green : COLORS.yellow} progress={data.progress / data.total} width={Dimensions.get('window').width * 0.6} borderColor={COLORS.unProgressed} />
                         <Text
                             style={{
@@ -543,13 +559,12 @@ console.log(_data);
                     </View>
                 </View>
             </View>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 150 }}>
                 <List.AccordionGroup>
                     {data.sessions.map((ele, index) => {
                         return (
                             (ele.session_unlock_status === true) || data2.sessions[index].session_unlock_status || index == 0 ? (
                                 <List.Accordion
-                                    onPress={() => { console.log(index) }}
                                     theme={{ colors: { primary: COLORS.primary } }} style={{ backgroundColor: 'white' }} title={ele.session_name} id={ele.session_id}
                                     right={props =>
                                         ele.session_feedback !== 'NA' || data2.sessions[index]?.session_feedback != "NA" ? (
@@ -574,7 +589,9 @@ console.log(_data);
 
 
                                         {(ele.audio_file_count == null) || (ele.audio_file_count == 0) ||
-                                            states[ele.session_id] == true || (ele.audio1 === "approved" && ele.audio2 === "approved")
+                                            (states[ele.session_id] == true && ele.session_name != "session21") || (ele.audio_details[0].audio_status === "approved" && ele.audio_details[1].audio_status === "approved")
+                                            || ( inter && ele.session_name == "session21" )
+                                            || (ele.audio_details[0].audio_status === "submitted" && ele.audio_details[1].audio_status === "submitted")
                                             ? <>
                                                 <Text style={{ ...TrainStyle.subHeading, marginTop: 4 }}>Rate this session</Text>
 
@@ -635,14 +652,15 @@ console.log(_data);
                                                         ele.session_feedback == "NA" &&
                                                         <View style={{ ...Style.subViewContainer, width: '40%', marginHorizontal: 0 }}>
                                                             <TouchableOpacity
-                                                                // onPress={()=>console.log("hii")}
-                                                                onPress={() => { updateFeedback(ele.level_id, ele.session_id, ele.level_name, index, ele.session_name, ele.session_guidelines) }}
+                                                                onPress={() => {
+                                                                    // if(ele.session_name == "session21") setUploaded(state => ({ ...state, cloud: true }))
+                                                                    updateFeedback(ele.level_id, ele.session_id, ele.level_name, index, ele.session_name, ele.common_desc)
+                                                                }}
                                                                 style={Style.btnStyle}>
                                                                 <Text style={Style.btnTextStyle}>SUBMIT</Text>
                                                             </TouchableOpacity>
                                                         </View>
                                                     }
-
 
                                                     {/* <View style={{ ...Style.subViewContainer, width: '40%', marginHorizontal: 0 }}>
                                                         <TouchableOpacity
@@ -652,9 +670,10 @@ console.log(_data);
                                                     </View> */}
                                                 </View>
                                             </> : <>
+
                                                 <Text style={TrainStyle.subHeading}>Upload Audios</Text>
-                                                <View style={{ ...Style.dragViewContainer, paddingVertical: 8 }}>
-                                                    <TouchableOpacity onPress={audioSubmitBtn}>
+                                                <View style={{ ...Style.dragViewContainer, paddingVertical: 16 }}>
+                                                    <TouchableOpacity onPress={() => audioSubmitBtn(ele.audio_details[0].audio_status)}>
                                                         <Feather
                                                             style={Style.uploadIcon}
                                                             name="upload-cloud"
@@ -662,14 +681,14 @@ console.log(_data);
                                                             color="blue"
                                                         />
                                                         <Text style={Style.uploadText}>
-                                                            {ele.audio1 === "null" ? "Drop files here or click to upload" : ele.audio1}
+                                                            {(ele.audio_details[0] ? ele.audio_details[0].audio_status == "null" : true) && fileResponse.assets[0].name == undefined ? "Drop files here or click to upload" : ele.audio_details[0] ? ele.audio_details[0].audio_status : ""}
                                                         </Text>
 
                                                     </TouchableOpacity>
-                                                    {fileResponse.name != undefined ? (
-                                                        <View style={{ flexDirection: 'row', marginTop: 24, alignItems: 'center' }}>
+                                                    {fileResponse.assets[0].name != undefined ? (
+                                                        <View style={{ flexDirection: 'row', marginTop: 4, alignItems: 'center' }}>
                                                             <Text>
-                                                                {fileResponse.name}
+                                                                {fileResponse.assets[0].name}
                                                             </Text>
 
                                                             <TouchableOpacity
@@ -689,8 +708,8 @@ console.log(_data);
                                                     ) : null}
                                                 </View>
 
-                                                <View style={{ ...Style.dragViewContainer, paddingVertical: 8, marginTop: 24 }}>
-                                                    <TouchableOpacity onPress={audioSubmitBtn2}>
+                                                <View style={{ ...Style.dragViewContainer, paddingVertical: 16, marginTop: 12 }}>
+                                                    <TouchableOpacity onPress={() => audioSubmitBtn2(ele.audio_details[1].audio_status)}>
                                                         <Feather
                                                             style={Style.uploadIcon}
                                                             name="upload-cloud"
@@ -698,14 +717,14 @@ console.log(_data);
                                                             color="blue"
                                                         />
                                                         <Text style={Style.uploadText}>
-                                                            {ele.audio2 === "null" ? "Drop files here or click to upload 2nd audio" : ele.audio2}
+                                                            {(ele.audio_details[1] ? ele.audio_details[1].audio_status == "null" : true) && fileResponse2.assets[0].name == undefined ? "Drop files here or click to upload" : ele.audio_details[1] ? ele.audio_details[1].audio_status : ""}
                                                         </Text>
 
                                                     </TouchableOpacity>
-                                                    {fileResponse2.name != undefined ? (
-                                                        <View style={{ flexDirection: 'row', marginTop: 24, alignItems: 'center' }}>
+                                                    {fileResponse2.assets[0].name != undefined ? (
+                                                        <View style={{ flexDirection: 'row', marginTop: 4, alignItems: 'center' }}>
                                                             <Text>
-                                                                {fileResponse2.name}
+                                                                {fileResponse2.assets[0].name}
                                                             </Text>
 
                                                             <TouchableOpacity
@@ -726,7 +745,9 @@ console.log(_data);
                                                 </View>
 
                                                 <View style={{ ...Style.subViewContainer }}>
-                                                    <TouchableOpacity onPress={() => uploadAudio(ele.session_id, ele.level_id, ele.level_name, index)} style={Style.btnStyle}>
+                                                    <TouchableOpacity onPress={() =>{ 
+                                                        // setInter(true)
+                                                        uploadAudio(ele.session_id, ele.level_id, ele.level_name, index ) }} style={Style.btnStyle}>
                                                         <Text style={Style.btnTextStyle}>SUBMIT</Text>
                                                     </TouchableOpacity>
                                                 </View>
@@ -767,7 +788,7 @@ console.log(_data);
                                 flexWrap: 'wrap',
                                 marginTop: -48
                             }}>
-                            Loading
+
                         </Text>
                     </View>
 
