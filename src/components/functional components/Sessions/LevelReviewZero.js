@@ -589,7 +589,7 @@ const LevelReviewZero = ({ navigation, route }) => {
 
 
                                         {(ele.audio_file_count == null) || (ele.audio_file_count == 0) ||
-                                            (states[ele.session_id] == true && ele.session_name != "session21") || (ele.audio_details[0].audio_status === "approved" && ele.audio_details[1].audio_status === "approved")
+                                            (states[ele.session_id] == true ) || (ele.audio_details[0].audio_status === "approved" && ele.audio_details[1].audio_status === "approved")
                                             || ( inter && ele.session_name == "session21" )
                                             || (ele.audio_details[0].audio_status === "submitted" && ele.audio_details[1].audio_status === "submitted")
                                             ? <>

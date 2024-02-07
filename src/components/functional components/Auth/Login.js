@@ -122,7 +122,7 @@ const Login = ({ navigation, route }) => {
           <View style={Styles.loginContainer} >
 
             <Image
-              style={{ height: 200, width: 200, resizeMode: 'contain', marginTop: '25%' }}
+              style={{ height: 200, width: 200, resizeMode: 'contain', marginTop: '20%' }}
               source={assets.logo} />
 
             <Text style={{ ...Styles.header, marginTop: 24 }}>

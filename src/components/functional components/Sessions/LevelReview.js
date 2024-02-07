@@ -500,7 +500,7 @@ const LevelReview = ({ navigation, route }) => {
                                         }}>{ele.common_desc}</Text>
 
                                         {(ele.audio_file_count == null) || (ele.audio_file_count == 0) ||
-                                            (states[ele.session_id] == true && ele.session_name != "session50") || (ele.audio_details[0].audio_status === "approved")
+                                            (states[ele.session_id] == true ) || (ele.audio_details[0].audio_status === "approved")
                                             || (ele.audio_details[0].audio_status === "submitted" )
                                             ? <>
                                                 <Text style={{ ...TrainStyle.subHeading, marginTop: 4 }}>Rate this session</Text>
@@ -590,7 +590,7 @@ const LevelReview = ({ navigation, route }) => {
                                                             color="blue"
                                                         />
                                                         <Text style={Style.uploadText}>
-                                                            {(ele.audio_details[0] ? ele.audio_details[0].audio_status == "null" : true) && fileResponse.assets[0].name == undefined ? "Drop files here or click to upload" : ele.audio_details[0] ? ele.audio_details[0].audio_status : ""}
+                                                            {(ele.audio_details[0] ? ele.audio_details[0].audio_status == "null" : true) && fileResponse.assets[0].name == undefined ? "Drop files here or click to upload" : ele.audio_details[0].audio_status !== "null" ? ele.audio_details[0].audio_status : ""}
                                                         </Text>
 
                                                     </TouchableOpacity>

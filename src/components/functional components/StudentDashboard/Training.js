@@ -29,14 +29,15 @@ const Training = ({ navigation, route }) => {
             data: { stud_id: route.params.student_id }
         };
 
+
         axios.request(config)
             .then((response) => {
+
 
                 response.data.stud_total_and_completed_level_session_details.map((ele, index) => {
                     setState(current => ({ ...current, [ele.level_id]: { total: Number(ele.total_session_count), completed: ele.completed_session_count, progress: Number(ele.total_session_count) / Number(ele.completed_session_count) == 0 ? 1 : Number(ele.completed_session_count) } }))
                 })
 
-                console.log(JSON.stringify(response.data.stud_next_session), "here")
 
                 response.data.stud_next_session.map((ele, index) => {
                     if(ele.start_time == null){
