@@ -101,6 +101,7 @@ const Training = ({ navigation, route }) => {
 
             })
             .catch((error) => {
+                
                 console.error(error.response.data);
             });
     }
@@ -135,7 +136,7 @@ const Training = ({ navigation, route }) => {
                             {state2[ele.level_id] || (parseInt(parseInt(state[ele.level_id].completed) / parseInt(state[ele.level_id].total)) == 1) ?
                                <List.Accordion
                                     right={props =>
-                                        completedState[ele.level_id].level_status == "completed"
+                                        completedState[ele.level_id] && completedState[ele.level_id]?.level_status == "completed"
                                             ? (
                                                 <List.Icon {...props} icon="check-circle-outline" color="green" />
                                             ) : (

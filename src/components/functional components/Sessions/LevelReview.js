@@ -82,7 +82,7 @@ const LevelReview = ({ navigation, route }) => {
     const [fileResponse, setFileResponse] = useState({
         assets: [{}]
     });
-  
+
 
     const [stateID, setStateID] = useState(-1)
     const [states, setStates] = useState({})
@@ -203,15 +203,18 @@ const LevelReview = ({ navigation, route }) => {
                 copyToCacheDirectory: true,
                 multiple: false,
             });
-            setFileResponse(response);
-            setFormData({ ...formData, file: response.uri });
+            if (!response.canceled) {
+                console.log(response);
+                setFileResponse(response);
+                setFormData({ ...formData, file: response.uri });
+            }
         } catch (err) {
-            console.warn(err);
+            console.log(err);
         }
     }, []);
 
 
-  
+
     const date = new Date();
 
     const [formData, setFormData] = useState({
@@ -235,7 +238,7 @@ const LevelReview = ({ navigation, route }) => {
         if (index > 0) {
             prelevel_id = data.sessions[index - 1].level_id
             presession_id = data.sessions[index - 1].session_id
-        }else{
+        } else {
             prelevel_id = levelId - 1
             presession_id = id - 1
         }
@@ -261,7 +264,7 @@ const LevelReview = ({ navigation, route }) => {
         });
 
 
-        console.log(_data,"payload");
+        console.log(_data, "payload");
 
         let config = {
             method: 'put',
@@ -274,11 +277,11 @@ const LevelReview = ({ navigation, route }) => {
         };
 
 
-       playAnimation()
+        playAnimation()
 
-     
 
-       axios.request(config)
+
+        axios.request(config)
             .then((response) => {
                 console.log(response.data);
                 pauseAnimation()
@@ -354,6 +357,11 @@ const LevelReview = ({ navigation, route }) => {
                         audio_uploaded_by: stateID,
                     }
                     ).then((response) => {
+
+                        setFileResponse({
+                            assets: [{}]
+                        })
+
                         if (response.status == 200) {
                             setStates(current => ({ ...current, [id]: true }))
                             Toast.show({
@@ -389,7 +397,7 @@ const LevelReview = ({ navigation, route }) => {
 
     };
 
-  
+
 
     return (
         <SafeAreaView style={{ height: '100%', backgroundColor: 'white', paddingTop: 24 }}>
@@ -500,8 +508,8 @@ const LevelReview = ({ navigation, route }) => {
                                         }}>{ele.common_desc}</Text>
 
                                         {(ele.audio_file_count == null) || (ele.audio_file_count == 0) ||
-                                            (states[ele.session_id] == true ) || (ele.audio_details[0].audio_status === "approved")
-                                            || (ele.audio_details[0].audio_status === "submitted" )
+                                            (states[ele.session_id] == true) || (ele.audio_details[0].audio_status === "approved")
+                                            || (ele.audio_details[0].audio_status === "submitted")
                                             ? <>
                                                 <Text style={{ ...TrainStyle.subHeading, marginTop: 4 }}>Rate this session</Text>
 
@@ -601,7 +609,11 @@ const LevelReview = ({ navigation, route }) => {
                                                             </Text>
 
                                                             <TouchableOpacity
-                                                                onPress={() => { setFileResponse({}) }}
+                                                                onPress={() => {
+                                                                    setFileResponse({
+                                                                        assets: [{}]
+                                                                    })
+                                                                }}
                                                                 style={{ marginLeft: 8, alignItems: 'center', justifyContent: 'center' }}>
 
                                                                 <Feather
@@ -654,9 +666,10 @@ const LevelReview = ({ navigation, route }) => {
                                                 </View> */}
 
                                                 <View style={{ ...Style.subViewContainer }}>
-                                                    <TouchableOpacity onPress={() =>{ 
+                                                    <TouchableOpacity onPress={() => {
                                                         // setInter(true)
-                                                        uploadAudio(ele.session_id, ele.level_id, ele.level_name, index ) }} style={Style.btnStyle}>
+                                                        uploadAudio(ele.session_id, ele.level_id, ele.level_name, index)
+                                                    }} style={Style.btnStyle}>
                                                         <Text style={Style.btnTextStyle}>SUBMIT</Text>
                                                     </TouchableOpacity>
                                                 </View>

@@ -48,13 +48,13 @@ export default PerformanceBottomSheet = ({ refRBSheet, name, number, level, sati
 
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 16 }}>
                         <Text style={{ fontFamily: FONTS.semiBold, fontSize: SIZES.smallFont }}>
-                            Level {level}
+                            {level}
                         </Text>
                         <View style={{ flexDirection: 'row', marginHorizontal: 8 }}>
                             <View style={{ height: 4, width: 4, borderRadius: 2, backgroundColor: COLORS.grey, marginHorizontal: 2 }} />
                         </View>
                         <Text style={{ fontFamily: FONTS.semiBold, fontSize: SIZES.smallFont }}>
-                            Session {session}
+                            {session}
                         </Text>
                     </View>
 

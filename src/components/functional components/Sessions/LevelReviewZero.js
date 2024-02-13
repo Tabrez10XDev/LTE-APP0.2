@@ -213,8 +213,11 @@ const LevelReviewZero = ({ navigation, route }) => {
                 copyToCacheDirectory: true,
                 multiple: false,
             });
+            if(!response.canceled){
+
             setFileResponse(response);
             setFormData({ ...formData, file: response.uri });
+            }
         } catch (err) {
             console.warn(err);
         }
@@ -232,8 +235,13 @@ const LevelReviewZero = ({ navigation, route }) => {
                 copyToCacheDirectory: true,
                 multiple: false,
             });
+
+            console.log(response);
+            if(!response.canceled){
+
             setFileResponse2(response);
             setFormData2({ ...formData2, file: response.uri });
+            }
         } catch (err) {
             console.warn(err);
         }
@@ -589,8 +597,8 @@ const LevelReviewZero = ({ navigation, route }) => {
 
 
                                         {(ele.audio_file_count == null) || (ele.audio_file_count == 0) ||
-                                            (states[ele.session_id] == true ) || (ele.audio_details[0].audio_status === "approved" && ele.audio_details[1].audio_status === "approved")
-                                            || ( inter && ele.session_name == "session21" )
+                                            (states[ele.session_id] == true) || (ele.audio_details[0].audio_status === "approved" && ele.audio_details[1].audio_status === "approved")
+                                            || (inter && ele.session_name == "session21")
                                             || (ele.audio_details[0].audio_status === "submitted" && ele.audio_details[1].audio_status === "submitted")
                                             ? <>
                                                 <Text style={{ ...TrainStyle.subHeading, marginTop: 4 }}>Rate this session</Text>
@@ -681,7 +689,7 @@ const LevelReviewZero = ({ navigation, route }) => {
                                                             color="blue"
                                                         />
                                                         <Text style={Style.uploadText}>
-                                                            {(ele.audio_details[0] ? ele.audio_details[0].audio_status == "null" : true) && fileResponse.assets[0].name == undefined ? "Drop files here or click to upload" : ele.audio_details[0] ? ele.audio_details[0].audio_status : ""}
+                                                            {(ele.audio_details[0] ? ele.audio_details[0].audio_status == "null" : true) && fileResponse.assets[0].name == undefined ? "Drop files here or click to upload" : fileResponse.assets[0].name == undefined ? ele.audio_details[0].audio_status : ""}
                                                         </Text>
 
                                                     </TouchableOpacity>
@@ -692,8 +700,11 @@ const LevelReviewZero = ({ navigation, route }) => {
                                                             </Text>
 
                                                             <TouchableOpacity
-                                                                onPress={() => { setFileResponse({}) }}
-                                                                style={{ marginLeft: 8, alignItems: 'center', justifyContent: 'center' }}>
+                                                                onPress={() => {
+                                                                    setFileResponse({
+                                                                        assets: [{}]
+                                                                    })
+                                                                }} style={{ marginLeft: 8, alignItems: 'center', justifyContent: 'center' }}>
 
                                                                 <Feather
                                                                     style={{}}
@@ -717,7 +728,7 @@ const LevelReviewZero = ({ navigation, route }) => {
                                                             color="blue"
                                                         />
                                                         <Text style={Style.uploadText}>
-                                                            {(ele.audio_details[1] ? ele.audio_details[1].audio_status == "null" : true) && fileResponse2.assets[0].name == undefined ? "Drop files here or click to upload" : ele.audio_details[1] ? ele.audio_details[1].audio_status : ""}
+                                                            {(ele.audio_details[1] ? ele.audio_details[1].audio_status == "null" : true) && fileResponse2.assets[0].name == undefined ? "Drop files here or click to upload" : fileResponse2.assets[0].name == undefined ? ele.audio_details[1].audio_status : ""}
                                                         </Text>
 
                                                     </TouchableOpacity>
@@ -728,8 +739,11 @@ const LevelReviewZero = ({ navigation, route }) => {
                                                             </Text>
 
                                                             <TouchableOpacity
-                                                                onPress={() => { setFileResponse2({}) }}
-                                                                style={{ marginLeft: 8, alignItems: 'center', justifyContent: 'center' }}>
+                                                                onPress={() => {
+                                                                    setFileResponse2({
+                                                                        assets: [{}]
+                                                                    })
+                                                                }} style={{ marginLeft: 8, alignItems: 'center', justifyContent: 'center' }}>
 
                                                                 <Feather
                                                                     style={{}}
@@ -745,9 +759,10 @@ const LevelReviewZero = ({ navigation, route }) => {
                                                 </View>
 
                                                 <View style={{ ...Style.subViewContainer }}>
-                                                    <TouchableOpacity onPress={() =>{ 
+                                                    <TouchableOpacity onPress={() => {
                                                         // setInter(true)
-                                                        uploadAudio(ele.session_id, ele.level_id, ele.level_name, index ) }} style={Style.btnStyle}>
+                                                        uploadAudio(ele.session_id, ele.level_id, ele.level_name, index)
+                                                    }} style={Style.btnStyle}>
                                                         <Text style={Style.btnTextStyle}>SUBMIT</Text>
                                                     </TouchableOpacity>
                                                 </View>

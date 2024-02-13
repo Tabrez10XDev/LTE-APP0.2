@@ -31,6 +31,7 @@ function StudentProfileView({ route, navigation }) {
     }
     ).then((res)=>{
           console.log(res.data, "shush");
+          setState(res.data)
     }).catch((err)=>{
       console.error(err.response.data);
     })
@@ -85,12 +86,12 @@ function StudentProfileView({ route, navigation }) {
       <PerformanceBottomSheet
         name={route.params.student_name}
         number={route.params.whatsappno}
-        level={route.params?.current_level_name?.at(-1)}
-        needsImprov={route.params.needs_improvement}
-        satisfied={route.params.satisfied}
-        good={route.params.good}
-        excellent={route.params.excellent}
-        session={route.params?.current_session_name?.replace(/\D/g, '')}
+        level={state.level_name ?? ""}
+        needsImprov={state.needs_improvement ?? 0}
+        satisfied={state.satisfied ?? 0}
+        good={state.good ?? 0}
+        excellent={state.excellent ?? 0}
+        session={state.session_name ?? ""}
         group={route.params.group_name}
         refRBSheet={refRBSheet} />
 
