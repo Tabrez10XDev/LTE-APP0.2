@@ -30,7 +30,6 @@ function StudentProfileView({ route, navigation }) {
       student_id: route.params.student_id
     }
     ).then((res)=>{
-          console.log(res.data, "shush");
           setState(res.data)
     }).catch((err)=>{
       console.error(err.response.data);
