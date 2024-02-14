@@ -12,11 +12,32 @@ import axios from "axios";
 import moment from 'moment';
 import { ScrollView } from "react-native-gesture-handler";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Lottie from 'lottie-react-native';
 
 const TicketStatus = ({ navigation, route }) => {
 
+
+    const [animSpeed, setAnimSpeed] = useState(false)
+    const animRef = useRef()
+
+    function playAnimation() {
+        setAnimSpeed(true)
+    }
+
+
+    function pauseAnimation() {
+        setAnimSpeed(false)
+    }
+
+    useEffect(() => {
+        setTimeout(() => {
+            animRef.current?.play();
+        }, 100)
+    }, [animSpeed])
+
+
+
     const [stackIndex, setStackIndex] = useState(1);
-    const [modalVisible, setModalVisible] = useState(false);
     const [popup, setPopup] = useState(false)
 
     const [allTickets, setAllTickets] = useState([])
@@ -30,11 +51,13 @@ const TicketStatus = ({ navigation, route }) => {
 
     const getTicketsList = async () => {
         try {
+            playAnimation()
             const teacherID = await AsyncStorage.getItem('AuthState')
             axios.get(
                 `${CONST.baseUrl}/teacherapp/all/tickets/${teacherID}`
             ).then((response) => {
                 console.log(response.data);
+                pauseAnimation()
                 const data = response.data
                 data.map((ele, index) => {
                     setTicketList(oldArray => [...oldArray, ele]);
@@ -48,6 +71,7 @@ const TicketStatus = ({ navigation, route }) => {
             })
         } catch (e) {
             // error reading value
+            pauseAnimation()
             console.error(e.response)
         }
     }
@@ -72,7 +96,7 @@ const TicketStatus = ({ navigation, route }) => {
                 <TextInput onChangeText={(text) => { }} placeholder="Search..." style={{ height: 60, width: '100%', borderRadius: 16, backgroundColor: 'white', paddingHorizontal: 42, alignItems: 'center', flexDirection: 'row' }} selectionColor={COLORS.grey}>
 
                 </TextInput>
-                <Ionicons name="md-search" size={22} color={COLORS.primary} style={{ position: 'absolute', left: 16 }} />
+                <Ionicons name="search" size={22} color={COLORS.primary} style={{ position: 'absolute', left: 16 }} />
             </View>
 
             <View style={{ flexDirection: 'row', width: '100%', marginTop: 12, justifyContent: 'space-evenly' }}>
@@ -138,9 +162,9 @@ const TicketStatus = ({ navigation, route }) => {
                 }
 
                 {
-                    ticketList.length === 0 ? <Text style={{ marginTop: 64, fontFamily: FONTS.bold, color: COLORS.darkGrey, fontSize: 16, alignSelf: 'center' }}>
+                    ticketList.length === 0 && !animSpeed  && <Text style={{ marginTop: 64, fontFamily: FONTS.bold, color: COLORS.darkGrey, fontSize: 16, alignSelf: 'center' }}>
                         No Ticket to show
-                    </Text> : null
+                    </Text> 
                 }
             </ScrollView>
 
@@ -333,6 +357,35 @@ const TicketStatus = ({ navigation, route }) => {
 
 
 
+            {animSpeed &&
+                <View style={{
+                    shadowColor: COLORS.homeCard,
+                    shadowOffset: {
+                        width: 0,
+                        height: 2,
+                    },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 2,
+                    elevation: 8,
+                    position: 'absolute', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(52, 52, 52, 0.0)', alignSelf: 'center', padding: 24, marginTop: 16
+                }}>
+
+                    <View style={{ marginTop: '-40%' }}>
+                        <Lottie source={require('../../../../assets/loading.json')} autoPlay style={{ height: 300, width: 300, alignSelf: 'center' }} loop ref={animRef} speed={1} />
+                        <Text
+                            style={{
+                                fontFamily: FONTS.bold,
+                                fontSize: SIZES.large,
+                                flexWrap: 'wrap',
+                                marginTop: -48
+                            }}>
+                        </Text>
+                    </View>
+
+                </View>
+
+            }
+       
         </View>
 
     )

@@ -69,7 +69,8 @@ const CustomDrawer = props => {
         }}
       >
         <Text
-          onPress={() => { props.initialParams.logout.logout() }}
+          onPress={() => { 
+            props.initialParams.logout.logout() }}
           style={Styles.semiBold} >Log Out</Text>
       </TouchableOpacity>
     </View>
@@ -207,7 +208,7 @@ function UploadAudioTab({ route, navigation }) {
 
         <View style={{ padding: 8, borderColor: COLORS.darkGrey, borderStyle: 'dashed', borderWidth: 1, borderRadius: 8, paddingHorizontal: 36 }}>
           <Text style={{ fontSize: 16, fontWeight: 500, margin: 8 }}>
-            {audioStatus ?? "NULL"}
+            {audioStatus == "null" ? "Loading" : audioStatus}
           </Text>
         </View>
 
@@ -338,7 +339,9 @@ function UploadAudioTab({ route, navigation }) {
   };
   return (
     <View style={Style.mainAudioContainer}>
-      {audioStatus != "unsubmitted" && audioStatus != "rejected" && audioStatus != null && audioStatus != "resend" ? <ImagePlaceholder /> : (
+      {audioStatus != "unsubmitted" && audioStatus != "rejected" && audioStatus != null && audioStatus != "resend" ? <ImagePlaceholder /> : 
+      
+      (
         <View style={Style.mainAudioContainer}>
           <Text style={Style.audioText}>
             Please share your voice audio file and we will get back to you once it

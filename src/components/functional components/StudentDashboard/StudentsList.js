@@ -7,8 +7,29 @@ import { useState, useEffect, useRef } from "react";
 import StudentListItem from "../../ui components/StudentListItem";
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Lottie from 'lottie-react-native';
 
 const StudentsList = ({ navigation, route }) => {
+
+
+
+    const [animSpeed, setAnimSpeed] = useState(false)
+    const animRef = useRef()
+
+    function playAnimation() {
+        setAnimSpeed(true)
+    }
+
+
+    function pauseAnimation() {
+        setAnimSpeed(false)
+    }
+
+    useEffect(() => {
+        setTimeout(() => {
+            animRef.current?.play();
+        }, 100)
+    }, [animSpeed])
 
     const [students, setStudents] = useState([])
     const [activeStudents, setActiveStudents] = useState([])
@@ -20,35 +41,37 @@ const StudentsList = ({ navigation, route }) => {
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
-          getStudentList()
+            getStudentList()
         });
-    
+
         return unsubscribe;
-      }, [navigation]);
+    }, [navigation]);
 
 
     const getStudentList = async () => {
-            let teacherID = await AsyncStorage.getItem('AuthState')
-            axios.post(
-                `${CONST.baseUrl}/teacherapp/get/student/training`, {
-                teacher_id: teacherID
-            }
-            ).then((response) => {
-                console.log(response.data);
-                setStudents(response.data)
-                setStudentData(response.data)
-                setActiveStudents([])
-                response.data.map((ele, index) => {
-                    if (ele.student_status == "active") {
-                        setActiveStudents(oldArray => [...oldArray, ele]);
-                    } else {
-                        setArchiveStudents(oldArray => [...oldArray, ele]);
-                    }
-                })
-            }).catch((err)=>{
-                console.log(err.response.data);
+        let teacherID = await AsyncStorage.getItem('AuthState')
+        playAnimation()
+        axios.post(
+            `${CONST.baseUrl}/teacherapp/get/student/training`, {
+            teacher_id: teacherID
+        }
+        ).then((response) => {
+            pauseAnimation()
+            setStudents(response.data)
+            setStudentData(response.data)
+            setActiveStudents([])
+            response.data.map((ele, index) => {
+                if (ele.student_status == "active") {
+                    setActiveStudents(oldArray => [...oldArray, ele]);
+                } else {
+                    setArchiveStudents(oldArray => [...oldArray, ele]);
+                }
             })
-        
+        }).catch((err) => {
+            pauseAnimation()
+            console.log(err.response.data);
+        })
+
     }
 
     function handleSearch(text) {
@@ -121,24 +144,58 @@ const StudentsList = ({ navigation, route }) => {
                     </Text>
                 </TouchableOpacity>
             </View>
-            {studentData.length == 0 ? 
-            <Text style={{marginTop:64, fontFamily: FONTS.bold, color:COLORS.darkGrey, fontSize: 16}}>
-                No Student is mapped to you 
-            </Text> : null}
-            {studentData.sort((a, b) => a.student_name.localeCompare(b.student_name)).map((ele, index) => {
-                return (
-                    <StudentListItem
-                        name={ele.student_name}
-                        education={ele.education}
-                        number={ele.whatsappno}
-                        onclick={() => {
-                            navigation.navigate("Student Profile",ele)
-                        }}
-                        key={index} />
-                )
-            })}
+
+            {
+                studentData.length == 0 && !animSpeed &&
+                <Text style={{ marginTop: 64, fontFamily: FONTS.bold, color: COLORS.darkGrey, fontSize: 16 }}>
+                    No Student is mapped to you
+                </Text>
+            }
+
+            {
+                studentData.sort((a, b) => a.student_name.localeCompare(b.student_name)).map((ele, index) => {
+                    return (
+                        <StudentListItem
+                            name={ele.student_name}
+                            education={ele.education}
+                            number={ele.whatsappno}
+                            onclick={() => {
+                                navigation.navigate("Student Profile", ele)
+                            }}
+                            key={index} />
+                    )
+                })}
 
 
+
+            {animSpeed &&
+                <View style={{
+                    shadowColor: COLORS.homeCard,
+                    shadowOffset: {
+                        width: 0,
+                        height: 2,
+                    },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 2,
+                    elevation: 8,
+                    position: 'absolute', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(52, 52, 52, 0.0)', alignSelf: 'center', padding: 24, marginTop: 16
+                }}>
+
+                    <View style={{ marginTop: '-40%' }}>
+                        <Lottie source={require('../../../../assets/loading.json')} autoPlay style={{ height: 300, width: 300, alignSelf: 'center' }} loop ref={animRef} speed={1} />
+                        <Text
+                            style={{
+                                fontFamily: FONTS.bold,
+                                fontSize: SIZES.large,
+                                flexWrap: 'wrap',
+                                marginTop: -48
+                            }}>
+                        </Text>
+                    </View>
+
+                </View>
+
+            }
         </View>
     )
 }

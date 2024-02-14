@@ -6,8 +6,28 @@ import { COLORS, SIZES, FONTS, assets, CONST } from "../../../../constants";
 import ProgressBar from 'react-native-progress/Bar'
 import { Feather, Ionicons, Entypo } from "@expo/vector-icons";
 import axios from "axios";
+import Lottie from 'lottie-react-native';
 
 const Training = ({ navigation, route }) => {
+
+    const [animSpeed, setAnimSpeed] = useState(false)
+    const animRef = useRef()
+
+    function playAnimation() {
+        setAnimSpeed(true)
+    }
+
+
+    function pauseAnimation() {
+        setAnimSpeed(false)
+    }
+
+    useEffect(() => {
+        setTimeout(() => {
+            animRef.current?.play();
+        }, 100)
+    }, [animSpeed])
+
 
     const [data, setData] = useState({ level_list: [] })
     const [state, setState] = useState({})
@@ -28,6 +48,8 @@ const Training = ({ navigation, route }) => {
             },
             data: { stud_id: route.params.student_id }
         };
+
+        playAnimation()
 
 
         axios.request(config)
@@ -99,9 +121,12 @@ const Training = ({ navigation, route }) => {
                     5: temp5,
                 })
 
+                pauseAnimation()
+
             })
             .catch((error) => {
-                
+                console.log("Fetch Levels error");
+                pauseAnimation()
                 console.error(error.response.data);
             });
     }
@@ -215,7 +240,7 @@ const Training = ({ navigation, route }) => {
                     )
                 })}
 
-                {data.level_list.length === 0 &&
+                {data.level_list.length === 0 && !animSpeed &&
                     <Text style={{ marginTop: 64, fontFamily: FONTS.bold, color: COLORS.darkGrey, fontSize: 16, alignSelf: 'center' }}>
                         No Training data is available
                     </Text>
@@ -233,6 +258,36 @@ const Training = ({ navigation, route }) => {
                 style={{ width: 60, height: 60, position: 'absolute', backgroundColor: COLORS.borderGrey, bottom: 120, right: 50, borderRadius: 30, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: COLORS.primary }}>
                 <Feather name="layers" size={30} color={COLORS.primary} />
             </TouchableOpacity>
+
+
+            {animSpeed &&
+                <View style={{
+                    shadowColor: COLORS.homeCard,
+                    shadowOffset: {
+                        width: 0,
+                        height: 2,
+                    },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 2,
+                    elevation: 8,
+                    position: 'absolute', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(52, 52, 52, 0.0)', alignSelf: 'center', padding: 24, marginTop: 16
+                }}>
+
+                    <View style={{ marginTop: '-40%' }}>
+                        <Lottie source={require('../../../../assets/loading.json')} autoPlay style={{ height: 300, width: 300, alignSelf: 'center' }} loop ref={animRef} speed={1} />
+                        <Text
+                            style={{
+                                fontFamily: FONTS.bold,
+                                fontSize: SIZES.large,
+                                flexWrap: 'wrap',
+                                marginTop: -48
+                            }}>
+                        </Text>
+                    </View>
+
+                </View>
+
+            }
         </View>
     )
 }

@@ -108,11 +108,7 @@ const TeacherDashboard = ({ route, navigation }) => {
                                 <Text ellipsizeMode="tail" numberOfLines={1} style={Styles.blackText}>
                                 {data.spoc_name}
                                 </Text>
-                                <MaterialIcons 
-                                onPress={()=>{
-                                    navigation.navigate('Contact SPOC');
-                                }}
-                                name="contact-page" size={24} color={COLORS.primary} style={{position:'absolute', right:8}}/>
+                               
                             </View>
 
                             <View style={{ flexDirection: 'row' }}>
