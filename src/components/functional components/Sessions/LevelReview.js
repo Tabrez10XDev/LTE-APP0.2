@@ -1,4 +1,4 @@
-import { Text, View, Image, StyleSheet, TouchableOpacity, Dimensions, TextInput, SafeAreaView, Modal, Pressable } from "react-native";
+import { Text, View, Image, StyleSheet, TouchableOpacity, Dimensions, TextInput, SafeAreaView, Modal, Pressable, ActivityIndicator } from "react-native";
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { List, Chip } from "react-native-paper";
@@ -169,7 +169,29 @@ const LevelReview = ({ navigation, route }) => {
                 let tempState = { ..._state[level_id], ..._state2[level_id], title: level_name, sessions: _state3[level_name.slice(-1)] }
 
                 tempState.sessions = tempState.sessions.sort(function (a, b) { return (a.session_id > b.session_id) ? 1 : ((b.session_id > a.session_id) ? -1 : 0); });
-                setData(tempState)
+
+
+                let nextSession = {}
+
+                response.data.stud_next_session.map((ele, index) => {
+                    if (ele.start_time == null) {
+                        return
+                    }
+                    if (ele.level_id == level_id) {
+                        nextSession = {
+                            start: ele.start_time.substring(0, 5),
+                            end: ele.end_time.substring(0, 5),
+                            nextId: ele.session_id,
+                            nextTitle: ele.session_name,
+                            day: ele.day
+                        }
+                    }
+                })
+
+
+                setData({ ...tempState, ...nextSession })
+
+
             })
             .catch((error) => {
                 console.error(error);
@@ -287,7 +309,7 @@ const LevelReview = ({ navigation, route }) => {
                 pauseAnimation()
                 Toast.show({
                     type: 'success',
-                    text1: 'Successfully updated'
+                    text1: response.data
                 })
                 setStackIndex(1)
                 setMessage("")
@@ -299,6 +321,9 @@ const LevelReview = ({ navigation, route }) => {
                 //     setPopup(true)
                 // }
                 fetchLevels(levelId, id, level_name)
+                if (name == "session50") {
+                    navigation.dispatch(StackActions.pop(1))
+                }
             })
             .catch((error) => {
                 pauseAnimation()
@@ -420,7 +445,7 @@ const LevelReview = ({ navigation, route }) => {
                         {data.title}
                     </Text>
 
-                    {data.progress != data.total ?
+                    {data2.progress != data.total ?
                         <>
                             <Text
                                 style={{
@@ -428,7 +453,7 @@ const LevelReview = ({ navigation, route }) => {
                                     fontSize: SIZES.smallFont,
                                     flexWrap: 'wrap',
                                 }}>
-                                {data.nextTitle} {" "} {data.start}  {"- "} {data.end}
+                                {data2.nextTitle} {" "} {data2.start}  {"- "} {data2.end}
                             </Text>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                 <Text
@@ -437,7 +462,7 @@ const LevelReview = ({ navigation, route }) => {
                                         fontSize: SIZES.smallFont,
                                         color: COLORS.grey
                                     }}>
-                                    Next session on {data.date} {" "} {data.day}
+                                    Next session on {data2.day}
                                 </Text>
 
 
@@ -466,7 +491,7 @@ const LevelReview = ({ navigation, route }) => {
                         </>
                     }
                     <View style={{ alignSelf: 'flex-start', marginTop: 8, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', width: '90%' }}>
-                        <ProgressBar unfilledColor={COLORS.unProgressed} color={data.progress == data.total ? COLORS.green : COLORS.yellow} progress={data.progress / data.total} width={Dimensions.get('window').width * 0.6} borderColor={COLORS.unProgressed} />
+                        <ProgressBar unfilledColor={COLORS.unProgressed} color={data2.progress == data.total ? COLORS.green : COLORS.yellow} progress={data2.progress / data.total} width={Dimensions.get('window').width * 0.6} borderColor={COLORS.unProgressed} />
                         <Text
                             style={{
                                 fontFamily: FONTS.regular,
@@ -474,7 +499,7 @@ const LevelReview = ({ navigation, route }) => {
                                 color: COLORS.darkBlue,
                                 marginStart: 8
                             }}>
-                            {data.completed} of {data.total}
+                            {data2.completed} of {data.total}
                         </Text>
                     </View>
                 </View>
@@ -571,10 +596,15 @@ const LevelReview = ({ navigation, route }) => {
                                                         <View style={{ ...Style.subViewContainer, width: '40%', marginHorizontal: 0 }}>
                                                             <TouchableOpacity
                                                                 onPress={() => {
+                                                                    if (animSpeed) return
                                                                     updateFeedback(ele.level_id, ele.session_id, ele.level_name, index, ele.session_name, ele.common_desc)
                                                                 }}
                                                                 style={Style.btnStyle}>
-                                                                <Text style={Style.btnTextStyle}>SUBMIT</Text>
+                                                                {
+                                                                    animSpeed ? <ActivityIndicator size="small" color='white' />
+                                                                        : <Text style={Style.btnTextStyle}>SUBMIT</Text>
+
+                                                                }
                                                             </TouchableOpacity>
                                                         </View>
                                                     }
@@ -667,10 +697,15 @@ const LevelReview = ({ navigation, route }) => {
 
                                                 <View style={{ ...Style.subViewContainer }}>
                                                     <TouchableOpacity onPress={() => {
+                                                        if (animSpeed) return
                                                         // setInter(true)
                                                         uploadAudio(ele.session_id, ele.level_id, ele.level_name, index)
                                                     }} style={Style.btnStyle}>
-                                                        <Text style={Style.btnTextStyle}>SUBMIT</Text>
+                                                        {
+                                                            animSpeed ? <ActivityIndicator size="small" color='white' />
+                                                                : <Text style={Style.btnTextStyle}>SUBMIT</Text>
+
+                                                        }
                                                     </TouchableOpacity>
                                                 </View>
                                             </>}
@@ -688,7 +723,7 @@ const LevelReview = ({ navigation, route }) => {
 
                 </List.AccordionGroup>
             </ScrollView>
-            {animSpeed &&
+            {/* {animSpeed &&
                 <View style={{
                     shadowColor: COLORS.homeCard,
                     shadowOffset: {
@@ -716,7 +751,7 @@ const LevelReview = ({ navigation, route }) => {
 
                 </View>
 
-            }
+            } */}
 
             <Modal
                 animationType="slide"

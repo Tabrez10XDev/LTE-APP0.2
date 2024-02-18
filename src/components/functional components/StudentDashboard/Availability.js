@@ -44,7 +44,6 @@ const Availability = ({ navigation, route }) => {
     const [temp, setTemp] = useState("")
     const [open, setOpen] = React.useState(false);
 
-    const [temp2, setTemp2] = useState()
     const [open2, setOpen2] = React.useState(false);
     const [data, setData] = useState({
         next_level_name: "",
@@ -90,8 +89,6 @@ const Availability = ({ navigation, route }) => {
             })
             return
         }
-
-        console.log("going");
 
         const trueSwitches = [];
         if (totalDays !== 3) {
@@ -166,7 +163,6 @@ const Availability = ({ navigation, route }) => {
 
     }
 
-    const [value, setValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
 
     useEffect(() => {
@@ -241,7 +237,7 @@ const Availability = ({ navigation, route }) => {
 
             <ScrollView style={{ backgroundColor: 'white', height: '100%' }} contentContainerStyle={{ alignItems: 'center', }}>
                 <View style={{ justifyContent:'center', alignItems: 'center', marginTop: 24, width:'95%' }}>
-                    <Dropdown
+                    {state.level_details.length !== 0  && <Dropdown
                         style={[Styles.dropdown, isFocus && { }]}
                         placeholderStyle={Styles.placeholderStyle}
                         selectedTextStyle={Styles.selectedTextStyle}
@@ -253,32 +249,14 @@ const Availability = ({ navigation, route }) => {
                         valueField="level_name"
                         placeholder={!isFocus ? 'Select Level' : 'Select Level'}
                         searchPlaceholder="Search..."
-                        value={value}
+                        value={currentLevel.value}
                         onFocus={() => setIsFocus(true)}
                         onBlur={() => setIsFocus(false)}
                         onChange={item => {
-                            setValue(item.value);
                             setCurrentLevel(item)
                             setIsFocus(false);
                         }}
-                        // renderLeftIcon={() => (
-                        //     <AntDesign
-                        //         style={Styles.icon}
-                        //         color={isFocus ? 'blue' : 'black'}
-                        //         name="Safety"
-                        //         size={20}
-                        //     />
-                        // )}
-                    />
-                    {/* <Text style={{ fontFamily: FONTS.semiBold, fontSize: SIZES.font }}>
-                        Level {data.next_level_name?.replace("level", "")}
-                    </Text>
-                    <View style={{ flexDirection: 'row', marginStart: 8 }}>
-                        <View style={{ height: 4, width: 4, borderRadius: 2, backgroundColor: COLORS.grey, marginHorizontal: 2 }} />
-                        <View style={{ height: 4, width: 4, borderRadius: 2, backgroundColor: COLORS.grey, marginHorizontal: 2 }} />
-                        <View style={{ height: 4, width: 4, borderRadius: 2, backgroundColor: COLORS.grey, marginHorizontal: 2 }} />
-
-                    </View> */}
+                    />}
                 </View>
 
                 <View style={{ width: '98%', marginTop: SIZES.doubleLarge, flexDirection: 'row' }}>

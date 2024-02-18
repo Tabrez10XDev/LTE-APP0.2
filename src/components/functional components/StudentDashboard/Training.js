@@ -55,12 +55,11 @@ const Training = ({ navigation, route }) => {
         axios.request(config)
             .then((response) => {
 
-                console.log("ruby");
 
                 response.data.stud_total_and_completed_level_session_details.map((ele, index) => {
                     setState(current => ({ ...current, [ele.level_id]: { total: Number(ele.total_session_count), completed: ele.completed_session_count, progress: Number(ele.total_session_count) / Number(ele.completed_session_count) == 0 ? 1 : Number(ele.completed_session_count) } }))
                 })
-
+                                                                                                                                                                                        
 
                 response.data.stud_next_session.map((ele, index) => {
                     if(ele.start_time == null){

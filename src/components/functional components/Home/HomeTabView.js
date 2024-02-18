@@ -317,24 +317,7 @@ function UploadAudioTab({ route, navigation }) {
 
     }
 
-    // let data = new FormData();
-
-
-    // let config = {
-    //   method: 'post',
-    //   maxBodyLength: Infinity,
-    //   url: 'https://api.cloudinary.com/v1_1/db2bzxbn7/video/upload',
-
-    //   data : data
-    // };
-
-    // axios.request(config)
-    // .then((response) => {
-    //   console.log(JSON.stringify(response.data));
-    // })
-    // .catch((error) => {
-    //   console.log(error);
-    // });
+  
 
   };
   return (
@@ -360,7 +343,7 @@ function UploadAudioTab({ route, navigation }) {
               </Text>
 
               <Text style={{ ...Style.greyText, alignSelf: 'center', marginTop: 2 }}>
-                Status: {audioStatus ?? ""}
+                Status: {fileResponse.assets != undefined ? fileResponse.assets[0].name : "Submit for verification"}
               </Text>
             </TouchableOpacity>
             {fileResponse.assets != undefined ? (
