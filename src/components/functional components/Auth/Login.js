@@ -7,6 +7,7 @@ import Toast from 'react-native-toast-message';
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Lottie from 'lottie-react-native';
+import messaging from '@react-native-firebase/messaging';
 
 
 
@@ -60,7 +61,7 @@ const Login = ({ navigation, route }) => {
     }
   }
 
-  const loginSubmitBtn = () => {
+  const loginSubmitBtn = async () => {
     if (validateEmail(loginDetails.email) == null) {
       Toast.show({
         type: 'error',
@@ -76,10 +77,11 @@ const Login = ({ navigation, route }) => {
       // navigation.navigate('TermsConditions');
       playAnimation()
 
-      console.log(`${CONST.baseUrl}/teacher/get/teacherlogin`);
-      console.log(loginDetails);
+      const token = await messaging().getToken()
+   
+      console.log({...loginDetails, device_token: token});
       axios.post(
-        `${CONST.baseUrl}/teacher/get/teacherlogin`, loginDetails
+        `${CONST.baseUrl}/teacher/get/teacherlogin`, {...loginDetails, device_token: token}
       ).then((response) => {
 
         console.log(response.data)
@@ -108,7 +110,6 @@ const Login = ({ navigation, route }) => {
           text1: 'Unknown error occured'
         })
       });
-
     }
   };
 

@@ -63,12 +63,15 @@ const Availability = ({ navigation, route }) => {
         let value = await AsyncStorage.getItem('AuthState')
         setTeacherID(value)
 
+        console.log("Teacher-",value);
+        console.log("Student-",route.params.student_id);
+
 
         axios.post(`${CONST.baseUrl}/teacherapp/get/teacher/availablity`, {
             "teacher_id": value,
             "stud_id": route.params.student_id
         }).then((response) => {
-            console.log(response.data, "fetched");
+            console.log(response.data.teacher_avail_info, "fetched");
             setState(response.data)
         })
             .catch((error) => {
@@ -80,6 +83,8 @@ const Availability = ({ navigation, route }) => {
     }
 
     async function postAvailability() {
+
+
 
 
         if (temp == null || temp == undefined || temp.length == 0) {
@@ -112,6 +117,8 @@ const Availability = ({ navigation, route }) => {
         const originalDate = new Date(temp);
 
 
+
+
         const year = originalDate.getFullYear();
         const month = (originalDate.getMonth() + 1).toString().padStart(2, '0');
         const day = originalDate.getDate().toString().padStart(2, '0');
@@ -119,47 +126,115 @@ const Availability = ({ navigation, route }) => {
 
         const formattedDateString = `${year}-${month}-${day}`;
 
-        const payload = {
-            "stud_id": parseInt(route.params.student_id),
-            "start_date": formattedDateString,
-            "level_id": parseInt(currentLevel.level_id),
-            "level_status": "Not Completed",
-            "created_by": parseInt(teacherID),
-            "teacher_id": parseInt(teacherID),
-            "session_details": trueSwitches
+
+        let flag = true
+        state.level_start_date.map((ele, inx) => {
+            if (ele.level_id == currentLevel.level_id) flag = false
+        })
+
+
+        console.log(flag);
+
+        if (flag) {
+
+            
+
+
+            const payload = {
+                "stud_id": parseInt(route.params.student_id),
+                "start_date": formattedDateString,
+                "level_id": parseInt(currentLevel.level_id),
+                "level_status": "Not Completed",
+                "created_by": parseInt(teacherID),
+                "teacher_id": parseInt(teacherID),
+                "session_details": trueSwitches
+            }
+
+            console.log("Payload:");
+            console.log(payload);
+            console.log("----");
+
+            playAnimation()
+
+
+
+            axios.post(`${CONST.baseUrl}/student/assign/assignlevel`, payload)
+                .then(async (response) => {
+                    console.log("Response:");
+                    console.log("----");
+                    pauseAnimation()
+                    await fetchAvailability()
+                    Toast.show({
+                        type: 'success',
+                        text1: 'Successfully Updated'
+                    })
+                    setSwitches({ 0: false, 1: false, 2: false, 3: false, 4: false, 5: false, 6: false })
+                    setTime(["00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00"])
+                    setTime2(["00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00"])
+                })
+                .catch((error) => {
+                    console.log("ERROR:::");
+                    console.log("----");
+                    console.log(error);
+                    pauseAnimation()
+                    Toast.show({
+                        type: 'error',
+                        text1: "Please try again later"
+                    })
+                });
+
+
+            axios.post(`${CONST.baseUrl}/teacherapp/insert/teacher/availablity`, payload)
+                .then(async (response) => {
+                    console.log("Insert:");
+                    console.log(response.data)
+
+                })
+                .catch((error) => {
+                    pauseAnimation()
+                    Toast.show({
+                        type: 'error',
+                        text1: "Please try again later"
+                    })
+                });
+
+        } else {
+            const payload = {
+                "stud_id": parseInt(route.params.student_id),
+                "start_date": formattedDateString,
+                "level_id": parseInt(currentLevel.level_id),
+                "created_by": parseInt(teacherID),
+                "teacher_id": parseInt(teacherID),
+                "session_details": trueSwitches
+            }
+
+            console.log("Payload:");
+            console.log(payload);
+            console.log("----");
+
+            playAnimation()
+
+            axios.put(`${CONST.baseUrl}/teacherapp/update/teacher/availablity`, payload)
+                .then(async (response) => {
+
+                    pauseAnimation()
+                    await fetchAvailability()
+                    Toast.show({
+                        type: 'success',
+                        text1: 'Successfully Updated'
+                    })
+                    setSwitches({ 0: false, 1: false, 2: false, 3: false, 4: false, 5: false, 6: false })
+                    setTime(["00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00"])
+                    setTime2(["00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00"])
+                })
+                .catch((error) => {
+                    pauseAnimation()
+                    Toast.show({
+                        type: 'error',
+                        text1: "Please try again later"
+                    })
+                });
         }
-
-        console.log("Payload:");
-        console.log(payload);
-        console.log("----");
-
-        playAnimation()
-
-        axios.post(`${CONST.baseUrl}/student/assign/assignlevel`, payload)
-            .then(async (response) => {
-                console.log("Response:");
-                console.log(response.data)
-                console.log("----");
-                pauseAnimation()
-                await fetchAvailability()
-                Toast.show({
-                    type: 'success',
-                    text1: 'Successfully Updated'
-                })
-                setSwitches({ 0: false, 1: false, 2: false, 3: false, 4: false, 5: false, 6: false })
-                setTime(["00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00"])
-                setTime2(["00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00"])
-            })
-            .catch((error) => {
-                console.log("ERROR:::");
-                console.log("----");
-                console.log(error);
-                pauseAnimation()
-                Toast.show({
-                    type: 'error',
-                    text1: "Please try again later"
-                })
-            });
 
     }
 
@@ -234,11 +309,10 @@ const Availability = ({ navigation, route }) => {
     return (
 
         <View style={{ backgroundColor: 'white' }}>
-
             <ScrollView style={{ backgroundColor: 'white', height: '100%' }} contentContainerStyle={{ alignItems: 'center', }}>
-                <View style={{ justifyContent:'center', alignItems: 'center', marginTop: 24, width:'95%' }}>
-                    {state.level_details.length !== 0  && <Dropdown
-                        style={[Styles.dropdown, isFocus && { }]}
+                <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 24, width: '95%' }}>
+                    {state.level_details.length !== 0 && <Dropdown
+                        style={[Styles.dropdown, isFocus && {}]}
                         placeholderStyle={Styles.placeholderStyle}
                         selectedTextStyle={Styles.selectedTextStyle}
                         inputSearchStyle={Styles.inputSearchStyle}
@@ -524,7 +598,7 @@ const Styles = StyleSheet.create({
     },
     dropdown: {
         height: 50,
-        width:'60%',
+        width: '60%',
         borderColor: 'gray',
         borderWidth: 0.5,
         borderRadius: 8,

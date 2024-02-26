@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "866969103343",
+    "project_id": "lte-staging",
+    "storage_bucket": "lte-staging.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:866969103343:android:951b9f6f3176874818641a",
+        "android_client_info": {
+          "package_name": "com.lowjunkie.LTEAPP02"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATh_Jojw0KR2Dj9GiD4XQKUsrYKPkcNa0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

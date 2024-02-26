@@ -25,7 +25,9 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.lowjunkie.LTEAPP02"
+      "package": "com.lowjunkie.LTEAPP02",
+      "googleServicesFile": "./google-services.json"
+
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -38,7 +40,8 @@
             "useFrameworks": "static"
           }
         }
-      ]
+      ],
+      "@react-native-firebase/app"
     ],
     "extra": {
       "eas": {
