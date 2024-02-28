@@ -78,6 +78,7 @@ const Login = ({ navigation, route }) => {
       playAnimation()
 
       const token = await messaging().getToken()
+      // const token = ""
    
       console.log({...loginDetails, device_token: token});
       axios.post(

@@ -3,125 +3,120 @@ import { StyleSheet, Text, View } from 'react-native';
 import { RootSiblingParent } from 'react-native-root-siblings';
 import AppRoutes from "./src/routes/AppRoutes";
 import { useFonts } from 'expo-font';
-// import * as Notifications from 'expo-notifications';
+import * as Notifications from 'expo-notifications';
 import { useEffect } from 'react';
-// import messaging from '@react-native-firebase/messaging';
+import messaging from '@react-native-firebase/messaging';
 
 
 export default function App() {
 
 
   
-  // const requestUserPermission = async () => {
-  //   const authStatus = await messaging().requestPermission();
-  //   const enabled =
-  //     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-  //     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  const requestUserPermission = async () => {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-  //   if (enabled) {
-  //     console.log("Authorization status:", authStatus);
-  //   }
-  // };
+    if (enabled) {
+      console.log("Authorization status:", authStatus);
+    }
+  };
 
-// useEffect(() => {
+useEffect(() => {
 
-// if (requestUserPermission()) {
-//       messaging()
-//         .getToken()
-//         .then(
-//           token => console.log(token)
-//         );
-//     }
-//   }, []);
+if (requestUserPermission()) {
+      messaging()
+        .getToken()
+        .then(
+          token => console.log(token)
+        );
+    }
+  }, []);
 
-//   Notifications.setNotificationHandler({
-//     handleNotification: async () => ({
-//       shouldShowAlert: true,
-//       shouldPlaySound: true,
-//       shouldSetBadge: false,
-//     }),
-//   });
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+    }),
+  });
 
-//   // Handle user clicking on a notification and open the screen
-//   const handleNotificationClick = async (response) => {
-//     const screen = response?.notification?.request?.content?.data?.screen;
-//     if (screen !== null) {
-//       navigation.navigate(screen);
-//     }
-//   };
+  const handleNotificationClick = async (response) => {
+    const screen = response?.notification?.request?.content?.data?.screen;
+    if (screen !== null) {
+      navigation.navigate(screen);
+    }
+  };
 
-//   // Listen for user clicking on a notification
-//   useEffect(() => {
-//   const notificationClickSubscription =
-//     Notifications.addNotificationResponseReceivedListener(
-//       handleNotificationClick
-//     );
+  useEffect(() => {
+  const notificationClickSubscription =
+    Notifications.addNotificationResponseReceivedListener(
+      handleNotificationClick
+    );
 
-//   // Handle user opening the app from a notification (when the app is in the background)
-//   messaging().onNotificationOpenedApp((remoteMessage) => {
-//     console.log(
-//       "Notification caused app to open from background state:",
-//       remoteMessage.data.screen,
-//       navigation
-//     );
-//     if (remoteMessage?.data?.screen) {
-//       navigation.navigate(`${remoteMessage.data.screen}`);
-//     }
-//   });
+  messaging().onNotificationOpenedApp((remoteMessage) => {
+    console.log(
+      "Notification caused app to open from background state:",
+      remoteMessage.data.screen,
+      navigation
+    );
+    if (remoteMessage?.data?.screen) {
+      navigation.navigate(`${remoteMessage.data.screen}`);
+    }
+  });
 
-//   // Check if the app was opened from a notification (when the app was completely quit)
-//   messaging()
-//     .getInitialNotification()
-//     .then((remoteMessage) => {
-//       if (remoteMessage) {
-//         console.log(
-//           "Notification caused app to open from quit state:",
-//           remoteMessage.notification
-//         );
-//         if (remoteMessage?.data?.screen) {
-//           navigation.navigate(`${remoteMessage.data.screen}`);
-//         }
-//       }
-//     });
+  messaging()
+    .getInitialNotification()
+    .then((remoteMessage) => {
+      if (remoteMessage) {
+        console.log(
+          "Notification caused app to open from quit state:",
+          remoteMessage.notification
+        );
+        if (remoteMessage?.data?.screen) {
+          navigation.navigate(`${remoteMessage.data.screen}`);
+        }
+      }
+    });
 
-//   // Handle push notifications when the app is in the background
-//   messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-//     console.log("Message handled in the background!", remoteMessage);
-//     const notification = {
-//       title: remoteMessage.notification.title,
-//       body: remoteMessage.notification.body,
-//       data: remoteMessage.data, // optional data payload
-//     };
+  messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+    console.log("Message handled in the background!", remoteMessage);
+    const notification = {
+      title: remoteMessage.notification.title,
+      body: remoteMessage.notification.body,
+      data: remoteMessage.data, // optional data payload
+    };
 
-//     // Schedule the notification with a null trigger to show immediately
-//     await Notifications.scheduleNotificationAsync({
-//       content: notification,
-//       trigger: null,
-//     });
-//   });
+    // Schedule the notification with a null trigger to show immediately
+    await Notifications.scheduleNotificationAsync({
+      content: notification,
+      trigger: null,
+    });
+  });
 
-//   // Handle push notifications when the app is in the foreground
-//   const handlePushNotification = async (remoteMessage) => {
-//     const notification = {
-//       title: remoteMessage.notification.title,
-//       body: remoteMessage.notification.body,
-//       data: remoteMessage.data, // optional data payload
-//     };
+  // Handle push notifications when the app is in the foreground
+  const handlePushNotification = async (remoteMessage) => {
+    const notification = {
+      title: remoteMessage.notification.title,
+      body: remoteMessage.notification.body,
+      data: remoteMessage.data, // optional data payload
+    };
 
-//     await Notifications.scheduleNotificationAsync({
-//       content: notification,
-//       trigger: null,
-//     });
-//   };
+    await Notifications.scheduleNotificationAsync({
+      content: notification,
+      trigger: null,
+    });
+  };
 
-//   const unsubscribe = messaging().onMessage(handlePushNotification);
+  const unsubscribe = messaging().onMessage(handlePushNotification);
 
-//   // Clean up the event listeners
-//   return () => {
-//     unsubscribe();
-//     notificationClickSubscription.remove();
-//   };
-// }, []);
+  // Clean up the event listeners
+  return () => {
+    unsubscribe();
+    notificationClickSubscription.remove();
+  };
+}, []);
 
 
 

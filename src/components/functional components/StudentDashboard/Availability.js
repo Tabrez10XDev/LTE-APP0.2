@@ -50,6 +50,8 @@ const Availability = ({ navigation, route }) => {
         next_level_session_count: "21"
     })
 
+    const [chosenDate, setChosenDate] = useState(null)
+
     const [state, setState] = useState({ level_details: [] })
     const [currentLevel, setCurrentLevel] = useState({})
 
@@ -57,6 +59,7 @@ const Availability = ({ navigation, route }) => {
     const [currentTimeIndex, setCurrentTimeIndex] = useState(0)
 
     const [teacherID, setTeacherID] = useState(-1)
+    const [currentAvailabilityIds, setCurrentAvailabilityIds] = useState([])
 
     async function fetchAvailability() {
 
@@ -71,7 +74,6 @@ const Availability = ({ navigation, route }) => {
             "teacher_id": value,
             "stud_id": route.params.student_id
         }).then((response) => {
-            console.log(response.data.teacher_avail_info, "fetched");
             setState(response.data)
         })
             .catch((error) => {
@@ -87,7 +89,7 @@ const Availability = ({ navigation, route }) => {
 
 
 
-        if (temp == null || temp == undefined || temp.length == 0) {
+        if ((temp == null || temp == undefined || temp.length == 0) && chosenDate == null) {
             Toast.show({
                 type: 'info',
                 text1: "Please select start date"
@@ -96,13 +98,7 @@ const Availability = ({ navigation, route }) => {
         }
 
         const trueSwitches = [];
-        if (totalDays !== 3) {
-            Toast.show({
-                type: 'info',
-                text1: "Please choose 3 days only"
-            })
-            return
-        }
+      
 
         for (const key in switches) {
             if (switches[key] === true) {
@@ -112,6 +108,18 @@ const Availability = ({ navigation, route }) => {
                     end_time: time2[parseInt(key)]
                 });
             }
+        }
+
+        const totalDays = trueSwitches.length
+
+
+
+        if (totalDays == 0) {
+            Toast.show({
+                type: 'info',
+                text1: "Please choose 3 days only"
+            })
+            return
         }
 
         const originalDate = new Date(temp);
@@ -133,7 +141,7 @@ const Availability = ({ navigation, route }) => {
         })
 
 
-        console.log(flag);
+        console.log("Flag: ",flag);
 
         if (flag) {
 
@@ -150,9 +158,7 @@ const Availability = ({ navigation, route }) => {
                 "session_details": trueSwitches
             }
 
-            console.log("Payload:");
-            console.log(payload);
-            console.log("----");
+       
 
             playAnimation()
 
@@ -199,13 +205,32 @@ const Availability = ({ navigation, route }) => {
                 });
 
         } else {
+
+            let _teacher_availablity = []
+            if(totalDays != currentAvailabilityIds.length){
+                Toast.show({
+                    type: 'error',
+                    text1: 'Please choose ' + currentAvailabilityIds.length + " days"
+                })
+                return
+            }            
+
+            currentAvailabilityIds.forEach((id,inx)=>{
+                let temp = {
+                    date: chosenDate.substring(0,10),
+                    availablity_id: id,
+                    level_id: parseInt(currentLevel.level_id),
+                    day:  trueSwitches[inx].day,
+                    start_time: trueSwitches[inx].start_time,
+                    end_time: trueSwitches[inx].end_time
+
+                }
+                _teacher_availablity.push(temp)
+            })
+
+
             const payload = {
-                "stud_id": parseInt(route.params.student_id),
-                "start_date": formattedDateString,
-                "level_id": parseInt(currentLevel.level_id),
-                "created_by": parseInt(teacherID),
-                "teacher_id": parseInt(teacherID),
-                "session_details": trueSwitches
+                teacher_availablity: _teacher_availablity
             }
 
             console.log("Payload:");
@@ -216,6 +241,7 @@ const Availability = ({ navigation, route }) => {
 
             axios.put(`${CONST.baseUrl}/teacherapp/update/teacher/availablity`, payload)
                 .then(async (response) => {
+                    console.log(response.data);
 
                     pauseAnimation()
                     await fetchAvailability()
@@ -229,6 +255,7 @@ const Availability = ({ navigation, route }) => {
                 })
                 .catch((error) => {
                     pauseAnimation()
+                    console.log(error.response.data);
                     Toast.show({
                         type: 'error',
                         text1: "Please try again later"
@@ -286,6 +313,31 @@ const Availability = ({ navigation, route }) => {
     const [switches, setSwitches] = useState({ 0: false, 1: false, 2: false, 3: false, 4: false, 5: false, 6: false })
 
 
+    useEffect(()=>{
+        if(currentLevel.level_id != undefined){
+            setSwitches({ 0: false, 1: false, 2: false, 3: false, 4: false, 5: false, 6: false })
+            let _time = ["00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00"]
+            let _time2 = ["00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00"]
+            setChosenDate(null)
+            let _ids = []
+            state.teacher_avail_info.forEach((ele)=>{
+                if(ele.level_id == currentLevel.level_id){
+                    _ids.push(ele.availablity_id)
+                    const _day = parseInt(ele.day) - 1
+                    setChosenDate(ele.date.substring(0,10))
+                    setSwitches(curr => ({...curr, [_day]: true }))
+                    _time[_day] = ele.start_time
+                    _time2[_day] = ele.end_time
+
+                }
+            })      
+            setCurrentAvailabilityIds(_ids)
+            setTime(_time)
+            setTime2(_time2)
+        }
+    },[currentLevel])
+
+
     const [visible2, setVisible2] = React.useState(false)
     const [time2, setTime2] = useState(["00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00"])
 
@@ -333,26 +385,22 @@ const Availability = ({ navigation, route }) => {
                     />}
                 </View>
 
+                {console.log(temp)}
+
                 <View style={{ width: '98%', marginTop: SIZES.doubleLarge, flexDirection: 'row' }}>
                     <View style={{ marginHorizontal: 16, flex: 1, justifyContent: 'center' }}>
                         <Ionicons name="calendar-outline" size={22} color={COLORS.grey} style={{ position: 'absolute', right: 12 }} />
                         <TouchableOpacity onPress={() => {
-                            setOpen(true)
+                            if(chosenDate == null )setOpen(true)
                         }}>
                             <TextInput
                                 onPressOut={() => {
-                                    setOpen(true)
+                                    if(chosenDate == null )setOpen(true)
                                 }}
-                                value={temp.substring(4, 15)} editable={false} variant="flat" label="Start Date" style={{ backgroundColor: COLORS.borderGrey, borderRadius: 4, paddingTop: 6 }} color={COLORS.darkGrey} />
+                                value={chosenDate ?? temp.substring(4, 15)} editable={false} variant="flat" label="Start Date" style={{ backgroundColor: COLORS.borderGrey, borderRadius: 4, paddingTop: 6 }} color={COLORS.darkGrey} />
                         </TouchableOpacity>
                     </View>
 
-                    {/* <View style={{ marginHorizontal: 16, flex: 1, justifyContent: 'center' }}>
-                    <Ionicons name="calendar-outline" size={22} color={COLORS.grey} style={{ position: 'absolute', right: 12 }} />
-                    <TextInput
-                        onPressOut={() => { setOpen2(true) }}
-                        value={temp2} editable={false} variant="flat" label="End Date" style={{ backgroundColor: COLORS.borderGrey, borderRadius: 4, paddingTop: 6 }} color={COLORS.darkGrey} />
-                </View> */}
                 </View>
 
 
@@ -393,7 +441,7 @@ const Availability = ({ navigation, route }) => {
                                                         setCurrentTimeIndex(inx)
                                                         setVisible(true)
                                                     }}
-                                                    value={time[inx]} editable={false} variant="outlined" label="Start Time" style={{ marginHorizontal: 16 }} color={COLORS.darkGrey} />
+                                                    value={time[inx] ? time[inx].substring(0,5) : time[inx]} editable={false} variant="outlined" label="Start Time" style={{ marginHorizontal: 16 }} color={COLORS.darkGrey} />
                                             </TouchableOpacity>
 
                                             <TouchableOpacity
@@ -408,7 +456,7 @@ const Availability = ({ navigation, route }) => {
                                                         setCurrentTimeIndex(inx)
                                                         setVisible2(true)
                                                     }}
-                                                    value={time2[inx]} editable={false} variant="outlined" label="End Time" style={{ marginHorizontal: 16, flex: 1 }} color={COLORS.darkGrey} />
+                                                    value={time2[inx] ? time2[inx].substring(0,5) : time2[inx]} editable={false} variant="outlined" label="End Time" style={{ marginHorizontal: 16, flex: 1 }} color={COLORS.darkGrey} />
                                             </TouchableOpacity>
                                         </View>
                                         <View style={{ width: '95%', marginTop: SIZES.medium, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', alignSelf: 'center' }}>
@@ -466,23 +514,7 @@ const Availability = ({ navigation, route }) => {
                     }
                 />
 
-                {/* <DatePickerModal
-                locale="en"
-                mode="range"
-                visible={open2}
-                startDate={new Date(data.date)}
-                validRange={{startDate: new Date(data.date)}}
-                onDismiss={onDismissSingle2}
-                label='Select Date'
-                date={date}
-                onConfirm={
-                    (date) => {
-                        setTemp2(date.date.toString().substring(4, 15))
-                        console.log(date.date)
-                        setOpen2(false)
-                    }
-                }
-            /> */}
+            
 
                 <View style={Styles.subViewContainer}>
                     <TouchableOpacity onPress={() => { postAvailability() }}
