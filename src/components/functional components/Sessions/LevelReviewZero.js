@@ -344,7 +344,7 @@ const LevelReviewZero = ({ navigation, route }) => {
                 })
                 setStackIndex(1)
                 setMessage("")
-                if (index >= 1) {
+                if (index >= 0) {
                     setGuidelines({
                         session: name,
                         text: guidelines

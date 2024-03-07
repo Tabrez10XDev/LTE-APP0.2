@@ -127,7 +127,7 @@ const Training = ({ navigation, route }) => {
             .catch((error) => {
                 console.log("Fetch Levels error");
                 pauseAnimation()
-                console.error(error.response.data);
+                console.log(error.response);
             });
     }
 

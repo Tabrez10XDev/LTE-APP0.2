@@ -115,7 +115,6 @@ function TrainingMaterialTab({ navigation }) {
 
         <View style={{ width: Dimensions.get('window').width * 0.9, alignItems: 'center', justifyContent: 'center' }}>
           {trainingMaterial.map((ele, index) => {
-            console.log(ele)
             return (<TeacherMaterial
               name={ele.teacher_res_name}
               desc={ele.teacher_res_desc}
@@ -173,10 +172,11 @@ function UploadAudioTab({ route, navigation }) {
 
   function getAudioStatus() {
     try {
+      playAnimation()
       axios.get(
         `${CONST.baseUrl}/audio/get/teacherdetails/audiostatus/${teacherID}`
       ).then((response) => {
-        console.log(response.data)
+        pauseAnimation()
         setAudioStatus(response.data.at(-1).audio_status)
         if (response.data.at(-1).audio_status == "submitted") {
           setImage(assets.waiting)
@@ -185,6 +185,7 @@ function UploadAudioTab({ route, navigation }) {
         }
       })
     } catch (e) {
+      pauseAnimation()
       console.error(e);
     }
   }
@@ -252,7 +253,6 @@ function UploadAudioTab({ route, navigation }) {
 
 
     const { name, uri } = fileResponse.assets[0];
-    console.log(uri);
     let formDataObj = new FormData();
     if (uri) {
       formDataObj.append('file', { name, uri, type: "video/mp4" });
@@ -272,7 +272,6 @@ function UploadAudioTab({ route, navigation }) {
 
       axios.request(config)
         .then((response) => {
-          console.log("Inside--", response.data.url );
           axios.post(
             `${CONST.baseUrl}/audio`, {
             teacher_id: teacherID,
@@ -316,10 +315,11 @@ function UploadAudioTab({ route, navigation }) {
 
 
     }
+  };
+
 
   
 
-  };
   return (
     <View style={Style.mainAudioContainer}>
       {audioStatus != "unsubmitted" && audioStatus != "rejected" && audioStatus != null && audioStatus != "resend" ? <ImagePlaceholder /> : 
@@ -412,28 +412,47 @@ function UploadAudioTab({ route, navigation }) {
   );
 }
 
-function HomeScreen({ route }) {
+ function HomeScreen({ route }) {
+
+  const [audioStatus, setAudioStatus] = useState(true)
+
+  function getAudioStatus(teacherID) {
+    console.log("Running", teacherID);
+    try {
+      axios.get(
+        `${CONST.baseUrl}/audio/get/teacherdetails/audiostatus/${teacherID}`
+      ).then((response) => {
+        console.log(response.data, "Ran")
+        if (response.data.at(-1).audio_status == "approved") {
+          setAudioStatus(false)
+        }else{
+          setAudioStatus(true)
+        }
+      })
+    } catch (e) {
+      console.error(e.response);
+    }
+  }
+
+  useEffect(async ()=>{
+    const teacherID = await AsyncStorage.getItem('AuthState')
+    getAudioStatus(teacherID)
+  },[])
+
   return (
     <Tab.Navigator
       screenOptions={{
         contentStyle: { backgroundColor: '#FFFFFF' }, tabBarIndicatorStyle: { backgroundColor: COLORS.primary },
       }}>
       <Tab.Screen name="Training Material" component={TrainingMaterialTab} />
+{ audioStatus &&
       <Tab.Screen name="Upload Audio" component={UploadAudioTab} />
+}
     </Tab.Navigator>
   );
 }
 
 
-function MyProfileView() {
-  return (
-    <View>
-      <Text style={{ textAlign: "center", marginTop: 300 }}>
-        Welcome to My Profile page!
-      </Text>
-    </View>
-  );
-}
 
 
 function HomeTabView({ route }) {

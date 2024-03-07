@@ -2,7 +2,7 @@
   "expo": {
     "name": "LTE-APP",
     "slug": "LTE-APP02",
-    "version": "1.0.3",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -17,7 +17,9 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.bwt.lte",
-      "bitcode": false
+      "bitcode": false,
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "buildNumber": "2"
     },
     "android": {
       "jsEngine": "hermes",
@@ -27,7 +29,6 @@
       },
       "package": "com.lowjunkie.LTEAPP02",
       "googleServicesFile": "./google-services.json"
-
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -124,7 +124,7 @@ const Login = ({ navigation, route }) => {
           <View style={Styles.loginContainer} >
 
             <Image
-              style={{ height: 200, width: 200, resizeMode: 'contain', marginTop: '20%' }}
+              style={{ height: 200, width: 200, resizeMode: 'contain', marginTop: Platform.OS == "ios" ? '20%' : '10%' }}
               source={assets.logo} />
 
             <Text style={{ ...Styles.header, marginTop: 24 }}>
@@ -154,7 +154,6 @@ const Login = ({ navigation, route }) => {
             </View>
             <Text onPress={() => {
               navigation.navigate('ForgotPassword');
-
             }} style={{ ...Styles.headerText, color: COLORS.blue, marginTop: SIZES.small, textAlign: 'right', alignSelf: 'flex-end', fontSize: 14 }}>
               Forgot Password ?
             </Text>
@@ -248,7 +247,7 @@ const Styles = StyleSheet.create({
     borderColor: "#0000001F",
     borderWidth: 1,
     borderRadius: 5,
-    marginTop: SIZES.doubleLarge,
+    marginTop: Platform.OS == "ios" ? SIZES.large : SIZES.doubleLarge,
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -260,7 +259,7 @@ const Styles = StyleSheet.create({
   },
   subViewContainer: {
     width: 350,
-    height: 250,
+    marginTop:48,
     alignSelf: "center",
     justifyContent: "center",
   },

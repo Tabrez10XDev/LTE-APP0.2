@@ -13,6 +13,10 @@ import OnBoardingRoutes from '../components/functional components/OnBoardingComp
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import ContactSpoc from '../components/functional components/Profile/ContactSpoc';
 import ForgotPassword from '../components/functional components/Auth/ForgotPassword';
+import axios from 'axios';
+import messaging from '@react-native-firebase/messaging';
+import { COLORS, SIZES, FONTS, assets, CONST } from "../../constants/constants";
+
 const AppRoutes = ({ navigation }) => {
 
 
@@ -24,6 +28,7 @@ const AppRoutes = ({ navigation }) => {
 
     const finishAuth = () => {
         setState(false)
+        getData()
     }
 
     const theme = {
@@ -53,7 +58,20 @@ const AppRoutes = ({ navigation }) => {
 
     const logout = async () => {
         try {
-            await AsyncStorage.setItem('AuthState', "-1")
+            const result = await AsyncStorage.getItem('AuthState')
+            if (result === null && result == "-1") return
+
+            const token = await messaging().getToken()
+            // const token = ""
+            const payload = {
+                "user_id": result,
+                "device_token": token
+            }
+            axios.post(`${CONST.baseUrl}/teacher/get/teacherlogout`, payload).then(async (response) => {
+                //TODO
+                await AsyncStorage.setItem('AuthState', "-1")
+                console.log(response.data);
+            })
         } catch (err) {
             alert(err)
         }
@@ -72,6 +90,16 @@ const AppRoutes = ({ navigation }) => {
             const result = await AsyncStorage.getItem('AuthState')
             if (result !== null && result != "-1") {
                 setState(false)
+                const token = await messaging().getToken()
+                // const token = ""
+                const payload = {
+                    "user_id": result,
+                    "device_token": token
+                }
+                axios.post(`${CONST.baseUrl}/teacher/get/teacherloginExp`, payload).then((response) => {
+                    if (response.data.do_logout) logout()
+                    //TODO
+                })
             } else {
 
                 setState(true)
@@ -105,33 +133,33 @@ const AppRoutes = ({ navigation }) => {
 
                 <Stack.Group screenOptions={{}}  >
 
-                {state ? (<Stack.Group screenOptions={{}} >
+                    {state ? (<Stack.Group screenOptions={{}} >
 
-                    {isBoarded ? (<Stack.Group screenOptions={{}} >
+                        {isBoarded ? (<Stack.Group screenOptions={{}} >
 
-                        <Stack.Screen name="Login" component={Login} options={{ header: () => null }} initialParams={{ finishAuth: finishAuth }} />
-                        <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ header: () => null }}  />
+                            <Stack.Screen name="Login" component={Login} options={{ header: () => null }} initialParams={{ finishAuth: finishAuth }} />
+                            <Stack.Screen name="ForgotPassword" component={ForgotPassword} options={{ header: () => null }} />
 
-                        <Stack.Screen name="TermsConditions" component={TermsConditions} options={{ header: () => null }} initialParams={{ finishAuth: finishAuth }} />
-                    </Stack.Group>)
-                        : (<Stack.Group screenOptions={{}} >
-                             <Stack.Screen name="Landing" component={OnBoardingRoutes} options={{ header: () => null }} initialParams={{ finishBoarding: finishBoarding }}/>
+                            <Stack.Screen name="TermsConditions" component={TermsConditions} options={{ header: () => null }} initialParams={{ finishAuth: finishAuth }} />
                         </Stack.Group>)
-                    }
+                            : (<Stack.Group screenOptions={{}} >
+                                <Stack.Screen name="Landing" component={OnBoardingRoutes} options={{ header: () => null }} initialParams={{ finishBoarding: finishBoarding }} />
+                            </Stack.Group>)
+                        }
+                    </Stack.Group>
+                    )
+
+                        : (<Stack.Group screenOptions={{}}  >
+
+                            <Stack.Screen name="HomeTabView" component={HomeTabView} initialParams={{ logout: logout }} options={({ navigation, route }) => ({
+                                headerShown: false,
+                            })} />
+                            <Stack.Screen name="Contact SPOC" component={ContactSpoc} initialParams={{ logout: logout }} options={({ navigation, route }) => ({
+                                headerShown: false,
+                            })} />
+                        </Stack.Group>)}
+
                 </Stack.Group>
-                )
-
-                    : (<Stack.Group screenOptions={{}}  >
-
-                        <Stack.Screen name="HomeTabView" component={HomeTabView} initialParams={{ logout: logout }} options={({ navigation, route }) => ({
-                            headerShown: false,
-                        })} />
-                         <Stack.Screen name="Contact SPOC" component={ContactSpoc} initialParams={{ logout: logout }} options={({ navigation, route }) => ({
-                            headerShown: false,
-                        })} />
-                    </Stack.Group>)}
-
-            </Stack.Group>
 
             </Stack.Navigator>
         </NavigationContainer>

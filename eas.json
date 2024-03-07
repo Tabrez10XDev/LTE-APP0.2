@@ -18,7 +18,9 @@
     },
     "production": {
       "ios": {
-        "resourceClass": "m1-medium"
+        "resourceClass": "m1-medium",
+        "autoIncrement": true
+
       }
     }
   },

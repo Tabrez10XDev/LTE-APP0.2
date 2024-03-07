@@ -4,25 +4,73 @@ import { useState, useEffect, useRef } from "react";
 import { List, Chip } from "react-native-paper";
 import { Dimensions } from "react-native";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { COLORS, SIZES, FONTS, assets } from "../../../../constants";
-import { DatePickerModal } from 'react-native-paper-dates';
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { COLORS, SIZES, FONTS, assets, CONST } from "../../../../constants";
+import Lottie from 'lottie-react-native';
+import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 import { ScrollView } from "react-native-gesture-handler";
-import { TimePickerModal } from 'react-native-paper-dates';
-import { Switch } from 'react-native-paper';
-import { createContext, useContext } from 'react';
-import { TextInput } from "@react-native-material/core";
+
 
 
 const TeacherDashboard = ({ route, navigation }) => {
 
-    const data = route.params
+    const [animSpeed, setAnimSpeed] = useState(false)
+    const animRef = useRef()
+
+    function playAnimation() {
+        setAnimSpeed(true)
+    }
+
+
+    function pauseAnimation() {
+        setAnimSpeed(false)
+    }
+
+    useEffect(() => {
+        setTimeout(() => {
+            animRef.current?.play();
+        }, 100)
+    }, [animSpeed])
+
+    const [data, setData] = useState({})
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            getData()
+        });
+
+        return unsubscribe;
+    }, [navigation]);
+
+
+    const getData = async () => {
+        try {
+            let value = await AsyncStorage.getItem('AuthState')
+
+            playAnimation()
+            axios.post(
+                `${CONST.baseUrl}/teacher/get/teacherdetails/app`, {
+                teacher_id: value
+            }
+            ).then((response) => {
+                pauseAnimation()
+                setData(response.data[0])
+            })
+        } catch (e) {
+            pauseAnimation()
+            setData(route.params)
+            console.error(e)
+        }
+    }
+
 
     return (
 
         <View style={{ width: '100%', height: '100%', backgroundColor: 'white', alignItems: 'center' }}>
             <ScrollView contentContainerStyle={{ alignItems: 'center', width: Dimensions.get('window').width, justifyContent: 'center' }} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false} style={{ backgroundColor: COLORS.blueShade }}>
+                {console.log(data, "profile")}
                 <Image
                     source={assets.profile}
                     style={{ height: 160, width: 160, marginTop: 24 }}
@@ -53,6 +101,9 @@ const TeacherDashboard = ({ route, navigation }) => {
                             <Text style={Styles.greyText}>
                                 City
                             </Text>
+                            <Text style={Styles.greyText}>
+                                Audio Status
+                            </Text>
 
                         </View>
                         <View style={{ maxWidth: '60%' }}>
@@ -64,13 +115,13 @@ const TeacherDashboard = ({ route, navigation }) => {
                                     {data.teacher_name}
                                 </Text>
                             </View>
-                            
+
                             <View style={{ flexDirection: 'row' }}>
                                 <Text style={Styles.greyText}>
                                     :
                                 </Text>
                                 <Text ellipsizeMode="tail" numberOfLines={1} style={Styles.blackText}>
-                                {data.contactno}
+                                    {data.contactno}
                                 </Text>
                             </View>
 
@@ -79,7 +130,7 @@ const TeacherDashboard = ({ route, navigation }) => {
                                     :
                                 </Text>
                                 <Text ellipsizeMode="tail" numberOfLines={1} style={Styles.blackText}>
-                                {data.email}
+                                    {data.email}
                                 </Text>
                             </View>
 
@@ -88,7 +139,7 @@ const TeacherDashboard = ({ route, navigation }) => {
                                     :
                                 </Text>
                                 <Text ellipsizeMode="tail" numberOfLines={1} style={Styles.blackText}>
-                                {data.role}
+                                    {data.role}
                                 </Text>
                             </View>
 
@@ -97,18 +148,18 @@ const TeacherDashboard = ({ route, navigation }) => {
                                     :
                                 </Text>
                                 <Text ellipsizeMode="tail" numberOfLines={1} style={Styles.blackText}>
-                                {data.teacher_id.toString()}
+                                    {route.params.teacher_id}
                                 </Text>
                             </View>
 
-                            <View style={{ flexDirection: 'row', alignItems:'center' }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <Text style={Styles.greyText}>
                                     :
                                 </Text>
                                 <Text ellipsizeMode="tail" numberOfLines={1} style={Styles.blackText}>
-                                {data.spoc_name}
+                                    {data.spoc_name ?? "NA"}
                                 </Text>
-                               
+
                             </View>
 
                             <View style={{ flexDirection: 'row' }}>
@@ -116,7 +167,16 @@ const TeacherDashboard = ({ route, navigation }) => {
                                     :
                                 </Text>
                                 <Text ellipsizeMode="tail" numberOfLines={1} style={Styles.blackText}>
-                                {data.city ?? "NA"}
+                                    {data.city ?? "NA"}
+                                </Text>
+                            </View>
+
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={Styles.greyText}>
+                                    :
+                                </Text>
+                                <Text ellipsizeMode="tail" numberOfLines={1} style={Styles.blackText}>
+                                    {data.audio_status ?? "NA"}
                                 </Text>
                             </View>
                         </View>
@@ -126,6 +186,34 @@ const TeacherDashboard = ({ route, navigation }) => {
 
                 </View>
             </ScrollView>
+            {animSpeed &&
+                <View style={{
+                    shadowColor: COLORS.homeCard,
+                    shadowOffset: {
+                        width: 0,
+                        height: 2,
+                    },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 2,
+                    elevation: 8,
+                    position: 'absolute', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(52, 52, 52, 0.0)', alignSelf: 'center', padding: 24, marginTop: 16
+                }}>
+
+                    <View style={{ marginTop: '-40%' }}>
+                        <Lottie source={require('../../../../assets/loading.json')} autoPlay style={{ height: 300, width: 300, alignSelf: 'center' }} loop ref={animRef} speed={1} />
+                        <Text
+                            style={{
+                                fontFamily: FONTS.bold,
+                                fontSize: SIZES.large,
+                                flexWrap: 'wrap',
+                                marginTop: -48
+                            }}>
+                        </Text>
+                    </View>
+
+                </View>
+
+            }
 
         </View>
     )

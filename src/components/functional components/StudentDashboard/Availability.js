@@ -51,32 +51,35 @@ const Availability = ({ navigation, route }) => {
     })
 
     const [chosenDate, setChosenDate] = useState(null)
-
     const [state, setState] = useState({ level_details: [] })
+    const [currentAvailabilityIds, setCurrentAvailabilityIds] = useState([])
     const [currentLevel, setCurrentLevel] = useState({})
-
     const [totalDays, setTotalDays] = useState(0)
     const [currentTimeIndex, setCurrentTimeIndex] = useState(0)
 
     const [teacherID, setTeacherID] = useState(-1)
-    const [currentAvailabilityIds, setCurrentAvailabilityIds] = useState([])
 
     async function fetchAvailability() {
+        playAnimation()
 
         let value = await AsyncStorage.getItem('AuthState')
         setTeacherID(value)
 
-        console.log("Teacher-",value);
-        console.log("Student-",route.params.student_id);
+        console.log("Teacher-", value);
+        console.log("Student-", route.params.student_id);
 
 
         axios.post(`${CONST.baseUrl}/teacherapp/get/teacher/availablity`, {
             "teacher_id": value,
             "stud_id": route.params.student_id
         }).then((response) => {
+            pauseAnimation()
             setState(response.data)
+            console.log("done", value, route.params.student_id);
+            console.log(response.data);
         })
             .catch((error) => {
+                pauseAnimation()
                 console.log("error");
                 console.log(error);
             });
@@ -85,9 +88,6 @@ const Availability = ({ navigation, route }) => {
     }
 
     async function postAvailability() {
-
-
-
 
         if ((temp == null || temp == undefined || temp.length == 0) && chosenDate == null) {
             Toast.show({
@@ -98,7 +98,7 @@ const Availability = ({ navigation, route }) => {
         }
 
         const trueSwitches = [];
-      
+
 
         for (const key in switches) {
             if (switches[key] === true) {
@@ -141,12 +141,7 @@ const Availability = ({ navigation, route }) => {
         })
 
 
-        console.log("Flag: ",flag);
-
         if (flag) {
-
-            
-
 
             const payload = {
                 "stud_id": parseInt(route.params.student_id),
@@ -158,7 +153,7 @@ const Availability = ({ navigation, route }) => {
                 "session_details": trueSwitches
             }
 
-       
+
 
             playAnimation()
 
@@ -166,8 +161,7 @@ const Availability = ({ navigation, route }) => {
 
             axios.post(`${CONST.baseUrl}/student/assign/assignlevel`, payload)
                 .then(async (response) => {
-                    console.log("Response:");
-                    console.log("----");
+
                     pauseAnimation()
                     await fetchAvailability()
                     Toast.show({
@@ -179,9 +173,8 @@ const Availability = ({ navigation, route }) => {
                     setTime2(["00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00"])
                 })
                 .catch((error) => {
-                    console.log("ERROR:::");
-                    console.log("----");
-                    console.log(error);
+
+                    console.error(error);
                     pauseAnimation()
                     Toast.show({
                         type: 'error',
@@ -192,8 +185,7 @@ const Availability = ({ navigation, route }) => {
 
             axios.post(`${CONST.baseUrl}/teacherapp/insert/teacher/availablity`, payload)
                 .then(async (response) => {
-                    console.log("Insert:");
-                    console.log(response.data)
+
 
                 })
                 .catch((error) => {
@@ -207,20 +199,20 @@ const Availability = ({ navigation, route }) => {
         } else {
 
             let _teacher_availablity = []
-            if(totalDays != currentAvailabilityIds.length){
+            if (totalDays != currentAvailabilityIds.length) {
                 Toast.show({
                     type: 'error',
                     text1: 'Please choose ' + currentAvailabilityIds.length + " days"
                 })
                 return
-            }            
+            }
 
-            currentAvailabilityIds.forEach((id,inx)=>{
+            currentAvailabilityIds.forEach((id, inx) => {
                 let temp = {
-                    date: chosenDate.substring(0,10),
+                    date: chosenDate.substring(0, 10),
                     availablity_id: id,
                     level_id: parseInt(currentLevel.level_id),
-                    day:  trueSwitches[inx].day,
+                    day: trueSwitches[inx].day,
                     start_time: trueSwitches[inx].start_time,
                     end_time: trueSwitches[inx].end_time
 
@@ -232,10 +224,6 @@ const Availability = ({ navigation, route }) => {
             const payload = {
                 teacher_availablity: _teacher_availablity
             }
-
-            console.log("Payload:");
-            console.log(payload);
-            console.log("----");
 
             playAnimation()
 
@@ -268,11 +256,25 @@ const Availability = ({ navigation, route }) => {
     const [isFocus, setIsFocus] = useState(false);
 
     useEffect(() => {
+        setChosenDate(null)
+        setState({ level_details: [] })
+        setCurrentAvailabilityIds([])
+        setCurrentLevel({})
+        setTotalDays(0)
+        setCurrentTimeIndex(0)
         const unsubscribe = navigation.addListener('focus', () => {
             fetchAvailability()
         });
 
-        return unsubscribe;
+        return () => {
+            setChosenDate(null)
+            setState({ level_details: [] })
+            setCurrentAvailabilityIds([])
+            setCurrentLevel({})
+            setTotalDays(0)
+            setCurrentTimeIndex(0)
+            unsubscribe
+        };
     }, [navigation]);
 
     const onDismissSingle = React.useCallback(() => {
@@ -313,29 +315,29 @@ const Availability = ({ navigation, route }) => {
     const [switches, setSwitches] = useState({ 0: false, 1: false, 2: false, 3: false, 4: false, 5: false, 6: false })
 
 
-    useEffect(()=>{
-        if(currentLevel.level_id != undefined){
+    useEffect(() => {
+        if (currentLevel.level_id != undefined) {
             setSwitches({ 0: false, 1: false, 2: false, 3: false, 4: false, 5: false, 6: false })
             let _time = ["00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00"]
             let _time2 = ["00:00", "00:00", "00:00", "00:00", "00:00", "00:00", "00:00"]
             setChosenDate(null)
             let _ids = []
-            state.teacher_avail_info.forEach((ele)=>{
-                if(ele.level_id == currentLevel.level_id){
+            state.teacher_avail_info.forEach((ele) => {
+                if (ele.level_id == currentLevel.level_id) {
                     _ids.push(ele.availablity_id)
                     const _day = parseInt(ele.day) - 1
-                    setChosenDate(ele.date.substring(0,10))
-                    setSwitches(curr => ({...curr, [_day]: true }))
+                    setChosenDate(ele.date.substring(0, 10))
+                    setSwitches(curr => ({ ...curr, [_day]: true }))
                     _time[_day] = ele.start_time
                     _time2[_day] = ele.end_time
 
                 }
-            })      
+            })
             setCurrentAvailabilityIds(_ids)
             setTime(_time)
             setTime2(_time2)
         }
-    },[currentLevel])
+    }, [currentLevel])
 
 
     const [visible2, setVisible2] = React.useState(false)
@@ -391,11 +393,11 @@ const Availability = ({ navigation, route }) => {
                     <View style={{ marginHorizontal: 16, flex: 1, justifyContent: 'center' }}>
                         <Ionicons name="calendar-outline" size={22} color={COLORS.grey} style={{ position: 'absolute', right: 12 }} />
                         <TouchableOpacity onPress={() => {
-                            if(chosenDate == null )setOpen(true)
+                            if (chosenDate == null) setOpen(true)
                         }}>
                             <TextInput
                                 onPressOut={() => {
-                                    if(chosenDate == null )setOpen(true)
+                                    if (chosenDate == null) setOpen(true)
                                 }}
                                 value={chosenDate ?? temp.substring(4, 15)} editable={false} variant="flat" label="Start Date" style={{ backgroundColor: COLORS.borderGrey, borderRadius: 4, paddingTop: 6 }} color={COLORS.darkGrey} />
                         </TouchableOpacity>
@@ -409,7 +411,7 @@ const Availability = ({ navigation, route }) => {
                 </Text>
 
                 <Text style={{ fontFamily: FONTS.regular, fontSize: SIZES.font, color: COLORS.almostBlack, alignSelf: 'flex-start', marginStart: 16, marginTop: 4 }}>
-                    Total {currentLevel.session_count} sessions in Level {data.next_level_name?.replace("level", "")}. End Date will auto calculate based on the selection of the start date.
+                    Total {currentLevel.session_count} sessions in Level {data.next_level_name?.replace("level", "")}.
                 </Text>
 
 
@@ -441,7 +443,7 @@ const Availability = ({ navigation, route }) => {
                                                         setCurrentTimeIndex(inx)
                                                         setVisible(true)
                                                     }}
-                                                    value={time[inx] ? time[inx].substring(0,5) : time[inx]} editable={false} variant="outlined" label="Start Time" style={{ marginHorizontal: 16 }} color={COLORS.darkGrey} />
+                                                    value={time[inx] ? time[inx].substring(0, 5) : time[inx]} editable={false} variant="outlined" label="Start Time" style={{ marginHorizontal: 16 }} color={COLORS.darkGrey} />
                                             </TouchableOpacity>
 
                                             <TouchableOpacity
@@ -456,21 +458,52 @@ const Availability = ({ navigation, route }) => {
                                                         setCurrentTimeIndex(inx)
                                                         setVisible2(true)
                                                     }}
-                                                    value={time2[inx] ? time2[inx].substring(0,5) : time2[inx]} editable={false} variant="outlined" label="End Time" style={{ marginHorizontal: 16, flex: 1 }} color={COLORS.darkGrey} />
+                                                    value={time2[inx] ? time2[inx].substring(0, 5) : time2[inx]} editable={false} variant="outlined" label="End Time" style={{ marginHorizontal: 16, flex: 1 }} color={COLORS.darkGrey} />
                                             </TouchableOpacity>
                                         </View>
                                         <View style={{ width: '95%', marginTop: SIZES.medium, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', alignSelf: 'center' }}>
-
                                             {/* <Text
                                             onPress={() => { }}
                                             style={{ fontFamily: FONTS.semiBold, fontSize: SIZES.font, color: COLORS.blue, alignSelf: 'center' }}>
                                             Request Postpone
                                         </Text> */}
-                                            <Switch value={switches[inx]} onValueChange={(value) => {
+                                            {/* <Switch value={switches[inx]} onValueChange={(value) => {
                                                 if (totalDays >= 3 && value) return
                                                 setSwitches(curr => ({ ...curr, [inx]: value }))
                                                 onToggleSwitch(inx, value)
-                                            }} color={COLORS.primary} />
+                                            }} color={COLORS.primary} /> */}
+
+                                            <TouchableOpacity
+                                                onPress={() => {
+                                                    if (totalDays >= 3 && !switches[inx]) return
+                                                    setSwitches(curr => ({ ...curr, [inx]: !curr[inx] }))
+                                                    onToggleSwitch(inx, !switches[inx])
+                                                }}
+                                                style={{
+                                                    height: 45, backgroundColor: 'blue', justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.primary,
+                                                    padding: 10,
+                                                    borderRadius: 5,
+                                                    width: '100%'
+                                                }}>
+
+                                                {
+                                                    !switches[inx] ?
+                                                        <View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row', }}>
+                                                            <Text style={{ fontFamily: FONTS.semiBold, fontSize: SIZES.font, color: 'white', marginRight: 8 }}>
+                                                                Click here to select the day
+                                                            </Text>
+                                                            <AntDesign name="plus" size={24} color="white" />
+
+                                                        </View>
+                                                        :
+                                                        <View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row', }}>
+                                                            <Text style={{ fontFamily: FONTS.semiBold, fontSize: SIZES.font, color: 'white', marginRight: 8 }}>
+                                                                Day is selected
+                                                            </Text>
+                                                            <AntDesign name="check" size={24} color="white" />
+                                                        </View>
+                                                }
+                                            </TouchableOpacity>
                                         </View>
                                     </List.Accordion>
                                 )
@@ -514,7 +547,7 @@ const Availability = ({ navigation, route }) => {
                     }
                 />
 
-            
+
 
                 <View style={Styles.subViewContainer}>
                     <TouchableOpacity onPress={() => { postAvailability() }}
