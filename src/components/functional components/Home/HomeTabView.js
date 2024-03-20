@@ -5,7 +5,7 @@ import {
   DrawerItemList,
 } from "@react-navigation/drawer";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { Feather, Ionicons, Fontisto, FontAwesome } from "@expo/vector-icons";
+import { Feather, Ionicons, Fontisto, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
 import { StyleSheet } from "react-native";
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
@@ -25,6 +25,8 @@ import TicketStatus from "../Tickets/TicketStatus";
 import moment from 'moment';
 import { StatusBar } from "expo-status-bar";
 import * as mime from 'mime';
+import { addEventListener } from "@react-native-community/netinfo";
+
 
 const Tab = createMaterialTopTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -52,7 +54,7 @@ const CustomDrawer = props => {
 
           <View>
             <Text style={Styles.bold}>{teacher.teacher_name}</Text>
-            <Text style={Styles.greyText}>{teacher.role}</Text>
+            {/* <Text style={Styles.greyText}>{teacher.role}</Text> */}
             {teacher.tentative_start_date ? <Text style={Styles.greyText}>Since {moment(teacher.tentative_start_date).fromNow()}</Text> : null}
           </View>
 
@@ -66,12 +68,15 @@ const CustomDrawer = props => {
           left: 0,
           bottom: 50,
           padding: 20,
+          flexDirection:'row'
         }}
       >
         <Text
-          onPress={() => { 
-            props.initialParams.logout.logout() }}
+          onPress={() => {
+            props.initialParams.logout.logout()
+          }}
           style={Styles.semiBold} >Log Out</Text>
+          <MaterialIcons style={{marginLeft:16}} name="logout" size={24} color="black" />
       </TouchableOpacity>
     </View>
   );
@@ -96,9 +101,10 @@ function TrainingMaterialTab({ navigation }) {
     }
   }
 
-  useEffect(() => {
+  useEffect(()=>{
     getTrainingMaterials()
-  }, [])
+  })
+
 
   return (
     <View
@@ -126,9 +132,9 @@ function TrainingMaterialTab({ navigation }) {
 
           {
             trainingMaterial.length === 0 **
-            <Text style={{ fontSize: 16, fontWeight: 500, position:'absolute', top:'40%', alignSelf:'center' }}>
-            No Training Material available
-          </Text>
+            <Text style={{ fontSize: 16, fontWeight: 500, position: 'absolute', top: '40%', alignSelf: 'center' }}>
+              No Training Material available
+            </Text>
           }
         </View>
 
@@ -177,6 +183,7 @@ function UploadAudioTab({ route, navigation }) {
         `${CONST.baseUrl}/audio/get/teacherdetails/audiostatus/${teacherID}`
       ).then((response) => {
         pauseAnimation()
+        console.log(response.data);
         setAudioStatus(response.data.at(-1).audio_status)
         if (response.data.at(-1).audio_status == "submitted") {
           setImage(assets.waiting)
@@ -197,6 +204,7 @@ function UploadAudioTab({ route, navigation }) {
 
     return unsubscribe;
   }, [navigation]);
+
 
 
   const ImagePlaceholder = () => {
@@ -318,62 +326,62 @@ function UploadAudioTab({ route, navigation }) {
   };
 
 
-  
+
 
   return (
     <View style={Style.mainAudioContainer}>
-      {audioStatus != "unsubmitted" && audioStatus != "rejected" && audioStatus != null && audioStatus != "resend" ? <ImagePlaceholder /> : 
-      
-      (
-        <View style={Style.mainAudioContainer}>
-          <Text style={Style.audioText}>
-            Please share your voice audio file and we will get back to you once it
-            approved
-          </Text>
-          <View style={Style.dragViewContainer}>
-            <TouchableOpacity onPress={audioSubmitBtn}>
-              <Feather
-                style={Style.uploadIcon}
-                name="upload-cloud"
-                size={42}
-                color="blue"
-              />
-              <Text style={Style.uploadText}>
-                Drop files here or click to upload
-              </Text>
+      {audioStatus != "unsubmitted" && audioStatus != "rejected" && audioStatus != null && audioStatus != "resend" ? <ImagePlaceholder /> :
 
-              <Text style={{ ...Style.greyText, alignSelf: 'center', marginTop: 2 }}>
-                Status: {fileResponse.assets != undefined ? fileResponse.assets[0].name : "Submit for verification"}
-              </Text>
-            </TouchableOpacity>
-            {fileResponse.assets != undefined ? (
-              <View style={{ flexDirection: 'row', marginTop: 32, alignItems: 'center' }}>
-                <Text>
-                  {fileResponse.assets[0].name}
+        (
+          <View style={Style.mainAudioContainer}>
+            <Text style={Style.audioText}>
+              Please share your voice audio file and we will get back to you once it
+              approved
+            </Text>
+            <View style={Style.dragViewContainer}>
+              <TouchableOpacity onPress={audioSubmitBtn}>
+                <Feather
+                  style={Style.uploadIcon}
+                  name="upload-cloud"
+                  size={42}
+                  color="blue"
+                />
+                <Text style={Style.uploadText}>
+                  Drop files here or click to upload
                 </Text>
 
-                <TouchableOpacity
-                  onPress={() => { setFileResponse({}) }}
-                  style={{ marginLeft: 8, alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ ...Style.greyText, alignSelf: 'center', marginTop: 2 }}>
+                  Status: {fileResponse.assets != undefined ? fileResponse.assets[0].name : "Submit for verification"}
+                </Text>
+              </TouchableOpacity>
+              {fileResponse.assets != undefined ? (
+                <View style={{ flexDirection: 'row', marginTop: 32, alignItems: 'center' }}>
+                  <Text>
+                    {fileResponse.assets[0].name}
+                  </Text>
 
-                  <Feather
-                    style={{}}
-                    name="x"
-                    size={24}
-                    color="black"
-                  />
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => { setFileResponse({}) }}
+                    style={{ marginLeft: 8, alignItems: 'center', justifyContent: 'center' }}>
 
-              </View>
+                    <Feather
+                      style={{}}
+                      name="x"
+                      size={24}
+                      color="black"
+                    />
+                  </TouchableOpacity>
 
-            ) : null}
-          </View>
-          <View style={Style.subViewContainer}>
-            <TouchableOpacity onPress={uploadAudio} style={Style.btnStyle}>
-              <Text style={Style.btnTextStyle}>SUBMIT</Text>
-            </TouchableOpacity>
-          </View>
-        </View>)
+                </View>
+
+              ) : null}
+            </View>
+            <View style={Style.subViewContainer}>
+              <TouchableOpacity onPress={uploadAudio} style={Style.btnStyle}>
+                <Text style={Style.btnTextStyle}>SUBMIT</Text>
+              </TouchableOpacity>
+            </View>
+          </View>)
       }
       {animSpeed &&
         <View style={{
@@ -412,7 +420,7 @@ function UploadAudioTab({ route, navigation }) {
   );
 }
 
- function HomeScreen({ route }) {
+function HomeScreen({ route, navigation }) {
 
   const [audioStatus, setAudioStatus] = useState(true)
 
@@ -425,7 +433,7 @@ function UploadAudioTab({ route, navigation }) {
         console.log(response.data, "Ran")
         if (response.data.at(-1).audio_status == "approved") {
           setAudioStatus(false)
-        }else{
+        } else {
           setAudioStatus(true)
         }
       })
@@ -434,10 +442,21 @@ function UploadAudioTab({ route, navigation }) {
     }
   }
 
-  useEffect(async ()=>{
-    const teacherID = await AsyncStorage.getItem('AuthState')
-    getAudioStatus(teacherID)
-  },[])
+  useEffect(async () => {
+
+    const unsubscribe = navigation.addListener('focus', async () => {
+      const teacherID = await AsyncStorage.getItem('AuthState')
+      getAudioStatus(teacherID)
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+
+  // useEffect(async ()=>{
+  //   const teacherID = await AsyncStorage.getItem('AuthState')
+  //   getAudioStatus(teacherID)
+  // },[])
 
   return (
     <Tab.Navigator
@@ -445,9 +464,9 @@ function UploadAudioTab({ route, navigation }) {
         contentStyle: { backgroundColor: '#FFFFFF' }, tabBarIndicatorStyle: { backgroundColor: COLORS.primary },
       }}>
       <Tab.Screen name="Training Material" component={TrainingMaterialTab} />
-{ audioStatus &&
-      <Tab.Screen name="Upload Audio" component={UploadAudioTab} />
-}
+      {audioStatus &&
+        <Tab.Screen name="Upload Audio" component={UploadAudioTab} />
+      }
     </Tab.Navigator>
   );
 }
@@ -455,20 +474,14 @@ function UploadAudioTab({ route, navigation }) {
 
 
 
-function HomeTabView({ route }) {
+function HomeTabView({ route, navigation }) {
 
   const [data, setData] = useState({})
 
   const [stateID, setStateID] = useState("NULL")
 
-
-  useEffect(() => {
-
-    getData()
-  }, [])
-
-
   const getData = async () => {
+    if(stateID !== "NULL") return
     try {
       let value = await AsyncStorage.getItem('AuthState')
       setStateID(value)
@@ -478,14 +491,16 @@ function HomeTabView({ route }) {
         teacher_id: value
       }
       ).then((response) => {
+        console.log("Done");
         setData(response.data[0])
       })
     } catch (e) {
       // error reading value
       console.error(e)
-    }
+    } 
   }
 
+  getData()
 
   return (
     <TeacherIDContext.Provider value={stateID}>
@@ -498,6 +513,7 @@ function HomeTabView({ route }) {
         />
 
         <Drawer.Navigator
+
           drawerContent={props => <CustomDrawer {...props} initialParams={{ logout: route.params }} />}
           initialParams={{ teacherID: stateID }}
           screenOptions={{
@@ -511,10 +527,9 @@ function HomeTabView({ route }) {
             name="Teacher's Training"
             component={HomeScreen}
             options={({ route }) => {
+              const routeName = getFocusedRouteNameFromRoute(route) ?? "NULL"
               return ({
-                headerRight: () => (
-                  <Ionicons name="notifications" size={22} color={COLORS.primary} style={{ marginEnd: 16 }} />
-                ),
+              
                 drawerIcon: ({ focused, size }) => (
                   <Ionicons
                     name="home"

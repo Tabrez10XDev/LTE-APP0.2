@@ -79,7 +79,7 @@ const TeacherDashboard = ({ route, navigation }) => {
                 <View style={{ width: '90%', borderRadius: 16, backgroundColor: 'white', padding: 8, paddingHorizontal: 16 }}>
 
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <View style={{ maxWidth: '30%' }}>
+                        <View style={{ maxWidth: '40%' }}>
                             <Text style={Styles.greyText}>
                                 Name
                             </Text>
@@ -92,9 +92,7 @@ const TeacherDashboard = ({ route, navigation }) => {
                             <Text style={Styles.greyText}>
                                 Role
                             </Text>
-                            <Text style={Styles.greyText}>
-                                Teacher ID
-                            </Text>
+                  
                             <Text style={Styles.greyText}>
                                 SPOC Name
                             </Text>
@@ -143,14 +141,7 @@ const TeacherDashboard = ({ route, navigation }) => {
                                 </Text>
                             </View>
 
-                            <View style={{ flexDirection: 'row' }}>
-                                <Text style={Styles.greyText}>
-                                    :
-                                </Text>
-                                <Text ellipsizeMode="tail" numberOfLines={1} style={Styles.blackText}>
-                                    {route.params.teacher_id}
-                                </Text>
-                            </View>
+                        
 
                             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <Text style={Styles.greyText}>

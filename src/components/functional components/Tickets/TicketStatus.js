@@ -44,7 +44,10 @@ const TicketStatus = ({ navigation, route }) => {
     const [activeTickets, setActiveTickets] = useState([])
     const [resolvedTickets, setResolvedTickets] = useState([])
     const [ticketList, setTicketList] = useState([])
-    const [content, setContent] = useState("")
+    const [content, setContent] = useState({
+        createdAt: "",
+        updatedAt: ""
+    })
     const [title, setTitle] = useState("")
 
 
@@ -304,7 +307,6 @@ const TicketStatus = ({ navigation, route }) => {
 
                     <View style={{ backgroundColor: COLORS.blueShade, width: '100%', borderBottomLeftRadius: 16, borderBottomRightRadius: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: '5%', marginTop: 2 }}>
 
-
                         <Text
                             style={{
                                 textAlign: 'left',
@@ -314,7 +316,7 @@ const TicketStatus = ({ navigation, route }) => {
                                 marginVertical: 14,
                                 flex: 1
                             }}
-                        >Ticket Raised {moment(content.createdAt).fromNow()}</Text>
+                        >Ticket Raised {moment(new Date(content.createdAt.substring(0, 16))).fromNow()}</Text>
 
                         {content.updatedAt &&
 
@@ -327,7 +329,7 @@ const TicketStatus = ({ navigation, route }) => {
                                     marginVertical: 14,
                                     flex: 1
                                 }}
-                            >Ticket Resolved {moment(content.updatedAt).fromNow()}</Text>
+                            >Ticket Resolved {moment(content.updatedAt.substring(0, 16)).fromNow()}</Text>
                         }
                     </View>
 
@@ -372,14 +374,14 @@ const TicketStatus = ({ navigation, route }) => {
 
                     <View style={{ marginTop: '-40%' }}>
                         <Lottie source={require('../../../../assets/loading.json')} autoPlay style={{ height: 300, width: 300, alignSelf: 'center' }} loop ref={animRef} speed={1} />
-                        <Text
+                        {/* <Text
                             style={{
                                 fontFamily: FONTS.bold,
                                 fontSize: SIZES.large,
                                 flexWrap: 'wrap',
                                 marginTop: -48
                             }}>
-                        </Text>
+                        </Text> */}
                     </View>
 
                 </View>

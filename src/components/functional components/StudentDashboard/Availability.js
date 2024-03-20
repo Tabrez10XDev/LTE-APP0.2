@@ -75,8 +75,7 @@ const Availability = ({ navigation, route }) => {
         }).then((response) => {
             pauseAnimation()
             setState(response.data)
-            console.log("done", value, route.params.student_id);
-            console.log(response.data);
+            // console.log(response.data);
         })
             .catch((error) => {
                 pauseAnimation()
@@ -386,8 +385,6 @@ const Availability = ({ navigation, route }) => {
                         }}
                     />}
                 </View>
-
-                {console.log(temp)}
 
                 <View style={{ width: '98%', marginTop: SIZES.doubleLarge, flexDirection: 'row' }}>
                     <View style={{ marginHorizontal: 16, flex: 1, justifyContent: 'center' }}>

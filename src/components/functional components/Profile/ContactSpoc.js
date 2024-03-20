@@ -105,7 +105,7 @@ const ContactSpoc = ({ navigation }) => {
                 onPress={() => {
                     navigation.dispatch(StackActions.pop(1))
                 }}
-                style={{ top:32, position:'absolute', left:10 }}>
+                style={{ top:45, position:'absolute', left:10 }}>
                 <Ionicons name="arrow-back" size={32} color={COLORS.grey} style={{}} />
             </TouchableOpacity>
 
@@ -239,7 +239,7 @@ const ContactSpoc = ({ navigation }) => {
 
                     <View>
                         <Lottie source={require('../../../../assets/loading.json')} autoPlay style={{ height: 300, width: 300, alignSelf: 'center' }} loop ref={animRef} speed={1} />
-                        <Text
+                        {/* <Text
                             style={{
                                 fontFamily: FONTS.bold,
                                 fontSize: SIZES.large,
@@ -247,7 +247,7 @@ const ContactSpoc = ({ navigation }) => {
                                 marginTop: -48
                             }}>
                             Loading
-                        </Text>
+                        </Text> */}
                     </View>
 
 

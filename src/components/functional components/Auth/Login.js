@@ -85,15 +85,16 @@ const Login = ({ navigation, route }) => {
         `${CONST.baseUrl}/teacher/get/teacherlogin`, {...loginDetails, device_token: token}
       ).then((response) => {
 
-        console.log(response.data)
+        console.log(response.data, response.status)
 
         pauseAnimation()
 
-        if (response.data == "invalid password") {
+        if (response.status == 201) {
           Toast.show({
             type: 'error',
-            text1: 'Invalid password'
+            text1: response.data
           })
+          return
         }
 
         else if (response.data[0].is_commitment_three_months === true && response.data[0].is_agreed_lte_policy === true) {

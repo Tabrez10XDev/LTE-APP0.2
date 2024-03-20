@@ -1,11 +1,15 @@
 import 'react-native-gesture-handler';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Alert, DevSettings } from 'react-native';
 import { RootSiblingParent } from 'react-native-root-siblings';
 import AppRoutes from "./src/routes/AppRoutes";
 import { useFonts } from 'expo-font';
 import * as Notifications from 'expo-notifications';
 import { useEffect } from 'react';
 import messaging from '@react-native-firebase/messaging';
+import axios from 'axios';
+import { CONST } from "./constants";
+import { addEventListener } from "@react-native-community/netinfo";
+
 
 
 export default function App() {
@@ -118,6 +122,46 @@ export default function App() {
     };
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = addEventListener(state => {
+      if(!state.isConnected){
+        Alert.alert('Internet Check', 'Please check your connection', [
+          {
+            text: 'Okay',
+            onPress: () => DevSettings.reload(),
+          },
+        ])
+      }
+    });
+
+    // Unsubscribe
+    unsubscribe();
+  })
+
+
+  async function lockSessions() {
+
+    const date = new Date();
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Month is zero-based, so we add 1
+    const year = date.getFullYear();
+    console.log({
+      todayDate: year + "-" + month + "-" + day
+    });
+
+    axios.post(`${CONST.baseUrl}/teacherapp/lock/sessions`, {
+      todayDate: year + "-" + month + "-" + day
+    }).then((res) => {
+      console.log(res.data, "Locked");
+    }).catch((err) => {
+      console.log(err.response.data, "ERROR");
+    }).finally(() => {
+    })
+  }
+
+  useEffect(() => {
+    lockSessions()
+  })
 
 
 

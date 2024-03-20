@@ -119,9 +119,11 @@ const LevelReview = ({ navigation, route }) => {
             data: { stud_id: route.params.student_id }
         };
 
+        playAnimation()
 
         axios.request(config)
             .then((response) => {
+                pauseAnimation()
                 response.data.stud_total_and_completed_level_session_details.map((ele, index) => {
                     _state = { ..._state, [ele.level_id]: { total: Number(ele.total_session_count), completed: ele.completed_session_count, progress: Number(ele.total_session_count) / Number(ele.completed_session_count) == 0 ? 1 : Number(ele.completed_session_count) } }
                 })
@@ -194,6 +196,7 @@ const LevelReview = ({ navigation, route }) => {
 
             })
             .catch((error) => {
+                pauseAnimation()
                 console.error(error);
             });
     }

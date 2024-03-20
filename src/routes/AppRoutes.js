@@ -33,9 +33,10 @@ const AppRoutes = ({ navigation }) => {
 
     const theme = {
         ...DefaultTheme,
+        dark: false,
         colour: {
             ...DefaultTheme.colors,
-            background: "transparent"
+            background: "white"
         }
     }
 
