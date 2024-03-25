@@ -41,6 +41,7 @@ const StudentsList = ({ navigation, route }) => {
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
+            setStackIndex(1)
             getStudentList()
         });
 

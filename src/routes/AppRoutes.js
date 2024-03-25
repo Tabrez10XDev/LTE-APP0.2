@@ -58,9 +58,13 @@ const AppRoutes = ({ navigation }) => {
 
 
     const logout = async () => {
-        try {
+
+        console.log("called logout");
+
             const result = await AsyncStorage.getItem('AuthState')
             if (result === null && result == "-1") return
+
+       
 
             const token = await messaging().getToken()
             // const token = ""
@@ -70,21 +74,19 @@ const AppRoutes = ({ navigation }) => {
             }
             axios.post(`${CONST.baseUrl}/teacher/get/teacherlogout`, payload).then(async (response) => {
                 //TODO
-                await AsyncStorage.setItem('AuthState', "-1")
-                console.log(response.data);
-            })
-        } catch (err) {
-            alert(err)
-        }
+                console.log(response.data, "locked");
+            }).finally(
+                console.log("hel"),
+            )
+   
+            console.log("help");
+            await AsyncStorage.setItem('AuthState', "-1")
+            setState(true)
 
 
-        setState(true)
     }
 
-    useEffect(() => {
-        getData()
-        getBoardedData()
-    }, [])
+
 
     const getData = async () => {
         try {
@@ -123,6 +125,11 @@ const AppRoutes = ({ navigation }) => {
             console.error(e)
         }
     }
+
+    useEffect(() => {
+        getData()
+        getBoardedData()
+    }, [])
 
 
 

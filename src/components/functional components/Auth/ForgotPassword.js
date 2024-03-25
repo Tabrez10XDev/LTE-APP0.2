@@ -7,6 +7,7 @@ import { EvilIcons } from '@expo/vector-icons'; import {
     TouchableOpacity,
     Image,
     Dimensions,
+    ActivityIndicator,
     StyleSheet,
     Linking
 } from "react-native";
@@ -49,6 +50,9 @@ const ForgotPassword = ({ navigation }) => {
     }, [animSpeed])
 
 
+    const [isSent, setSent] = useState(false)
+
+
 
     const triggerForgotPassword = async () => {
         if (validateEmail(email) == null) {
@@ -59,16 +63,25 @@ const ForgotPassword = ({ navigation }) => {
         } else {
 
             axios.post(
-                `${CONST.baseUrl}/teacherapp/forgot/password`, {email: email.trim().toLowerCase()}
+                `${CONST.baseUrl}/teacherapp/forgot/password`, { email: email.trim().toLowerCase() }
             ).then((response) => {
 
                 console.log(response.data)
 
-                    Toast.show({
-                        type: 'info',
-                        text1: response.data.message
-                    })
-        
+                Toast.show({
+                    type: 'info',
+                    text1: response.data.message
+                })
+                setSent(true)
+
+                // setTimeout(() => {
+                //     navigation.dispatch(StackActions.pop(1))
+                // }, 2000);
+
+
+
+
+
             }).catch((error) => {
                 console.error(error)
                 console.log(error.response);
@@ -157,11 +170,20 @@ const ForgotPassword = ({ navigation }) => {
             </View>
 
             <View style={{ ...Styles.subViewContainer, position: 'absolute', bottom: 20 }}>
-                <TouchableOpacity onPress={triggerForgotPassword}
-                    style={Styles.btnStyle}>
-                    <Text style={Styles.btnTextStyle}>Send Reset Link</Text>
+                <TouchableOpacity disabled={isSent} onPress={() => {
+                    if (animSpeed) return
+                    // setInter(true)
+                    triggerForgotPassword()
+                }} style={Styles.btnStyle}>
+                    {
+                        animSpeed ? <ActivityIndicator size="small" color='white' />
+                            : <Text style={Styles.btnTextStyle}>{isSent ? "Email Sent" :"Send reset link"}</Text>
+
+                    }
                 </TouchableOpacity>
             </View>
+
+
 
             {/* <RectButton text="Send" position='absolute' bottom={60} onClick={() => { triggerForgotPassword() }} /> */}
 

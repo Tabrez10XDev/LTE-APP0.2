@@ -85,6 +85,7 @@ const TicketStatus = ({ navigation, route }) => {
             setActiveTickets([])
             setResolvedTickets([])
             setAllTickets([])
+            setStackIndex(1)
             getTicketsList()
         });
 
