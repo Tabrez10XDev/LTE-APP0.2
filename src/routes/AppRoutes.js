@@ -14,7 +14,7 @@ import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import ContactSpoc from '../components/functional components/Profile/ContactSpoc';
 import ForgotPassword from '../components/functional components/Auth/ForgotPassword';
 import axios from 'axios';
-import messaging from '@react-native-firebase/messaging';
+// import messaging from '@react-native-firebase/messaging';
 import { COLORS, SIZES, FONTS, assets, CONST } from "../../constants/constants";
 
 const AppRoutes = ({ navigation }) => {
@@ -57,31 +57,29 @@ const AppRoutes = ({ navigation }) => {
     }
 
 
-    const logout = async () => {
+    async function logout() {
 
         console.log("called logout");
 
-            const result = await AsyncStorage.getItem('AuthState')
-            if (result === null && result == "-1") return
+        const result = await AsyncStorage.getItem('AuthState')
+        if (result === null && result == "-1") return
 
-       
 
-            const token = await messaging().getToken()
-            // const token = ""
-            const payload = {
-                "user_id": result,
-                "device_token": token
-            }
-            axios.post(`${CONST.baseUrl}/teacher/get/teacherlogout`, payload).then(async (response) => {
-                //TODO
-                console.log(response.data, "locked");
-            }).finally(
-                console.log("hel"),
-            )
-   
-            console.log("help");
+
+        // const token = await messaging().getToken()
+        const token = ""
+        const payload = {
+            "user_id": result,
+            "device_token": token
+        }
+        axios.post(`${CONST.baseUrl}/teacher/get/teacherlogout`, payload).then(async (response) => {
+            console.log(response.data, "locked");
+        }).finally(async () => {
             await AsyncStorage.setItem('AuthState', "-1")
             setState(true)
+        })
+
+
 
 
     }
@@ -93,8 +91,8 @@ const AppRoutes = ({ navigation }) => {
             const result = await AsyncStorage.getItem('AuthState')
             if (result !== null && result != "-1") {
                 setState(false)
-                const token = await messaging().getToken()
-                // const token = ""
+                // const token = await messaging().getToken()
+                const token = ""
                 const payload = {
                     "user_id": result,
                     "device_token": token

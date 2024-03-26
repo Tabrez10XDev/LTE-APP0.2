@@ -62,19 +62,20 @@ const CustomDrawer = props => {
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
       <TouchableOpacity
+       onPress={() => {
+        props.initialParams.logout.logout()
+      }}
         style={{
           position: 'absolute',
           right: 0,
+         
           left: 0,
           bottom: 50,
           padding: 20,
           flexDirection:'row'
         }}
       >
-        <Text
-          onPress={() => {
-            props.initialParams.logout.logout()
-          }}
+        <Text 
           style={Styles.semiBold} >Log Out</Text>
           <MaterialIcons style={{marginLeft:16}} name="logout" size={24} color="black" />
       </TouchableOpacity>
