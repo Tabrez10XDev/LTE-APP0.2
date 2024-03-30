@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import Checkbox from 'expo-checkbox';
 import { React, useState } from "react";
 import { StyleSheet } from "react-native";
@@ -7,15 +7,27 @@ import { Ionicons, Feather } from '@expo/vector-icons';
 import { Linking } from 'react-native'
 
 const TeacherMaterial = ({ name, desc, type, size, link }) => {
+
+
+    async function openMaterial(){
+        Alert.alert("Please Note",'Redistribution or copying this document outside the community is strictly prohibited', [
+          {
+            text: 'Okay',
+            onPress: () =>  Linking.openURL(link)
+          },
+        ])
+      }
+
     return (
-        <View style={{ width: '100%', borderWidth: 1, borderColor: COLORS.darkGrey, borderStyle: 'dashed', padding: 18, borderRadius: 6, marginBottom: 24 }}>
+        <TouchableOpacity 
+        onPress={() => {
+            openMaterial()
+         }}
+        style={{ width: '100%', borderWidth: 1, borderColor: COLORS.darkGrey, borderStyle: 'dashed', padding: 18, borderRadius: 6, marginBottom: 24 }}>
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
 
                 <Text
-                    onPress={() => {
-                        Linking.openURL(link);
-                    }}
                     style={{ color: COLORS.primary, fontSize: 16, flex:10 }}>
                     {name}
                 </Text>
@@ -58,7 +70,7 @@ const TeacherMaterial = ({ name, desc, type, size, link }) => {
 
 
 
-        </View>
+        </TouchableOpacity>
     )
 }
 

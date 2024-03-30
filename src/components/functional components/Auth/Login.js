@@ -79,10 +79,10 @@ const Login = ({ navigation, route }) => {
 
       // const token = await messaging().getToken()
       const token = ""
-   
-      console.log({...loginDetails, device_token: token});
+
+      console.log({ ...loginDetails, device_token: token });
       axios.post(
-        `${CONST.baseUrl}/teacher/get/teacherlogin`, {...loginDetails, device_token: token}
+        `${CONST.baseUrl}/teacher/get/teacherlogin`, { ...loginDetails, device_token: token }
       ).then((response) => {
 
         console.log(response.data, response.status)
@@ -105,7 +105,7 @@ const Login = ({ navigation, route }) => {
         }
       }).catch((error) => {
         pauseAnimation()
-        
+
         console.log(error.response);
         Toast.show({
           type: 'error',
@@ -166,15 +166,16 @@ const Login = ({ navigation, route }) => {
                 <Text style={Styles.btnTextStyle}>LOGIN</Text>
               </TouchableOpacity>
             </View>
-            <Toast
-              position='bottom'
-              bottomOffset={20}
-            />
+
 
           </View>
 
         </TouchableWithoutFeedback>
       </ScrollView>
+      <Toast
+        position='bottom'
+        bottomOffset={20}
+      />
       {animSpeed &&
         <View style={{
           shadowColor: COLORS.homeCard,
@@ -188,9 +189,9 @@ const Login = ({ navigation, route }) => {
           position: 'absolute', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(52, 52, 52, 0.0)', alignSelf: 'center', padding: 24, marginTop: 16
         }}>
 
-<View>
-<Lottie source={require('../../../../assets/loading.json')} autoPlay style={{ height: 300, width: 300, alignSelf: 'center' }} loop ref={animRef} speed={1} />
-                        {/* <Text
+          <View>
+            <Lottie source={require('../../../../assets/loading.json')} autoPlay style={{ height: 300, width: 300, alignSelf: 'center' }} loop ref={animRef} speed={1} />
+            {/* <Text
                         style={{
                             fontFamily: FONTS.bold,
                             fontSize: SIZES.large,
@@ -201,7 +202,7 @@ const Login = ({ navigation, route }) => {
                         }}>
                         Loading
                     </Text> */}
-</View>
+          </View>
 
         </View>
 
@@ -260,7 +261,7 @@ const Styles = StyleSheet.create({
   },
   subViewContainer: {
     width: 350,
-    marginTop:48,
+    marginTop: 48,
     alignSelf: "center",
     justifyContent: "center",
   },

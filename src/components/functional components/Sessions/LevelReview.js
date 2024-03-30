@@ -1,4 +1,4 @@
-import { Text, View, Image, StyleSheet, TouchableOpacity, Dimensions, TextInput, SafeAreaView, Modal, Pressable, ActivityIndicator } from "react-native";
+import { Text, View, Image, StyleSheet, TouchableOpacity, Dimensions, TextInput, SafeAreaView, Modal, Pressable, ActivityIndicator, Alert } from "react-native";
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { List, Chip } from "react-native-paper";
@@ -17,31 +17,41 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const openURI = async (url) => {
-
-
-    if (url.trim() == "") {
-        Toast.show({
-            type: 'error',
-            text1: 'No Data'
-        })
-        return
-    }
-
-
-    const supported = await Linking.canOpenURL(url); //To check if URL is supported or not.
-    if (supported) {
-        await Linking.openURL(url); // It will open the URL on browser.
-    } else {
-        Alert.alert(`Don't know how to open this URL: ${url}`);
-    }
-}
 
 
 
 
 
 const LevelReview = ({ navigation, route }) => {
+
+    const _openURI = async (url) => {
+
+
+        if (url.trim() == "") {
+            Toast.show({
+                type: 'error',
+                text1: 'No Data'
+            })
+            return
+        }
+    
+    
+        const supported = await Linking.canOpenURL(url); //To check if URL is supported or not.
+        if (supported) {
+            await Linking.openURL(url); // It will open the URL on browser.
+        } else {
+            Alert.alert(`Don't know how to open this URL: ${url}`);
+        }
+    }
+    
+    async function openURI(url){
+        Alert.alert("Please Note",'Redistribution or copying this document outside the community is strictly prohibited', [
+          {
+            text: 'Okay',
+            onPress: () =>  _openURI(url)
+          },
+        ])
+      }
 
     const [popup, setPopup] = useState(false)
     const [guidelines, setGuidelines] = useState({

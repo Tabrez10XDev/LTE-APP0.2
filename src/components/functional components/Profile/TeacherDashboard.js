@@ -78,8 +78,7 @@ const TeacherDashboard = ({ route, navigation }) => {
 
                 <View style={{ width: '90%', borderRadius: 16, backgroundColor: 'white', padding: 8, paddingHorizontal: 16 }}>
 
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <View style={{ maxWidth: '40%' }}>
+                        {/* <View style={{ maxWidth: '40%' }}>
                             <Text style={Styles.greyText}>
                                 Name
                             </Text>
@@ -170,12 +169,129 @@ const TeacherDashboard = ({ route, navigation }) => {
                                     {data.audio_status ?? "NA"}
                                 </Text>
                             </View>
+                        </View> */}
+
+                        <View style={{flexDirection:'row', marginTop:8}}>
+                            <View style={{flex:1}}>
+                            <Text style={Styles.greyText}>
+                                Name
+                            </Text>
+                            </View>
+                            <View style={{flex:2, flexDirection:'row'}}>
+                            <Text style={Styles.greyText}>
+                                    :
+                                </Text>
+                                <Text ellipsizeMode="tail" numberOfLines={1} style={Styles.blackText}>
+                                    {data.teacher_name}
+                                </Text>
+                            </View>
                         </View>
 
+                        <View style={{flexDirection:'row', marginTop:6}}>
+                            <View style={{flex:1}}>
+                            <Text style={Styles.greyText}>
+                                Contact No
+                            </Text>
+                            </View>
+                            <View style={{flex:2, flexDirection:'row'}}>
+                            <Text style={Styles.greyText}>
+                                    :
+                                </Text>
+                                <Text ellipsizeMode="tail" numberOfLines={1} style={Styles.blackText}>
+                                    {data.contactno}
+                                </Text>
+                            </View>
+                        </View>
+
+                        <View style={{flexDirection:'row', marginTop:6}}>
+                            <View style={{flex:1}}>
+                            <Text style={Styles.greyText}>
+                                Email
+                            </Text>
+                            </View>
+                            <View style={{flex:2, flexDirection:'row'}}>
+                            <Text style={Styles.greyText}>
+                                    :
+                                </Text>
+                                <Text style={Styles.blackText}>
+                                    {data.email}
+                                </Text>
+                            </View>
+                        </View>
+
+                        <View style={{flexDirection:'row', marginTop:6}}>
+                            <View style={{flex:1}}>
+                            <Text style={Styles.greyText}>
+                                Role
+                            </Text>
+                            </View>
+                            <View style={{flex:2, flexDirection:'row'}}>
+                            <Text style={Styles.greyText}>
+                                    :
+                                </Text>
+                                <Text ellipsizeMode="tail" numberOfLines={1} style={Styles.blackText}>
+                                    {data.role}
+                                </Text>
+                            </View>
+                        </View>
+
+                        <View style={{flexDirection:'row', marginTop:6}}>
+                            <View style={{flex:1}}>
+                            <Text style={Styles.greyText}>
+                                SPOC Name
+                            </Text>
+                            </View>
+                            <View style={{flex:2, flexDirection:'row'}}>
+                            <Text style={Styles.greyText}>
+                                    :
+                                </Text>
+                                <Text ellipsizeMode="tail" numberOfLines={1} style={Styles.blackText}>
+                                    {data.spoc_name ?? "NA"}
+                                </Text>
+                            </View>
+                        </View>
+
+                        <View style={{flexDirection:'row', marginTop:6}}>
+                            <View style={{flex:1}}>
+                            <Text style={Styles.greyText}>
+                                City
+                            </Text>
+                            </View>
+                            <View style={{flex:2, flexDirection:'row'}}>
+                            <Text style={Styles.greyText}>
+                                    :
+                                </Text>
+                                <Text ellipsizeMode="tail" numberOfLines={1} style={Styles.blackText}>
+                                    {data.city ?? "NA"}
+                                </Text>
+                            </View>
+                            
+                        </View>
+
+                        <View style={{flexDirection:'row', marginTop:6}}>
+                            <View style={{flex:1}}>
+                            <Text style={Styles.greyText}>
+                                Audio Status
+                            </Text>
+                            </View>
+                            <View style={{flex:2, flexDirection:'row'}}>
+                            <Text style={Styles.greyText}>
+                                    :
+                                </Text>
+                                <Text ellipsizeMode="tail" numberOfLines={1} style={Styles.blackText}>
+                                    {data.audio_status ?? "NA"}
+                                </Text>
+                            </View>
+
+                            
+                        </View>
+
+
+                        
+
                     </View>
+               
 
-
-                </View>
             </ScrollView>
             {animSpeed &&
                 <View style={{
@@ -221,7 +337,6 @@ const Styles = StyleSheet.create({
         textAlign: 'justify',
         flexWrap: 'nowrap',
         color: COLORS.textGrey,
-        marginVertical: 6
 
     },
     blackText: {
@@ -230,7 +345,6 @@ const Styles = StyleSheet.create({
         textAlign: 'justify',
         flexWrap: 'nowrap',
         color: 'black',
-        marginVertical: 6,
         marginStart: 4
 
     },

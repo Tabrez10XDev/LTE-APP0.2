@@ -72,12 +72,16 @@ const AppRoutes = ({ navigation }) => {
             "user_id": result,
             "device_token": token
         }
-        axios.post(`${CONST.baseUrl}/teacher/get/teacherlogout`, payload).then(async (response) => {
-            console.log(response.data, "locked");
-        }).finally(async () => {
+
+        let promises = []
+
+        promises.push(axios.post(`${CONST.baseUrl}/teacher/get/teacherlogout`, payload))
+        Promise.all(promises).then(async (values)=>{
             await AsyncStorage.setItem('AuthState', "-1")
             setState(true)
         })
+           
+    
 
 
 
@@ -99,8 +103,17 @@ const AppRoutes = ({ navigation }) => {
                 }
                 axios.post(`${CONST.baseUrl}/teacher/get/teacherloginExp`, payload).then((response) => {
                     if (response.data.do_logout) logout()
-                    //TODO
                 })
+
+                axios.post(`${CONST.baseUrl}/teacherapp/get/teacherStatus`,{
+                    teacher_id: result
+                }).then((res)=>{
+                    console.log("Activity:");
+                    console.log(res.data);
+                    if(res.data[0].teacher_status !== "active")
+                    logout()
+                })
+
             } else {
 
                 setState(true)

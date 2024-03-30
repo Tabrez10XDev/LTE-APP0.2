@@ -57,7 +57,9 @@ const StudentsList = ({ navigation, route }) => {
             teacher_id: teacherID
         }
         ).then((response) => {
+            console.log("Success");
             pauseAnimation()
+            console.log(response.data);
             setStudents(response.data)
             setStudentData(response.data)
             setActiveStudents([])
@@ -70,6 +72,11 @@ const StudentsList = ({ navigation, route }) => {
             })
         }).catch((err) => {
             pauseAnimation()
+            setStudents([])
+            setStudentData([])
+            setActiveStudents([])
+            setArchiveStudents([])
+            console.log("Error");
             console.log(err.response.data);
         })
 
@@ -112,7 +119,6 @@ const StudentsList = ({ navigation, route }) => {
             <View style={{ flexDirection: 'row', width: '100%', marginTop: 12 }}>
                 <TouchableOpacity
                     onPress={() => {
-                        console.log(students);
                         setStudentData(students)
                         setStackIndex(1)
                     }}

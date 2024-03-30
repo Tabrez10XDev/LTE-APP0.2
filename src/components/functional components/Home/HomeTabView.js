@@ -107,6 +107,8 @@ function TrainingMaterialTab({ navigation }) {
   })
 
 
+
+
   return (
     <View
       style={{
