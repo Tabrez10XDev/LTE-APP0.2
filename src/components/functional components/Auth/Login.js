@@ -7,7 +7,7 @@ import Toast from 'react-native-toast-message';
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Lottie from 'lottie-react-native';
-import messaging from '@react-native-firebase/messaging';
+// import messaging from '@react-native-firebase/messaging';
 
 
 
@@ -77,8 +77,8 @@ const Login = ({ navigation, route }) => {
       // navigation.navigate('TermsConditions');
       playAnimation()
 
-      const token = await messaging().getToken()
-      // const token = ""
+      // const token = await messaging().getToken()
+      const token = ""
 
       console.log({ ...loginDetails, device_token: token });
       axios.post(

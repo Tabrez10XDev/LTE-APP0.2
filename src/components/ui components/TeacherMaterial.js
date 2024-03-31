@@ -12,10 +12,16 @@ const TeacherMaterial = ({ name, desc, type, size, link }) => {
     async function openMaterial(){
         Alert.alert("Please Note",'Redistribution or copying this document outside the community is strictly prohibited', [
           {
+            text: 'Cancel',
+            onPress:()=>{}
+          },
+            {
             text: 'Okay',
             onPress: () =>  Linking.openURL(link)
           },
-        ])
+        ],{
+            cancelable:true
+        })
       }
 
     return (

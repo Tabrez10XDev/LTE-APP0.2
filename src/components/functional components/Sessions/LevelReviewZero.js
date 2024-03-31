@@ -34,22 +34,28 @@ const LevelReviewZero = ({ navigation, route }) => {
             })
             return
         }
-        const supported = await Linking.canOpenURL(url); 
+        const supported = await Linking.canOpenURL(url);
         if (supported) {
-            await Linking.openURL(url); 
+            await Linking.openURL(url);
         } else {
             Alert.alert(`Don't know how to open this URL: ${url}`);
         }
     }
-    
-    async function openURI(url){
-        Alert.alert("Please Note",'Redistribution or copying this document outside the community is strictly prohibited', [
-          {
-            text: 'Okay',
-            onPress: () =>  _openURI(url)
-          },
-        ])
-      }
+
+    async function openURI(url) {
+        Alert.alert("Please Note", 'Redistribution or copying this document outside the community is strictly prohibited', [
+            {
+                text: 'Cancel',
+                onPress: () => { }
+            },
+            {
+                text: 'Okay',
+                onPress: () => _openURI(url)
+            },
+        ], {
+            cancelable: true
+        })
+    }
 
     const [popup, setPopup] = useState(false)
     const [guidelines, setGuidelines] = useState({
@@ -102,21 +108,11 @@ const LevelReviewZero = ({ navigation, route }) => {
     let _state2;
     let _state3;
 
-
-    // const [state, setState] = useState({})
-    // const [state2, setState2] = useState({})
-    // const [state3, setState3] = useState({})
     let data = route.params
     data.sessions = data.sessions.sort(function (a, b) { return (a.session_id > b.session_id) ? 1 : ((b.session_id > a.session_id) ? -1 : 0); });
 
     const [data2, setData] = useState(route.params)
 
-    // useEffect( () => {
-    //     console.log("1")
-    //     let temp = data2.sessions.sort(function (a, b) { return (a.session_id > b.session_id) ? 1 : ((b.session_id > a.session_id) ? -1 : 0); });
-    //     setData(current => ({ ...current, sessions: temp }))
-    //     console.log(temp)
-    // }, [data2])
 
 
     async function getTeacherID() {
@@ -126,7 +122,7 @@ const LevelReviewZero = ({ navigation, route }) => {
 
 
 
-    async function fetchLevels(level_id, session_id, level_name) {
+    async function fetchLevels(level_id, session_id, level_name, toast = false, toastText = "Success") {
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
@@ -142,6 +138,12 @@ const LevelReviewZero = ({ navigation, route }) => {
         axios.request(config)
             .then((response) => {
                 pauseAnimation()
+                if(toast){
+                    Toast.show({
+                        type: 'success',
+                        text1: toastText,
+                    })
+                }
                 response.data.stud_total_and_completed_level_session_details.map((ele, index) => {
                     _state = { ..._state, [ele.level_id]: { total: Number(ele.total_session_count), completed: ele.completed_session_count, progress: Number(ele.total_session_count) / Number(ele.completed_session_count) == 0 ? 1 : Number(ele.completed_session_count) } }
                 })
@@ -349,10 +351,7 @@ const LevelReviewZero = ({ navigation, route }) => {
             .then((response) => {
                 console.log(response.data);
                 pauseAnimation()
-                Toast.show({
-                    type: 'success',
-                    text1: response.data
-                })
+                
                 setStackIndex(1)
                 setMessage("")
                 if (index >= 0) {
@@ -362,8 +361,8 @@ const LevelReviewZero = ({ navigation, route }) => {
                     })
                     setPopup(true)
                 }
-                fetchLevels(levelId, id, level_name)
-                if(name == "session21"){
+                fetchLevels(levelId, id, level_name, true, response.data)
+                if (name == "session21") {
                     navigation.dispatch(StackActions.pop(1))
                 }
             })

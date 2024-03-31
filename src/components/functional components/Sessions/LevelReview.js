@@ -34,8 +34,8 @@ const LevelReview = ({ navigation, route }) => {
             })
             return
         }
-    
-    
+
+
         const supported = await Linking.canOpenURL(url); //To check if URL is supported or not.
         if (supported) {
             await Linking.openURL(url); // It will open the URL on browser.
@@ -43,15 +43,21 @@ const LevelReview = ({ navigation, route }) => {
             Alert.alert(`Don't know how to open this URL: ${url}`);
         }
     }
-    
-    async function openURI(url){
-        Alert.alert("Please Note",'Redistribution or copying this document outside the community is strictly prohibited', [
-          {
-            text: 'Okay',
-            onPress: () =>  _openURI(url)
-          },
-        ])
-      }
+
+    async function openURI(url) {
+        Alert.alert("Please Note", 'Redistribution or copying this document outside the community is strictly prohibited', [
+            {
+                text: 'Cancel',
+                onPress: ()     => { }
+            },
+            {
+                text: 'Okay',
+                onPress: () => _openURI(url)
+            },
+        ], {
+            cancelable: true
+        })
+    }
 
     const [popup, setPopup] = useState(false)
     const [guidelines, setGuidelines] = useState({
@@ -118,7 +124,7 @@ const LevelReview = ({ navigation, route }) => {
 
 
 
-    async function fetchLevels(level_id, session_id, level_name) {
+    async function fetchLevels(level_id, session_id, level_name, toast = false, toastText = "Success") {
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
@@ -134,6 +140,12 @@ const LevelReview = ({ navigation, route }) => {
         axios.request(config)
             .then((response) => {
                 pauseAnimation()
+                if(toast){
+                    Toast.show({
+                        type: 'success',
+                        text1: toastText,
+                    })
+                }
                 response.data.stud_total_and_completed_level_session_details.map((ele, index) => {
                     _state = { ..._state, [ele.level_id]: { total: Number(ele.total_session_count), completed: ele.completed_session_count, progress: Number(ele.total_session_count) / Number(ele.completed_session_count) == 0 ? 1 : Number(ele.completed_session_count) } }
                 })
@@ -320,10 +332,6 @@ const LevelReview = ({ navigation, route }) => {
             .then((response) => {
                 console.log(response.data);
                 pauseAnimation()
-                Toast.show({
-                    type: 'success',
-                    text1: response.data
-                })
                 setStackIndex(1)
                 setMessage("")
                 // if (index >= 1) {
@@ -333,7 +341,8 @@ const LevelReview = ({ navigation, route }) => {
                 //     })
                 //     setPopup(true)
                 // }
-                fetchLevels(levelId, id, level_name)
+                fetchLevels(levelId, id, level_name, true, response.data)
+
                 if (name == "session50") {
                     navigation.dispatch(StackActions.pop(1))
                 }
