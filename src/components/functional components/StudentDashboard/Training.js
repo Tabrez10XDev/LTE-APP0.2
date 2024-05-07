@@ -37,7 +37,7 @@ const Training = ({ navigation, route }) => {
 
     async function fetchLevels() {
 
-        console.log(route.params.student_id,);
+        console.log(route.params.student_id,`${CONST.baseUrl}/teacherapp/get/student/details`);
 
         let config = {
             method: 'post',
@@ -128,7 +128,9 @@ const Training = ({ navigation, route }) => {
                 console.log("Fetch Levels error");
                 pauseAnimation()
                 console.log(error.response);
-            });
+            }).finally(()=>{
+                console.log("Done finally.....");
+            })
     }
 
 

@@ -1,3 +1,3 @@
 export const CONST ={
-    baseUrl : "https://lte-backend.onrender.com/api"
+    baseUrl : "https://staginglteapi.letsteachenglishact.org/api"
 }

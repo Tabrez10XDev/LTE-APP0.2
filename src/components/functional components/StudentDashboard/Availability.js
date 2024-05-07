@@ -419,6 +419,7 @@ const Availability = ({ navigation, route }) => {
                             days.map((ele, inx) => {
                                 return (
                                     <List.Accordion
+                                    key={inx}
                                         right={props =>
                                             switches[inx] ? (
                                                 <List.Icon {...props} icon="check" color="green" />

@@ -354,13 +354,13 @@ function UploadAudioTab({ route, navigation }) {
                 </Text>
 
                 <Text style={{ ...Style.greyText, alignSelf: 'center', marginTop: 2 }}>
-                  Status: {fileResponse.assets != undefined ? fileResponse.assets[0].name : "Submit for verification"}
+                  Status: {fileResponse.assets != undefined ? fileResponse.assets[0].name.substring(0,12) : "Submit for verification"}
                 </Text>
               </TouchableOpacity>
               {fileResponse.assets != undefined ? (
                 <View style={{ flexDirection: 'row', marginTop: 32, alignItems: 'center' }}>
                   <Text>
-                    {fileResponse.assets[0].name}
+                    {fileResponse.assets[0].name.substring(0,12)}
                   </Text>
 
                   <TouchableOpacity

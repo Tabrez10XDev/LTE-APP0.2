@@ -12,7 +12,6 @@ import messaging from '@react-native-firebase/messaging';
 
 
 import { StyleSheet } from "react-native";
-import { log } from "react-native-reanimated";
 
 const Login = ({ navigation, route }) => {
 
@@ -79,7 +78,7 @@ const Login = ({ navigation, route }) => {
 
       const token = await messaging().getToken()
       // const token = ""
-
+      
       console.log({ ...loginDetails, device_token: token });
       axios.post(
         `${CONST.baseUrl}/teacher/get/teacherlogin`, { ...loginDetails, device_token: token }

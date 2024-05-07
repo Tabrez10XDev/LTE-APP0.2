@@ -60,7 +60,7 @@ const AppRoutes = ({ navigation }) => {
     async function logout() {
 
         console.log("called logout");
-
+    
         const result = await AsyncStorage.getItem('AuthState')
         if (result === null && result == "-1") return
 
@@ -74,9 +74,13 @@ const AppRoutes = ({ navigation }) => {
         }
 
         let promises = []
-
+        
         promises.push(axios.post(`${CONST.baseUrl}/teacher/get/teacherlogout`, payload))
         Promise.all(promises).then(async (values)=>{
+            await AsyncStorage.setItem('AuthState', "-1")
+            setState(true)
+        }).catch(async (err)=>{
+            console.log(err.response.data);
             await AsyncStorage.setItem('AuthState', "-1")
             setState(true)
         })
