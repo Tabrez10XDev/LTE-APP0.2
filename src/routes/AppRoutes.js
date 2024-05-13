@@ -14,6 +14,7 @@ import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import ContactSpoc from '../components/functional components/Profile/ContactSpoc';
 import ForgotPassword from '../components/functional components/Auth/ForgotPassword';
 import axios from 'axios';
+import Notification from '../components/functional components/Home/Notifications';
 import messaging from '@react-native-firebase/messaging';
 import { COLORS, SIZES, FONTS, assets, CONST } from "../../constants/constants";
 
@@ -178,6 +179,9 @@ const AppRoutes = ({ navigation }) => {
                                 headerShown: false,
                             })} />
                             <Stack.Screen name="Contact SPOC" component={ContactSpoc} initialParams={{ logout: logout }} options={({ navigation, route }) => ({
+                                headerShown: false,
+                            })} />
+                             <Stack.Screen name="Notifications" component={Notification} options={({ navigation, route }) => ({
                                 headerShown: false,
                             })} />
                         </Stack.Group>)}

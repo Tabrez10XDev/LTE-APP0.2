@@ -62,22 +62,22 @@ const CustomDrawer = props => {
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
       <TouchableOpacity
-       onPress={() => {
-        props.initialParams.logout.logout()
-      }}
+        onPress={() => {
+          props.initialParams.logout.logout()
+        }}
         style={{
           position: 'absolute',
           right: 0,
-         
+
           left: 0,
           bottom: 50,
           padding: 20,
-          flexDirection:'row'
+          flexDirection: 'row'
         }}
       >
-        <Text 
+        <Text
           style={Styles.semiBold} >Log Out</Text>
-          <MaterialIcons style={{marginLeft:16}} name="logout" size={24} color="black" />
+        <MaterialIcons style={{ marginLeft: 16 }} name="logout" size={24} color="black" />
       </TouchableOpacity>
     </View>
   );
@@ -102,7 +102,7 @@ function TrainingMaterialTab({ navigation }) {
     }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     getTrainingMaterials()
   })
 
@@ -354,13 +354,13 @@ function UploadAudioTab({ route, navigation }) {
                 </Text>
 
                 <Text style={{ ...Style.greyText, alignSelf: 'center', marginTop: 2 }}>
-                  Status: {fileResponse.assets != undefined ? fileResponse.assets[0].name.substring(0,12) : "Submit for verification"}
+                  Status: {fileResponse.assets != undefined ? fileResponse.assets[0].name.substring(0, 12) : "Submit for verification"}
                 </Text>
               </TouchableOpacity>
               {fileResponse.assets != undefined ? (
                 <View style={{ flexDirection: 'row', marginTop: 32, alignItems: 'center' }}>
                   <Text>
-                    {fileResponse.assets[0].name.substring(0,12)}
+                    {fileResponse.assets[0].name.substring(0, 12)}
                   </Text>
 
                   <TouchableOpacity
@@ -482,9 +482,10 @@ function HomeTabView({ route, navigation }) {
   const [data, setData] = useState({})
 
   const [stateID, setStateID] = useState("NULL")
+  const [notifications, setNotifications] = useState(0)
 
   const getData = async () => {
-    if(stateID !== "NULL") return
+    if (stateID !== "NULL") return
     try {
       let value = await AsyncStorage.getItem('AuthState')
       setStateID(value)
@@ -494,16 +495,36 @@ function HomeTabView({ route, navigation }) {
         teacher_id: value
       }
       ).then((response) => {
-        console.log("Done");
+        axios.get(
+          `${CONST.baseUrl}/notification/unread/notif/281`
+        ).then((response) => {
+          setNotifications(response.data.length)
+        })
         setData(response.data[0])
       })
     } catch (e) {
       // error reading value
       console.error(e)
-    } 
+    }
   }
 
   getData()
+
+  useEffect(async () => {
+
+
+    const unsubscribe = navigation.addListener('focus', async () => {
+      axios.get(
+        `${CONST.baseUrl}/notification/unread/notif/${stateID}`
+      ).then((response) => {
+        console.log("not");
+
+        setNotifications(response.data.length)
+      })
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   return (
     <TeacherIDContext.Provider value={stateID}>
@@ -532,7 +553,12 @@ function HomeTabView({ route, navigation }) {
             options={({ route }) => {
               const routeName = getFocusedRouteNameFromRoute(route) ?? "NULL"
               return ({
-              
+                headerRight: () => (
+                  <TouchableOpacity style={{padding:0, position:'relative', marginEnd: 16, paddingVertical:10, paddingHorizontal:8}} onPress={() => navigation.navigate("Notifications")}>
+                    <Text style={{fontSize:12, color:'blue', position:'absolute', top:0, right:0}}>{notifications == 0 ? "" : notifications}</Text>
+                    <Ionicons name="notifications" size={22} color={COLORS.primary} style={{  }} />
+                  </TouchableOpacity>
+                ),
                 drawerIcon: ({ focused, size }) => (
                   <Ionicons
                     name="home"
