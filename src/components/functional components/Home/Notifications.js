@@ -51,7 +51,7 @@ const Notification = ({ navigation }) => {
             console.log("Done");
             pauseAnimation()
             axios.get(
-                `${CONST.baseUrl}/notification/unread/notif/${stateID}`
+                `${CONST.baseUrl}/notification/unread/notif/${value}`
             ).then((response) => {
                 pauseAnimation()
                 setNotifications(response.data)

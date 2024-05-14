@@ -496,7 +496,7 @@ function HomeTabView({ route, navigation }) {
       }
       ).then((response) => {
         axios.get(
-          `${CONST.baseUrl}/notification/unread/notif/281`
+          `${CONST.baseUrl}/notification/unread/notif/${value}`
         ).then((response) => {
           setNotifications(response.data.length)
         })
@@ -514,6 +514,8 @@ function HomeTabView({ route, navigation }) {
 
 
     const unsubscribe = navigation.addListener('focus', async () => {
+
+      if(stateID == "NULL") return
       axios.get(
         `${CONST.baseUrl}/notification/unread/notif/${stateID}`
       ).then((response) => {
