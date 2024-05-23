@@ -514,10 +514,11 @@ function HomeTabView({ route, navigation }) {
 
 
     const unsubscribe = navigation.addListener('focus', async () => {
+      let value = await AsyncStorage.getItem('AuthState')
 
-      if(stateID == "NULL") return
+      if(!value) return
       axios.get(
-        `${CONST.baseUrl}/notification/unread/notif/${stateID}`
+        `${CONST.baseUrl}/notification/unread/notif/${value}`
       ).then((response) => {
         console.log("not");
 
@@ -615,6 +616,11 @@ function HomeTabView({ route, navigation }) {
                   ),
                 })
               return ({
+                headerTintColor: 'white',
+                headerStyle:{
+                  backgroundColor:COLORS.primary,
+                },
+                
                 drawerIcon: ({ focused, size }) => (
                   <Ionicons
                     name="person"
