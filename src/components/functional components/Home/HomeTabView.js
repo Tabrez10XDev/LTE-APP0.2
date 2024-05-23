@@ -500,7 +500,7 @@ function HomeTabView({ route, navigation }) {
         ).then((response) => {
           setNotifications(response.data.length)
         })
-        setData(response.data[0])
+        setData(response.data)
       })
     } catch (e) {
       // error reading value
@@ -553,6 +553,7 @@ function HomeTabView({ route, navigation }) {
           <Drawer.Screen
             name="Teacher's Training"
             component={HomeScreen}
+            
             options={({ route }) => {
               const routeName = getFocusedRouteNameFromRoute(route) ?? "NULL"
               return ({
@@ -601,7 +602,7 @@ function HomeTabView({ route, navigation }) {
             }
             }
           />
-          <Drawer.Screen name="My Profile" component={ProfileRoutes} initialParams={data}
+          <Drawer.Screen name="My Profile" component={ProfileRoutes} initialParams={{ logout: route.params }}
             options={({ route }) => {
               const routeName = getFocusedRouteNameFromRoute(route) ?? 'Items'
               if (routeName == "Contact SPOC")

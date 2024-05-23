@@ -1,4 +1,4 @@
-import { Text, View, Image, StyleSheet, TouchableOpacity, Switch } from "react-native";
+import { Text, View, Image, StyleSheet, TouchableOpacity, Switch, Alert } from "react-native";
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { List, Chip } from "react-native-paper";
@@ -15,7 +15,7 @@ import { ScrollView } from "react-native-gesture-handler";
 
 
 
-const TeacherDashboard = ({ route, navigation }) => {
+const TeacherDashboard = ({ route, navigation, initialParams }) => {
 
     const [animSpeed, setAnimSpeed] = useState(false)
     const animRef = useRef()
@@ -23,6 +23,20 @@ const TeacherDashboard = ({ route, navigation }) => {
     function playAnimation() {
         setAnimSpeed(true)
     }
+
+    const deleteAccount = () =>
+        Alert.alert('Important', 'Your account will be dropped', [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          {text: 'OK', onPress: () => {
+            axios.put(`${CONST.baseUrl}/teacher/toggle/${data.teacher_id}`).then(()=>{
+                route.params.logout.logout()
+                        })
+          }},
+        ]);
 
 
     function pauseAnimation() {
@@ -46,7 +60,22 @@ const TeacherDashboard = ({ route, navigation }) => {
     }, [navigation]);
 
     const [isEnabled, setIsEnabled] = useState(false);
-    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+    const toggleSwitch = () => {
+        axios.post(`${CONST.baseUrl}/notification/toggle`,{
+             isEnabled: !isEnabled, 
+             teacherId: data.teacher_id
+        }).then((res)=>{
+            console.log(res.data,"succ");
+        }).catch((err)=>{
+            console.log(err.response.data, "error");
+            console.log(`${CONST.baseUrl}/notification/toggle`);
+            console.log(JSON.stringify({
+                isEnabled: !isEnabled, 
+                teacherId: data.teacher_id
+           }));
+        })
+        setIsEnabled(previousState => !previousState)
+    };
 
 
     const getData = async () => {
@@ -60,12 +89,13 @@ const TeacherDashboard = ({ route, navigation }) => {
             }
             ).then((response) => {
                 pauseAnimation()
-                setData(response.data[0])
-                console.log(response.data[0]);
+                setData(response.data)
+                console.log(response.data);
+                setIsEnabled(response.data.isenabled)
+
             })
         } catch (e) {
             pauseAnimation()
-            setData(route.params)
             console.error(e)
         }
     }
@@ -112,8 +142,8 @@ const TeacherDashboard = ({ route, navigation }) => {
                         </Text> 
 
                             <Switch
-        trackColor={{false: '#767577', true: '#81b0ff'}}
-        thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'}
+        trackColor={{false: '#767577', true: COLORS.blue}}
+        thumbColor={isEnabled ? 'white' : '#f4f3f4'}
         ios_backgroundColor="#3e3e3e"
         onValueChange={toggleSwitch}
         value={isEnabled}
@@ -146,7 +176,9 @@ const TeacherDashboard = ({ route, navigation }) => {
 
             </TouchableOpacity>
 
-            <TouchableOpacity style={{flexDirection:'row', alignItems:'center', justifyContent:'flex-start', position:'relative', marginTop:48}}>      
+            <TouchableOpacity
+            onPress={deleteAccount}
+            style={{flexDirection:'row', alignItems:'center', justifyContent:'flex-start', position:'relative', marginTop:48}}>      
             <MaterialIcons name="lock-outline" size={24} color="black" />
                                     <Text
                             style={{
