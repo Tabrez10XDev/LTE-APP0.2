@@ -1,4 +1,4 @@
-import { Text, View, Image, StyleSheet, SafeAreaView, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import { Text, View, Image, StyleSheet, SafeAreaView, TextInput, TouchableOpacity, ScrollView, Platform } from "react-native";
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { COLORS, SIZES, FONTS, assets, CONST } from "../../../../constants";
@@ -82,7 +82,7 @@ const PrivacyPolicy = ({ navigation }) => {
 
     return (
         <SafeAreaView style={{ backgroundColor: COLORS.blueShade, width: '100%', height: '100%', alignItems: 'center', position:'relative' }}>
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={{paddingBottom : 150}} showsVerticalScrollIndicator={false}>
         
             <Text style={{
                 fontSize: 24,

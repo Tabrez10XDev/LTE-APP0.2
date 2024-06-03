@@ -296,6 +296,7 @@ function UploadAudioTab({ route, navigation }) {
           ).then((response) => {
 
             pauseAnimation()
+            setFileResponse({})
 
             if (response.status == 200) {
               setAudioStatus("submitted")
@@ -342,19 +343,23 @@ function UploadAudioTab({ route, navigation }) {
               approved
             </Text>
             <View style={Style.dragViewContainer}>
-              <TouchableOpacity onPress={audioSubmitBtn}>
+              <TouchableOpacity disabled={audioStatus == "rejected"} onPress={audioSubmitBtn}>
                 <Feather
                   style={Style.uploadIcon}
                   name="upload-cloud"
                   size={42}
                   color="blue"
                 />
-                <Text style={Style.uploadText}>
+               {audioStatus !== "rejected" ? <Text style={Style.uploadText}>
                   Drop files here or click to upload
-                </Text>
+                </Text> : 
+                <Text style={Style.uploadText}>
+                Your Audio was Rejected!
+              </Text>
+                }
 
                 <Text style={{ ...Style.greyText, alignSelf: 'center', marginTop: 2 }}>
-                  Status: {fileResponse.assets != undefined ? fileResponse.assets[0].name.substring(0, 12) : "Submit for verification"}
+                  Status: {fileResponse.assets != undefined ? fileResponse.assets[0].name.substring(0, 12) : audioStatus == "resend" ? "Resend for verification" : audioStatus == "rejected" ? "Audio Rejected" : "Submit for verification"}
                 </Text>
               </TouchableOpacity>
               {fileResponse.assets != undefined ? (
@@ -380,9 +385,9 @@ function UploadAudioTab({ route, navigation }) {
               ) : null}
             </View>
             <View style={Style.subViewContainer}>
-              <TouchableOpacity onPress={uploadAudio} style={Style.btnStyle}>
+           {audioStatus !== "rejected" &&   <TouchableOpacity onPress={uploadAudio} style={Style.btnStyle}>
                 <Text style={Style.btnTextStyle}>SUBMIT</Text>
-              </TouchableOpacity>
+              </TouchableOpacity>}
             </View>
           </View>)
       }

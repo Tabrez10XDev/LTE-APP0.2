@@ -1,9 +1,9 @@
 import 'react-native-gesture-handler';
-import { StyleSheet, Text, View, Alert, DevSettings } from 'react-native';
+import { StyleSheet, Alert, DevSettings } from 'react-native';
 import { RootSiblingParent } from 'react-native-root-siblings';
 import AppRoutes from "./src/routes/AppRoutes";
 import { useFonts } from 'expo-font';
-import * as Notifications from 'expo-notifications';
+// import * as Notifications from 'expo-notifications';
 import { useEffect } from 'react';
 // import messaging from '@react-native-firebase/messaging';
 import axios from 'axios';

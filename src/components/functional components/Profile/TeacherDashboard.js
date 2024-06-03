@@ -1,9 +1,6 @@
 import { Text, View, Image, StyleSheet, TouchableOpacity, Switch, Alert } from "react-native";
 import React from "react";
 import { useState, useEffect, useRef } from "react";
-import { List, Chip } from "react-native-paper";
-import { Dimensions } from "react-native";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { COLORS, SIZES, FONTS, assets, CONST } from "../../../../constants";
 import Lottie from 'lottie-react-native';
 import axios from "axios";
@@ -11,7 +8,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Feather } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-import { ScrollView } from "react-native-gesture-handler";
 
 
 

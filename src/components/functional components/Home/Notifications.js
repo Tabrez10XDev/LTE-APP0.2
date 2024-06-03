@@ -106,7 +106,7 @@ const Notification = ({ navigation }) => {
                 textAlign: 'center',
                 fontFamily: FONTS.semiBold,
             }}>
-                Unread Notifications
+                Notifications
             </Text>
             <TouchableOpacity
             onPress={()=>{clearNotifications()}}
