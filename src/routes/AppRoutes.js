@@ -15,7 +15,7 @@ import ContactSpoc from '../components/functional components/Profile/ContactSpoc
 import ForgotPassword from '../components/functional components/Auth/ForgotPassword';
 import axios from 'axios';
 import Notification from '../components/functional components/Home/Notifications';
-// import messaging from '@react-native-firebase/messaging';
+import messaging from '@react-native-firebase/messaging';
 import { COLORS, SIZES, FONTS, assets, CONST } from "../../constants/constants";
 import PrivacyPolicy from '../components/functional components/Profile/PrivacyPolicy';
 
@@ -68,8 +68,8 @@ const AppRoutes = ({ navigation }) => {
 
 
 
-        // const token = await messaging().getToken()
-        const token = ""
+        const token = await messaging().getToken()
+        // const token = ""
         const payload = {
             "user_id": result,
             "device_token": token
@@ -101,8 +101,8 @@ const AppRoutes = ({ navigation }) => {
             const result = await AsyncStorage.getItem('AuthState')
             if (result !== null && result != "-1") {
                 setState(false)
-                // const token = await messaging().getToken()
-                const token = ""
+                const token = await messaging().getToken()
+                // const token = ""
                 const payload = {
                     "user_id": result,
                     "device_token": token
