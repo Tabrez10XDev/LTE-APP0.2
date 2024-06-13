@@ -111,7 +111,11 @@ const LevelReviewZero = ({ navigation, route }) => {
     let data = route.params
     data.sessions = data.sessions.sort(function (a, b) { return (a.session_id > b.session_id) ? 1 : ((b.session_id > a.session_id) ? -1 : 0); });
 
-    const [data2, setData] = useState(route.params)
+
+    let _data = route.params
+    _data.sessions = _data.sessions.sort(function (a, b) { return (a.session_id > b.session_id) ? 1 : ((b.session_id > a.session_id) ? -1 : 0); });
+
+    const [data2, setData] = useState(_data)
 
 
 
@@ -144,6 +148,8 @@ const LevelReviewZero = ({ navigation, route }) => {
                         text1: toastText,
                     })
                 }
+                setStackIndex(1)
+                setMessage("")
                 response.data.stud_total_and_completed_level_session_details.map((ele, index) => {
                     _state = { ..._state, [ele.level_id]: { total: Number(ele.total_session_count), completed: ele.completed_session_count, progress: Number(ele.total_session_count) / Number(ele.completed_session_count) == 0 ? 1 : Number(ele.completed_session_count) } }
                 })
@@ -210,7 +216,7 @@ const LevelReviewZero = ({ navigation, route }) => {
 
 
                 setData({ ...tempState, ...nextSession })
-                console.log(response.data, "- Level Data");
+                // console.log(response.data, "- Level Data");
 
             })
             .catch((error) => {
@@ -349,11 +355,9 @@ const LevelReviewZero = ({ navigation, route }) => {
 
         axios.request(config)
             .then((response) => {
-                console.log(response.data);
                 pauseAnimation()
                 
-                setStackIndex(1)
-                setMessage("")
+              
                 if (index >= 0) {
                     setGuidelines({
                         session: name,
@@ -602,7 +606,7 @@ const LevelReviewZero = ({ navigation, route }) => {
             </View>
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 150 }}>
                 <List.AccordionGroup>
-                    {data.sessions.map((ele, index) => {
+                    {data2.sessions.map((ele, index) => {
                         return (
                             (ele.session_unlock_status === true) || data2.sessions[index].session_unlock_status || index == 0 ? (
                                 <List.Accordion

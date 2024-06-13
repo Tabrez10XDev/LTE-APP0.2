@@ -112,7 +112,10 @@ const LevelReview = ({ navigation, route }) => {
     let data = route.params
     data.sessions = data.sessions.sort(function (a, b) { return (a.session_id > b.session_id) ? 1 : ((b.session_id > a.session_id) ? -1 : 0); });
 
-    const [data2, setData] = useState(route.params)
+    let _data = route.params
+     _data.sessions = _data.sessions.sort(function (a, b) { return (a.session_id > b.session_id) ? 1 : ((b.session_id > a.session_id) ? -1 : 0); });
+
+    const [data2, setData] = useState(_data)
 
 
 
@@ -146,6 +149,10 @@ const LevelReview = ({ navigation, route }) => {
                         text1: toastText,
                     })
                 }
+                setMessage("")
+                setStackIndex(1)
+
+
                 response.data.stud_total_and_completed_level_session_details.map((ele, index) => {
                     _state = { ..._state, [ele.level_id]: { total: Number(ele.total_session_count), completed: ele.completed_session_count, progress: Number(ele.total_session_count) / Number(ele.completed_session_count) == 0 ? 1 : Number(ele.completed_session_count) } }
                 })
@@ -153,6 +160,7 @@ const LevelReview = ({ navigation, route }) => {
                 response.data.stud_next_session.map((ele, index) => {
                     _state2 = { ..._state2, [ele.level_id]: { start: ele.start_time.substring(0, 5), end: ele.end_time.substring(0, 5), nextId: ele.session_id, nextTitle: ele.session_name, date: ele.date.substring(0, 10), day: ele.day } }
                 })
+                console.log("one");
 
                 let temp0 = []
                 let temp1 = []
@@ -279,12 +287,12 @@ const LevelReview = ({ navigation, route }) => {
 
         console.log(index);
         console.log("Sessions");
-        console.log(JSON.stringify(data.sessions));
+        console.log(JSON.stringify(data2.sessions));
         console.log("----");
 
         if (index > 0) {
-            prelevel_id = data.sessions[index - 1].level_id
-            presession_id = data.sessions[index - 1].session_id
+            prelevel_id = data2.sessions[index - 1].level_id
+            presession_id = data2.sessions[index - 1].session_id
         } else {
             prelevel_id = levelId - 1
             presession_id = id - 1
@@ -332,8 +340,6 @@ const LevelReview = ({ navigation, route }) => {
             .then((response) => {
                 console.log(response.data);
                 pauseAnimation()
-                setStackIndex(1)
-                setMessage("")
                 // if (index >= 1) {
                 //     setGuidelines({
                 //         session: name,
@@ -464,10 +470,10 @@ const LevelReview = ({ navigation, route }) => {
                             fontSize: SIZES.large,
                             flexWrap: 'wrap',
                         }}>
-                        {data.title}
+                        {data2.title}
                     </Text>
 
-                    {data2.progress != data.total ?
+                    {data2.progress != data2.total ?
                         <>
                             <Text
                                 style={{
@@ -513,7 +519,7 @@ const LevelReview = ({ navigation, route }) => {
                         </>
                     }
                     <View style={{ alignSelf: 'flex-start', marginTop: 8, alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', width: '90%' }}>
-                        <ProgressBar unfilledColor={COLORS.unProgressed} color={data2.progress == data.total ? COLORS.green : COLORS.yellow} progress={data2.progress / data.total} width={Dimensions.get('window').width * 0.6} borderColor={COLORS.unProgressed} />
+                        <ProgressBar unfilledColor={COLORS.unProgressed} color={data2.progress == data2.total ? COLORS.green : COLORS.yellow} progress={data2.progress / data2.total} width={Dimensions.get('window').width * 0.6} borderColor={COLORS.unProgressed} />
                         <Text
                             style={{
                                 fontFamily: FONTS.regular,
@@ -521,14 +527,14 @@ const LevelReview = ({ navigation, route }) => {
                                 color: COLORS.darkBlue,
                                 marginStart: 8
                             }}>
-                            {data2.completed} of {data.total}
+                            {data2.completed} of {data2.total}
                         </Text>
                     </View>
                 </View>
             </View>
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 150 }}>
                 <List.AccordionGroup>
-                    {data.sessions.map((ele, index) => {
+                    {data2.sessions.map((ele, index) => {
                         return (
                             (ele.session_unlock_status === true) || data2.sessions[index].session_unlock_status || index == 0 ? (
                                 <List.Accordion
