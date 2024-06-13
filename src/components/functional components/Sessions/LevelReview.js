@@ -131,7 +131,7 @@ const LevelReview = ({ navigation, route }) => {
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: 'https://lte-backend.onrender.com/api/teacherapp/get/student/details',
+            url: `${CONST.baseUrl}/teacherapp/get/student/details`,
             headers: {
                 'Content-Type': 'application/json'
             },

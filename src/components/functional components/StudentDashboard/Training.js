@@ -37,7 +37,6 @@ const Training = ({ navigation, route }) => {
 
     async function fetchLevels() {
 
-        console.log(route.params.student_id,`${CONST.baseUrl}/teacherapp/get/student/details`);
 
         let config = {
             method: 'post',
