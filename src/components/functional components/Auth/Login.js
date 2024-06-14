@@ -136,7 +136,10 @@ const Login = ({ navigation, route }) => {
 
             <TextInput onChangeText={username => setLoginDetails({ ...loginDetails, email: username.trim().toLowerCase() })} value={loginDetails.email} keyboardType="email-address" variant="outlined" label="Email" style={{ marginHorizontal: 16, width: '100%', marginTop: SIZES.medium, marginTop: 72 }} color={COLORS.darkGrey} />
             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: SIZES.medium }}>
-              <TextInput onChangeText={password => setLoginDetails({ ...loginDetails, password: password })} value={loginDetails.password} secureTextEntry={!visibility} variant="outlined" label="Password" style={{ marginHorizontal: 16, width: '100%' }} color={COLORS.darkGrey} />
+              <TextInput onChangeText={password => 
+                setLoginDetails({ ...loginDetails, password: password })} 
+                value={loginDetails.password} secureTextEntry={!visibility} 
+                variant="outlined" label="Password" style={{ marginHorizontal: 16, width: '100%' }} color={COLORS.darkGrey} />
               <TouchableOpacity
                 onPress={() => {
                   setVisibility(!visibility)

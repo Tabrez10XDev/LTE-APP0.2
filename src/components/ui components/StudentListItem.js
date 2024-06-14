@@ -42,14 +42,34 @@ const StudentListItem = ({onclick, name, education, number}) => {
                 </Text>
             </View>
 
-            <View style={{marginStart:12, paddingVertical:8, justifyContent:'space-between'}}>
-                <Text style={{
+            <View style={{marginStart:12, paddingVertical:8, justifyContent:'space-between', width:'70%'}}>
+                <View style={{flexDirection:'row'}}>
+                <Text
+                numberOfLines={2}
+                ellipsizeMode="middle"
+                style={{
                     fontFamily: FONTS.semiBold,
+                    flexWrap:'wrap',
                     fontSize: 16,
+                    maxWidth:'40%',
+                    color: 'black',
+                }}>
+                    {name}
+                </Text>
+
+                <Text
+                numberOfLines={2}
+                style={{
+                    fontFamily: FONTS.semiBold,
+                    flexWrap:'wrap',
+                    fontSize: 16,
+                    maxWidth:'60%',
                     color: 'black'
                 }}>
-                    {name} ({number})
+                  ({number})
                 </Text>
+                </View>
+             
                 <Text style={{
                     fontFamily: FONTS.regular,
                     fontSize: 14,

@@ -2,7 +2,7 @@
   "expo": {
     "name": "LTE-APP",
     "slug": "lte-app",
-    "version": "1.1.5",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -19,7 +19,7 @@
       "bundleIdentifier": "com.bwt.lte",
       "bitcode": false,
       "googleServicesFile": "./GoogleService-Info.plist",
-      "buildNumber": "8"
+      "buildNumber": "10"
     },
     "android": {
       "jsEngine": "hermes",
@@ -29,7 +29,7 @@
       },
       "package": "org.act.lte",
       "googleServicesFile": "./google-services.json",
-      "versionCode": 1105
+      "versionCode": 1201
     },
     "web": {
       "favicon": "./assets/favicon.png"
