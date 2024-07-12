@@ -502,8 +502,8 @@ const LevelReviewZero = ({ navigation, route }) => {
                         if (response.status == 200) {
                             setStates(current => ({ ...current, [id]: true }))
                             Toast.show({
-                                type: 'Audio Upload Successful',
-                                text1: 'Success'
+                                type: 'success',
+                                text1: 'Audio Upload Successful'
                             })
                             console.log("Uploaded audio");
                             // updateFeedback(levelId, id, level_name, index)

@@ -2,7 +2,7 @@
   "expo": {
     "name": "LTE-APP",
     "slug": "lte-app",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -29,7 +29,7 @@
       },
       "package": "org.act.lte",
       "googleServicesFile": "./google-services.json",
-      "versionCode": 1201
+      "versionCode": 1202
     },
     "web": {
       "favicon": "./assets/favicon.png"
