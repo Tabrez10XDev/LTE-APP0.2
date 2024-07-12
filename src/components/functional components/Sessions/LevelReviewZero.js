@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import { List, Chip } from "react-native-paper";
 import { Feather, Ionicons, Entypo, AntDesign } from "@expo/vector-icons";
 import Lottie from 'lottie-react-native';
-
 import { COLORS, SIZES, FONTS, assets, CONST } from "../../../../constants";
 import ProgressBar from 'react-native-progress/Bar'
 import { StackActions } from '@react-navigation/native';
@@ -367,7 +366,13 @@ const LevelReviewZero = ({ navigation, route }) => {
                 }
                 fetchLevels(levelId, id, level_name, true, response.data)
                 if (name == "session21") {
-                    navigation.dispatch(StackActions.pop(1))
+                    Toast.show({
+                        type: 'success',
+                        text1: 'Success'
+                    })
+                    setTimeout(()=>{
+                        navigation.dispatch(StackActions.pop(1))
+                    },600)
                 }
             })
             .catch((error) => {
@@ -497,7 +502,7 @@ const LevelReviewZero = ({ navigation, route }) => {
                         if (response.status == 200) {
                             setStates(current => ({ ...current, [id]: true }))
                             Toast.show({
-                                type: 'success',
+                                type: 'Audio Upload Successful',
                                 text1: 'Success'
                             })
                             console.log("Uploaded audio");
