@@ -1,4 +1,4 @@
-import { Text, View, Image, StyleSheet, TouchableOpacity, Dimensions, TextInput, SafeAreaView, Modal, Pressable, ActivityIndicator, Alert } from "react-native";
+import { Text, View, Image, StyleSheet, TouchableOpacity, Dimensions, TextInput, SafeAreaView, Modal, Pressable, ActivityIndicator, Alert, Platform } from "react-native";
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { List, Chip } from "react-native-paper";
@@ -531,7 +531,7 @@ const LevelReviewZero = ({ navigation, route }) => {
 
     return (
         <SafeAreaView style={{ height: '100%', backgroundColor: 'white', paddingTop: 24 }}>
-            <View style={{ flexDirection: 'row' }}>
+            <View style={{ flexDirection: 'row', marginTop:Platform.OS == "android" ? 20 : 0 }}>
                 <TouchableOpacity
                     onPress={() => {
                         navigation.dispatch(StackActions.pop(1))
