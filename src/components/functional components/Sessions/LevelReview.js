@@ -118,6 +118,66 @@ const LevelReview = ({ navigation, route }) => {
     const [data2, setData] = useState(_data)
 
 
+    const retakeSession = async (levelId, id, level_name, index, name, guidelines) => {
+
+
+
+        console.log("Retaking Session");
+        
+
+
+        let _data = JSON.stringify({
+            'stud_id': route.params.student_id,
+            'level_id': levelId,
+            'session_id': id,
+            'teacher_id': stateID,
+            'session_feedback': reviewMap[stackIndex],
+            'feedback_notes': message,
+        });
+
+
+        let config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: `${CONST.baseUrl}/student/assign/retake/session`,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: _data
+        };
+
+
+        playAnimation()
+
+        // if (index >= 1 && index < 12) {
+        //     setGuidelines({
+        //         session: name,
+        //         text: guidelines
+        //     })c
+        //     setPopup(true)
+        // }
+
+        axios.request(config)
+            .then((response) => {
+                pauseAnimation()
+                
+            
+                fetchLevels(levelId, id, level_name, true, response.data)
+                if (name == "session50") {
+                    Toast.show({
+                        type: 'success',
+                        text1: 'Success'
+                    })
+                    setTimeout(()=>{
+                        navigation.dispatch(StackActions.pop(1))
+                    },600)
+                }
+            })
+            .catch((error) => {
+                pauseAnimation()
+                console.log(error.response);
+            });
+    }
 
 
     async function getTeacherID() {
@@ -158,6 +218,11 @@ const LevelReview = ({ navigation, route }) => {
                 })
 
                 response.data.stud_next_session.map((ele, index) => {
+
+                    if(ele.start_time == null){
+                        return
+                    }
+
                     _state2 = { ..._state2, [ele.level_id]: { start: ele.start_time.substring(0, 5), end: ele.end_time.substring(0, 5), nextId: ele.session_id, nextTitle: ele.session_name, date: ele.date.substring(0, 10), day: ele.day } }
                 })
                 console.log("one");
@@ -198,8 +263,16 @@ const LevelReview = ({ navigation, route }) => {
                     4: temp4,
                     5: temp5,
                 }
-                let tempState = { ..._state[level_id], ..._state2[level_id], title: level_name, sessions: _state3[level_name.slice(-1)] }
 
+                let tempState = {}
+                if(_state2){
+                    
+                    tempState = { ..._state[level_id], ..._state2[level_id], title: level_name, sessions: _state3[level_name.slice(-1)] }
+                }else{
+
+                    tempState = { ..._state[level_id],title: level_name, sessions: _state3[level_name.slice(-1)] }
+    
+                }
                 tempState.sessions = tempState.sessions.sort(function (a, b) { return (a.session_id > b.session_id) ? 1 : ((b.session_id > a.session_id) ? -1 : 0); });
 
 
@@ -451,6 +524,16 @@ const LevelReview = ({ navigation, route }) => {
     };
 
 
+    const [expandedId, setExpandedId] = React.useState(false)
+
+    const _onAccordionPress = (newExpandedId) => {
+        setMessage("")
+        expandedId === newExpandedId
+        ? setExpandedId(undefined)
+        : setExpandedId(newExpandedId);
+    }
+     
+
 
     return (
         <SafeAreaView style={{ height: '100%', backgroundColor: 'white', paddingTop: 24 }}>
@@ -533,7 +616,10 @@ const LevelReview = ({ navigation, route }) => {
                 </View>
             </View>
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 150 }}>
-                <List.AccordionGroup>
+                <List.AccordionGroup
+                   expandedId={expandedId}
+                   onAccordionPress={_onAccordionPress}
+                >
                     {data2.sessions.map((ele, index) => {
                         return (
                             (ele.session_unlock_status === true) || data2.sessions[index].session_unlock_status || index == 0 ? (
@@ -608,12 +694,15 @@ const LevelReview = ({ navigation, route }) => {
                                                 <TextInput multiline
                                                     maxLength={50}
                                                     textAlign='left'
-                                                    onChangeText={message => { if (ele.feedback_notes === null) setMessage(message) }}
+                                                    onChangeText={message => { 
+                                                  
+                                                        if (ele.feedback_notes === null || message !== "") setMessage(message) }}
                                                     underlineColorAndroid='transparent'
                                                     returnKeyType="done"
                                                     blurOnSubmit={true}
                                                     fontSize={16}
-                                                    value={ele.feedback_notes ?? message}
+                                                    value={(ele.feedback_notes == null || message !== "") ? message : ele.feedback_notes}
+
                                                     placeholder="Type Here" style={{ width: '90%', backgroundColor: COLORS.blueShade, marginTop: 20, padding: 8, height: 120, borderRadius: 8, width: '95%', alignSelf: 'center' }}>
 
                                                 </TextInput>
@@ -637,12 +726,17 @@ const LevelReview = ({ navigation, route }) => {
                                                         </View>
                                                     }
 
-                                                    {/* <View style={{ ...Style.subViewContainer, width: '40%', marginHorizontal: 0 }}>
+                                                   
+                                                  {(ele.session_feedback !== 'NA' || data2.sessions[index]?.session_feedback != "NA") &&  <View style={{ ...Style.subViewContainer, width: '40%', marginHorizontal: 0 }}>
                                                         <TouchableOpacity
-                                                            style={Style.btnStyle}>
+                                                        disabled={message==""}
+                                                        onPress={()=>{
+                                                            retakeSession(ele.level_id, ele.session_id, ele.level_name, index, ele.session_name, ele.common_desc)
+                                                        }}
+                                                            style={{...Style.btnStyle, backgroundColor: message=="" ? 'grey' : COLORS.blue}}>
                                                             <Text style={Style.btnTextStyle}>RETAKE</Text>
                                                         </TouchableOpacity>
-                                                    </View> */}
+                                                    </View>}
                                                 </View>
                                             </> : <>
 

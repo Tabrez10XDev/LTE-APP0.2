@@ -19,7 +19,7 @@
       "bundleIdentifier": "com.bwt.lte",
       "bitcode": false,
       "googleServicesFile": "./GoogleService-Info.plist",
-      "buildNumber": "13"
+      "buildNumber": "14"
     },
     "android": {
       "jsEngine": "hermes",

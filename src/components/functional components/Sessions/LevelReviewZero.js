@@ -153,9 +153,20 @@ const LevelReviewZero = ({ navigation, route }) => {
                     _state = { ..._state, [ele.level_id]: { total: Number(ele.total_session_count), completed: ele.completed_session_count, progress: Number(ele.total_session_count) / Number(ele.completed_session_count) == 0 ? 1 : Number(ele.completed_session_count) } }
                 })
 
+                console.log(route.params.student_id);
+                
+            
                 response.data.stud_next_session.map((ele, index) => {
+
+                    if(ele.start_time == null){
+                        return
+                    }
+                
+            
                     _state2 = { ..._state2, [ele.level_id]: { start: ele.start_time.substring(0, 5), end: ele.end_time.substring(0, 5), nextId: ele.session_id, nextTitle: ele.session_name, date: ele.date.substring(0, 10), day: ele.day } }
                 })
+
+                
 
                 let temp0 = []
                 let temp1 = []
@@ -185,6 +196,8 @@ const LevelReviewZero = ({ navigation, route }) => {
 
                 })
 
+
+
                 _state3 = {
                     0: temp0,
                     1: temp1,
@@ -193,10 +206,29 @@ const LevelReviewZero = ({ navigation, route }) => {
                     4: temp4,
                     5: temp5,
                 }
-                let tempState = { ..._state[level_id], ..._state2[level_id], title: level_name, sessions: _state3[level_name.slice(-1)] }
+
+
+
+                let tempState = {}
+                if(_state2){
+                    
+                    tempState = { ..._state[level_id], ..._state2[level_id], title: level_name, sessions: _state3[level_name.slice(-1)] }
+                }else{
+
+                    tempState = { ..._state[level_id],title: level_name, sessions: _state3[level_name.slice(-1)] }
+    
+                }
+
+
+
+
 
                 tempState.sessions = tempState.sessions.sort(function (a, b) { return (a.session_id > b.session_id) ? 1 : ((b.session_id > a.session_id) ? -1 : 0); });
+               
+               
+
                 let nextSession = {}
+
 
                 response.data.stud_next_session.map((ele, index) => {
                     if (ele.start_time == null) {
@@ -356,7 +388,6 @@ const LevelReviewZero = ({ navigation, route }) => {
             .then((response) => {
                 pauseAnimation()
                 
-              
                 if (index >= 0) {
                     setGuidelines({
                         session: name,
@@ -364,7 +395,71 @@ const LevelReviewZero = ({ navigation, route }) => {
                     })
                     setPopup(true)
                 }
-                fetchLevels(levelId, id, level_name, true, response.data)
+                fetchLevels(levelId, id, level_name, true)
+                if (name == "session21") {
+                    Toast.show({
+                        type: 'success',
+                        text1: 'Success'
+                    })
+                    setTimeout(()=>{
+                        navigation.dispatch(StackActions.pop(1))
+                    },600)
+                }
+            })
+            .catch((error) => {
+                pauseAnimation()
+                console.log(error.response);
+            });
+    }
+
+    const retakeSession = async (levelId, id, level_name, index, name, guidelines) => {
+
+
+
+        console.log("Retaking Session");
+        
+
+
+        let _data = JSON.stringify({
+            'stud_id': route.params.student_id,
+            'level_id': levelId,
+            'session_id': id,
+            'teacher_id': stateID,
+            'session_feedback': reviewMap[stackIndex],
+            'feedback_notes': message,
+        });
+
+
+        let config = {
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: `${CONST.baseUrl}/student/assign/retake/session`,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: _data
+        };
+
+
+        playAnimation()
+
+        // if (index >= 1 && index < 12) {
+        //     setGuidelines({
+        //         session: name,
+        //         text: guidelines
+        //     })c
+        //     setPopup(true)
+        // }
+
+        axios.request(config)
+            .then((response) => {
+                pauseAnimation()
+
+                console.log("done", response.data);
+                
+                
+                    fetchLevels(levelId, id, level_name, true)
+            
                 if (name == "session21") {
                     Toast.show({
                         type: 'success',
@@ -529,6 +624,16 @@ const LevelReviewZero = ({ navigation, route }) => {
 
     };
 
+    const [expandedId, setExpandedId] = React.useState(false)
+
+    const _onAccordionPress = (newExpandedId) => {
+        setMessage("")
+        expandedId === newExpandedId
+        ? setExpandedId(undefined)
+        : setExpandedId(newExpandedId);
+    }
+     
+
     return (
         <SafeAreaView style={{ height: '100%', backgroundColor: 'white', paddingTop: 24 }}>
             <View style={{ flexDirection: 'row', marginTop:Platform.OS == "android" ? 20 : 0 }}>
@@ -610,11 +715,15 @@ const LevelReviewZero = ({ navigation, route }) => {
                 </View>
             </View>
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 150 }}>
-                <List.AccordionGroup>
+                <List.AccordionGroup
+                     expandedId={expandedId}
+                     onAccordionPress={_onAccordionPress}
+                >
                     {data2.sessions.map((ele, index) => {
                         return (
                             (ele.session_unlock_status === true) || data2.sessions[index].session_unlock_status || index == 0 ? (
                                 <List.Accordion
+                            
                                     theme={{ colors: { primary: COLORS.primary } }} style={{ backgroundColor: 'white' }} title={ele.session_name} id={ele.session_id}
                                     right={props =>
                                         ele.session_feedback !== 'NA' || data2.sessions[index]?.session_feedback != "NA" ? (
@@ -687,12 +796,14 @@ const LevelReviewZero = ({ navigation, route }) => {
                                                 <TextInput multiline
                                                     maxLength={50}
                                                     textAlign='left'
-                                                    onChangeText={message => { if (ele.feedback_notes === null) setMessage(message) }}
+                                                    onChangeText={message => { 
+                                                        
+                                                        if (ele.feedback_notes === null || message !== "") setMessage(message) }}
                                                     underlineColorAndroid='transparent'
                                                     returnKeyType="done"
                                                     blurOnSubmit={true}
                                                     fontSize={16}
-                                                    value={ele.feedback_notes ?? message}
+                                                    value={(ele.feedback_notes == null || message !== "") ? message : ele.feedback_notes}
                                                     placeholder="Type Here" style={{ width: '90%', backgroundColor: COLORS.blueShade, marginTop: 20, padding: 8, height: 120, borderRadius: 8, width: '95%', alignSelf: 'center' }}>
 
                                                 </TextInput>
@@ -717,12 +828,16 @@ const LevelReviewZero = ({ navigation, route }) => {
                                                         </View>
                                                     }
 
-                                                    {/* <View style={{ ...Style.subViewContainer, width: '40%', marginHorizontal: 0 }}>
+                                                  {(ele.session_feedback !== 'NA' || data2.sessions[index]?.session_feedback != "NA") &&  <View style={{ ...Style.subViewContainer, width: '40%', marginHorizontal: 0 }}>
                                                         <TouchableOpacity
-                                                            style={Style.btnStyle}>
+                                                        disabled={message==""}
+                                                        onPress={()=>{
+                                                            retakeSession(ele.level_id, ele.session_id, ele.level_name, index, ele.session_name, ele.common_desc)
+                                                        }}
+                                                            style={{...Style.btnStyle, backgroundColor: message=="" ? 'grey' : COLORS.blue}}>
                                                             <Text style={Style.btnTextStyle}>RETAKE</Text>
                                                         </TouchableOpacity>
-                                                    </View> */}
+                                                    </View>}
                                                 </View>
                                             </> : <>
 
