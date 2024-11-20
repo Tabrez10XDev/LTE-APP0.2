@@ -116,7 +116,7 @@ const Availability = ({ navigation, route }) => {
         if (totalDays == 0) {
             Toast.show({
                 type: 'info',
-                text1: "Please choose 3 days only"
+                text1: "Please choose 2-3 days only"
             })
             return
         }
@@ -473,7 +473,7 @@ const Availability = ({ navigation, route }) => {
 
                                             <TouchableOpacity
                                                 onPress={() => {
-                                                    if (totalDays >= 3 && !switches[inx]) return
+                                                    if (totalDays >= 2 && !switches[inx]) return
                                                     setSwitches(curr => ({ ...curr, [inx]: !curr[inx] }))
                                                     onToggleSwitch(inx, !switches[inx])
                                                 }}
